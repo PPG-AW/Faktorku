@@ -35,7 +35,7 @@ export default function GuruDeck() {
   const lastPushed = useRef<string | null>(null);
 
   const { data: kelasList, mutate: mutateList } = useSWR<{ kelas: KelasRow[] }>("/api/kelas", fetcher);
-  const { state, mutate: mutateState, offset } = useKelasState(kode, 2000);
+  const { state, mutate: mutateState, offset, error: stateError } = useKelasState(kode, 2000);
   const { data: monitor } = useSWR<MonitorData>(
     state ? `/api/guru/${state.kelas.id}/monitor` : null, fetcher, { refreshInterval: 2500 }
   );
@@ -45,6 +45,14 @@ export default function GuruDeck() {
     if (k) setKode(k);
     setBooted(true);
   }, []);
+
+  // Jika kode kelas lama guru di localStorage tidak lagi ada di database (404), reset ke daftar pilihan kelas
+  useEffect(() => {
+    if (stateError && kode) {
+      setGuruKode("");
+      setKode(null);
+    }
+  }, [stateError, kode]);
 
   const slide: DeckItem = DECK[index];
 
