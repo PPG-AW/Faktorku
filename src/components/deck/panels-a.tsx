@@ -81,6 +81,10 @@ export function DeckApersepsi({ kelasId }: PanelProps) {
   const [idx, setIdx] = useState(0);
   const [reveal, setReveal] = useState(false);
 
+  const s = soal[idx];
+  const total = soal.length;
+  const maxCount = s ? Math.max(1, ...Object.values(s.opsiCount)) : 1;
+
   useEffect(() => { setReveal(false); }, [idx]);
 
   useEffect(() => {
@@ -91,10 +95,6 @@ export function DeckApersepsi({ kelasId }: PanelProps) {
       body: JSON.stringify({ kelasId, action: "setApersepsiSoal", value: s.nomor }),
     }).catch(() => {});
   }, [s?.nomor, kelasId]);
-
-  const s = soal[idx];
-  const total = soal.length;
-  const maxCount = s ? Math.max(1, ...Object.values(s.opsiCount)) : 1;
 
   if (!s) {
     return <p className="py-16 text-center text-sm text-[var(--ink-3)]">Memuat soal apersepsi…</p>;
