@@ -3,7 +3,7 @@
 import Link from "next/link";
 
 /**
- * Logo baru — kotak teka-teki silang faktor 2×2 ala rubrik koran:
+ * Logo baru, kotak teka-teki silang faktor 2×2 ala rubrik koran:
  * [x²][p] di atas, [q][=] di bawah. Hitam-putih dengan aksen merah.
  */
 export function LogoMark({ size = 30 }: { size?: number }) {

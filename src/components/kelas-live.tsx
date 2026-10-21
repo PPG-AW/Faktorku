@@ -87,7 +87,7 @@ export function KelasLive({ kelasId, aktifStage }: { kelasId: string; aktifStage
           </span>
           <div>
             <p className="font-extrabold text-white">KELAS LIVE</p>
-            <p className="text-xs text-zinc-500">Pemantauan real-time — proyeksikan panel ini</p>
+            <p className="text-xs text-zinc-500">Pemantauan real-time, proyeksikan panel ini</p>
           </div>
         </div>
         <div className="flex flex-wrap items-center gap-2">
@@ -169,7 +169,7 @@ export function KelasLive({ kelasId, aktifStage }: { kelasId: string; aktifStage
         })}
         {siswa.length === 0 && (
           <p className="col-span-full rounded-xl border border-dashed border-white/12 px-4 py-8 text-center text-xs text-zinc-500">
-            Belum ada siswa — bagikan kode kelas agar mereka masuk.
+            Belum ada siswa, bagikan kode kelas agar mereka masuk.
           </p>
         )}
       </div>

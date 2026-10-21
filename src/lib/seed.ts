@@ -1,590 +1,434 @@
 import { db } from "@/db";
-import {
-  slide,
-  soalDiagnostik,
-  soalKuis,
-  soalWorksheet,
-  type SlideKonten,
-  type WorksheetData,
-} from "@/db/schema";
+import { slide, soalKuis, soalDiagnostik, soalWorksheet, type SlideKonten } from "@/db/schema";
 import { uid } from "@/lib/utils";
 
-/* ================================ SLIDES ================================= */
+/* ================== SLIDE MATERI, PERSIS MODUL AJAR (T-Faktor a=1) ================== */
 
 const SLIDES: { nomor: number; judul: string; konten: SlideKonten }[] = [
   {
-    nomor: 1,
-    judul: "Judul",
+    nomor: 1, judul: "Judul",
     konten: {
       layout: "title",
-      kicker: "Matematika · Bab Persamaan Kuadrat",
-      title: "FAKTORKU",
-      sub: "Memfaktorkan Persamaan Kuadrat — dari kisah jualan Rina hingga Metode AC",
+      kicker: "Matematika · Kelas X AKL · Fase E",
+      title: "PERSAMAAN KUADRAT",
+      sub: "Pemfaktoran T-Faktor untuk a = 1, lewat kisah usaha sablon kaos Rina",
       blocks: [
         { t: "eq", v: "ax^2 + bx + c = 0", big: true },
-        { t: "text", v: "Hari ini kita belajar memecahkan persamaan kuadrat dengan T-Faktor (a = 1) dan Metode AC (a > 1)." },
+        { t: "text", v: "Discovery Learning + Think-Pair-Share · 90 menit" },
       ],
     },
   },
   {
-    nomor: 2,
-    judul: "Uang Masuk",
+    nomor: 2, judul: "Judul Materi",
     konten: {
-      layout: "content",
-      kicker: "Kisah Rina · Bagian 1",
-      title: "Uang yang Masuk",
-      sub: "Rina berjualan keripik pisang buatan ibunya",
+      layout: "focus",
+      kicker: "Pendahuluan",
+      title: "Selamat Datang, Kelas X AKL!",
+      sub: "Satu jam ke depan kita adalah peneliti bisnis Rina",
       blocks: [
-        { t: "text", v: "Setiap bungkus keripik dijual Rp50 ribu... eh, Rp5 ribu! Maksudnya: harga per bungkus = 50 (ratus rupiah). Jika terjual x bungkus, pendapatannya:" },
-        { t: "eq", v: "Pendapatan = 50x", big: true },
-        { t: "box", title: "Ingat", v: "x adalah banyak bungkus yang terjual. Semakin besar x, semakin besar uang yang masuk.", tone: "info" },
+        { t: "text", v: "Hari ini kita tidak sekadar menghafal rumus. Kita menyelidiki kapan seorang pedagang sablon kaos bernama Rina balik modal." },
+        { t: "eq", v: "(x + p)(x + q) = x^2 + (p + q)x + pq", big: true },
+        { t: "box", title: "Mindful · Meaningful · Joyful", v: "Siapkan HP-mu, ikuti sinyal layar, dan siap jadi detektif matematika.", tone: "info" },
       ],
     },
   },
   {
-    nomor: 3,
-    judul: "Uang Keluar",
+    nomor: 3, judul: "Data Usaha Rina",
     konten: {
       layout: "content",
-      kicker: "Kisah Rina · Bagian 2",
-      title: "Uang yang Keluar",
-      sub: "Ternyata jualan butuh modal!",
+      kicker: "Sintaks 1 · Stimulation",
+      title: "Kasus Usaha Sablon Kaos Rina",
+      sub: "Rina memproduksi x kaos per minggu. Setiap angka ini adalah bukti.",
       blocks: [
-        { t: "list", items: [
-          "Sewa lapak & plastik kemasan: biaya tetap 75 (ratus rupiah)",
-          "Biaya bahan per bungkus: 30x",
-          "Biaya promosi yang makin mahal saat produksi ramai: x^2",
+        { t: "table", head: ["Keterangan", "Nilai"], rows: [
+          ["Harga jual per kaos", "50 ribu"],
+          ["Biaya bahan per kaos", "30 ribu"],
+          ["Biaya tenaga kerja per kaos", "x ribu"],
+          ["Biaya tetap per minggu (sewa, listrik)", "75 ribu"],
         ] },
-        { t: "eq", v: "Biaya = x^2 + 30x + 75", big: true },
-        { t: "box", title: "Perhatikan", v: "Ada suku x^2 di biaya! Inilah yang membuat masalah Rina jadi menarik.", tone: "warn" },
+        { t: "box", title: "Pertanyaan Pemantik", v: "Dari data ini, bisa tidak kita menentukan Rina untung atau rugi? Pilih di HP-mu!", tone: "warn" },
       ],
     },
   },
   {
-    nomor: 4,
-    judul: "Impas",
+    nomor: 4, judul: "Konsep Titik Impas",
     konten: {
       layout: "focus",
-      kicker: "Kisah Rina · Bagian 3",
-      title: "Kapan Rina Balik Modal?",
-      sub: "Titik impas (Break Even Point) terjadi saat pendapatan = biaya",
+      kicker: "Sintaks 2 · Problem Statement",
+      title: "Apa itu Titik Impas?",
+      sub: "Kondisi di mana uang masuk = uang keluar",
       blocks: [
-        { t: "eq", v: "Pendapatan = Biaya" },
-        { t: "arrow", v: "Substitusikan kedua rumus" },
-        { t: "eq", v: "50x = x^2 + 30x + 75", big: true },
-        { t: "box", title: "Pertanyaan", v: "Berapa bungkus yang harus terjual agar Rina tidak rugi?", tone: "violet" },
+        { t: "big", v: "Hasilnya NOL, tidak untung, tidak rugi." },
+        { t: "eq", v: "Uang masuk − Uang keluar = 0", big: true },
+        { t: "box", title: "Kegunaan", v: "Mengetahui jumlah minimal yang harus dijual supaya modal kembali. Ingat kata NANDD, NOL dan PERSAMAAN KUADRAT.", tone: "violet" },
       ],
     },
   },
   {
-    nomor: 5,
-    judul: "Persamaan Rina",
+    nomor: 5, judul: "Uang Masuk Rina",
     konten: {
       layout: "focus",
-      kicker: "Menyusun Persamaan",
-      title: "Persamaan Rina",
-      sub: "Pindahkan semua suku ke satu ruas",
+      kicker: "Uang Masuk",
+      title: "Pendapatan Rina",
+      sub: "50 ribu per kaos dikali x kaos",
+      blocks: [
+        { t: "eq", v: "Pendapatan = 50x ribu", big: true },
+        { t: "text", v: "Semakin banyak x, semakin besar uang yang masuk." },
+      ],
+    },
+  },
+  {
+    nomor: 6, judul: "Uang Keluar Rina",
+    konten: {
+      layout: "content",
+      kicker: "Uang Keluar",
+      title: "Biaya Rina",
+      sub: "Bahan + tenaga kerja + biaya tetap",
+      blocks: [
+        { t: "steps", items: [
+          "Bahan: 30 x x = 30x ribu",
+          "Tenaga kerja: x x x = x^2 ribu ← biaya per kaos (x) dikali jumlah kaos (x)",
+          "Biaya tetap: 75 ribu",
+        ] },
+        { t: "eq", v: "Biaya = x^2 + 30x + 75 ribu", big: true },
+        { t: "box", title: "Kunci", v: "Perhatikan x x x menghasilkan x^2, inilah yang membuat masalah Rina menjadi persamaan kuadrat!", tone: "warn" },
+      ],
+    },
+  },
+  {
+    nomor: 7, judul: "Titik Impas → Persamaan Kuadrat",
+    konten: {
+      layout: "focus",
+      kicker: "Titik Impas Rina",
+      title: "Pembentukan Persamaan",
+      sub: "Uang masuk = Uang keluar",
       blocks: [
         { t: "steps", items: [
           "50x = x^2 + 30x + 75",
-          "0 = x^2 + 30x + 75 - 50x",
+          "0 = x^2 + 30x - 50x + 75",
           "0 = x^2 - 20x + 75",
         ] },
         { t: "eq", v: "x^2 - 20x + 75 = 0", big: true },
-        { t: "box", title: "Jadi", v: "Masalah jualan Rina berubah menjadi sebuah persamaan kuadrat!", tone: "success" },
+        { t: "box", title: "Persamaan Kuadrat!", v: "dengan a = 1, b = -20, c = 75. Inilah yang harus dipecahkan hari ini.", tone: "success" },
       ],
     },
   },
   {
-    nomor: 6,
-    judul: "Ini Persamaan Kuadrat",
-    konten: {
-      layout: "content",
-      kicker: "Konsep Kunci",
-      title: "Ini Persamaan Kuadrat",
-      sub: "Bentuk umum dan komponennya",
-      blocks: [
-        { t: "eq", v: "ax^2 + bx + c = 0, a =/= 0", big: true },
-        { t: "table", head: ["Koefisien", "Pada x^2 - 20x + 75"], rows: [
-          ["a", "1"],
-          ["b", "-20"],
-          ["c", "75"],
-        ] },
-        { t: "box", title: "Nama Bagian", v: "a = koefisien x^2, b = koefisien x, c = konstanta. Hati-hati dengan tanda negatif!", tone: "info" },
-      ],
-    },
-  },
-  {
-    nomor: 7,
-    judul: "Cara Coba-coba",
-    konten: {
-      layout: "content",
-      kicker: "Pendekatan Pertama",
-      title: "Cara Coba-coba",
-      sub: "Bagaimana kalau kita tebak saja nilai x?",
-      blocks: [
-        { t: "check", eq: "x = 3 : 9 - 60 + 75", result: "= 24 (bukan 0)", ok: false },
-        { t: "check", eq: "x = 5 : 25 - 100 + 75", result: "= 0  — cocok!", ok: true },
-        { t: "check", eq: "x = 15 : 225 - 300 + 75", result: "= 0  — cocok!", ok: true },
-        { t: "box", title: "Masalahnya", v: "Menebak itu lambat dan tidak pasti. Ada berapa nilai yang harus dicoba? Bagaimana kalau jawabannya pecahan?", tone: "warn" },
-      ],
-    },
-  },
-  {
-    nomor: 8,
-    judul: "Cara Sistematis",
+    nomor: 8, judul: "Pertanyaan Besar",
     konten: {
       layout: "focus",
-      kicker: "Strategi Baru",
-      title: "Perlu Cara Sistematis",
-      sub: "Pemfaktoran: mengubah jumlah menjadi perkalian",
+      kicker: "Pemantik Nilai x",
+      title: "Berapa Nilai x?",
+      sub: "yang membuat x^2 - 20x + 75 = 0",
       blocks: [
-        { t: "arrow", v: "Ubah persamaan menjadi bentuk perkalian dua kurung" },
-        { t: "eq", v: "x^2 - 20x + 75 = (x - p)(x - q) = 0", big: true },
-        { t: "box", title: "Sifat Nol", v: "Jika A x B = 0, maka A = 0 atau B = 0. Inilah kunci mengapa pemfaktoran berhasil!", tone: "violet" },
+        { t: "eq", v: "x^2 - 20x + 75 = 0", big: true },
+        { t: "text", v: "Artinya: berapa kaos yang harus Rina jual supaya balik modal?" },
+        { t: "box", title: "Coba Tebak!", v: "Slide berikutnya adalah tebak-tebakan, buktikan intuisimu di HP!", tone: "warn" },
       ],
     },
   },
   {
-    nomor: 9,
-    judul: "Ide T-Faktor",
-    konten: {
-      layout: "content",
-      kicker: "Metode 1 · T-Faktor (a = 1)",
-      title: "Ide di Balik T-Faktor",
-      sub: "Kembangkan (x + p)(x + q)",
-      blocks: [
-        { t: "eq", v: "(x + p)(x + q) = x^2 + (p + q)x + pq", big: true },
-        { t: "steps", items: [
-          "Cari dua bilangan p dan q",
-          "Syarat 1: p + q = b (koefisien x)",
-          "Syarat 2: p x q = c (konstanta)",
-        ] },
-        { t: "box", title: "Kenapa disebut T-Faktor?", v: "Karena kita menyusun kandidat pasangan faktor dalam tabel berbentuk huruf T.", tone: "info" },
-      ],
-    },
-  },
-  {
-    nomor: 10,
-    judul: "T-Faktor untuk Rina",
+    nomor: 9, judul: "CobaX, Tebak Nilai x",
     konten: {
       layout: "focus",
-      kicker: "Metode 1 · T-Faktor (a = 1)",
-      title: "T-Faktor untuk Rina",
-      sub: "Cari p dan q untuk x^2 - 20x + 75 = 0",
+      kicker: "CobaX Interaktif",
+      title: "Pilih Satu Angka!",
+      sub: "yang membuat persamaan ini NOL",
       blocks: [
+        { t: "eq", v: "x^2 - 20x + 75 = 0", big: true },
         { t: "steps", items: [
-          "Butuh p + q = -20",
-          "Butuh p x q = 75 (positif!)",
-          "Karena hasil kali positif & jumlah negatif, keduanya negatif",
-          "Pasangan 75: (-1, -75), (-3, -25), (-5, -15)",
-          "Cek jumlah: -5 + (-15) = -20 — cocok!",
+          "[  1 ]   [  3 ]   [  5 ]",
+          "[ 10 ]   [ 15 ]   [ 20 ]",
         ] },
-        { t: "eq", v: "p = -5, q = -15", big: true },
+        { t: "box", title: "Tap di HP-mu", v: "Diagram tebakan kelas muncul real-time di proyektor. Guru akan membuka jawabannya bersama-sama.", tone: "violet" },
       ],
     },
   },
   {
-    nomor: 11,
-    judul: "Faktornya",
+    nomor: 10, judul: "THINK, Kerja Mandiri",
     konten: {
       layout: "focus",
-      kicker: "Metode 1 · T-Faktor (a = 1)",
-      title: "Faktor Persamaan Rina",
-      sub: "Substitusikan p dan q ke (x + p)(x + q)",
+      kicker: "LKPD · THINK",
+      title: "Waktunya Berpikir Sendiri",
+      sub: "Buka LKPD Bagian A & B, 20 menit",
       blocks: [
-        { t: "eq", v: "x^2 - 20x + 75 = 0" },
-        { t: "arrow", v: "Dengan p = -5 dan q = -15" },
-        { t: "eq", v: "(x - 5)(x - 15) = 0", big: true },
-        { t: "box", title: "Cek Cepat", v: "(x - 5)(x - 15) = x^2 - 15x - 5x + 75 = x^2 - 20x + 75. Benar!", tone: "success" },
+        { t: "steps", items: [
+          "Bagian A (6'): konsep, bedakan linear vs kuadrat, bentuk umum + a,b,c, ubah ke bentuk umum",
+          "Bagian B (14'): T-Faktor, cari dua bilangan, tulis faktor, tentukan x, substitusi bukti",
+        ] },
+        { t: "box", title: "Fokus", v: "Kerjakan sendiri tanpa diskusi. Jika bingung, tanyakan guru, bukan temanmu.", tone: "info" },
       ],
     },
   },
   {
-    nomor: 12,
-    judul: "Akar-Akar",
+    nomor: 11, judul: "PAIR, Diskusi",
     konten: {
       layout: "focus",
-      kicker: "Solusi",
-      title: "Akar-Akar Persamaan",
-      sub: "Gunakan sifat nol pada setiap faktor",
+      kicker: "LKPD · PAIR",
+      title: "Diskusi Berpasangan",
+      sub: "Teman sebangku, 10 menit",
       blocks: [
         { t: "steps", items: [
-          "(x - 5)(x - 15) = 0",
-          "x - 5 = 0  maka  x = 5",
-          "x - 15 = 0  maka  x = 15",
+          "Cek silang jawaban Bagian B dengan teman sebangku",
+          "Cari pola tanda: bagaimana tanda b dan c menentukan tanda di faktor?",
+          "Bahas: mengapa x^2 + 5x + 3 tidak bisa difaktorkan?",
         ] },
-        { t: "eq", v: "x = 5 atau x = 15", big: true },
-        { t: "box", title: "Maknanya untuk Rina", v: "Rina balik modal tepat saat menjual 5 bungkus, lalu impas lagi di 15 bungkus karena biaya promosi naik.", tone: "violet" },
+        { t: "box", title: "Kerja Sama", v: "Satu LKPD cukup untuk berdua. Catat temuan kalian, bisa jadi kalian yang presentasi!", tone: "info" },
       ],
     },
   },
   {
-    nomor: 13,
-    judul: "Cek Jawaban",
-    konten: {
-      layout: "content",
-      kicker: "Verifikasi",
-      title: "Selalu Cek Jawabanmu",
-      sub: "Substitusi balik ke persamaan awal",
-      blocks: [
-        { t: "check", eq: "x = 5 : (5)^2 - 20(5) + 75 = 25 - 100 + 75", result: "= 0", ok: true },
-        { t: "check", eq: "x = 15 : (15)^2 - 20(15) + 75 = 225 - 300 + 75", result: "= 0", ok: true },
-        { t: "box", title: "Kebiasaan Baik", v: "Pengecekan 10 detik ini menyelamatkanmu dari jawaban yang salah di ujian.", tone: "info" },
-      ],
-    },
-  },
-  {
-    nomor: 14,
-    judul: "Jika a > 1",
+    nomor: 12, judul: "SHARE, Presentasi",
     konten: {
       layout: "focus",
-      kicker: "Tantangan Baru",
-      title: "Bagaimana Jika a Bukan 1?",
-      sub: "T-Faktor biasa tidak cukup!",
-      blocks: [
-        { t: "eq", v: "2x^2 + 7x + 3 = 0", big: true },
-        { t: "text", v: "Coba cari p + q = 7 dan p x q = 3... dapat 1 dan 3? Cek: (x + 1)(x + 3) = x^2 + 4x + 3. Bukan 2x^2!" },
-        { t: "box", title: "Masalah", v: "Suku 2x^2 harus dipecah jadi (2x)(x). Kita butuh strategi baru: Metode AC.", tone: "warn" },
-      ],
-    },
-  },
-  {
-    nomor: 15,
-    judul: "Metode AC",
-    konten: {
-      layout: "content",
-      kicker: "Metode 2 · Metode AC (a > 1)",
-      title: "Metode AC — Langkah Awal",
-      sub: "Untuk 2x^2 + 7x + 3 = 0",
+      kicker: "SHARE",
+      title: "Waktunya Berbagi!",
+      sub: "Pasangan terpilih menjelaskan pola T-Faktor di depan kelas",
       blocks: [
         { t: "steps", items: [
-          "Hitung a x c = 2 x 3 = 6",
-          "Cari p dan q: p x q = 6 dan p + q = b = 7",
-          "Pasangan 6: (1, 6), (2, 3) — cek jumlah: 1 + 6 = 7, cocok!",
-          "Pecah suku tengah 7x menjadi 6x + 1x",
+          "Jalankan pola tanda yang kalian temukan dari tabel",
+          "Jelaskan temuanmu tentang soal yang tidak bisa difaktorkan",
+          "Ceritakan kesulitanmu dan bagaimana kalian mengatasinya",
         ] },
-        { t: "eq", v: "2x^2 + 6x + 1x + 3 = 0", big: true },
+        { t: "box", title: "Etika Presentasi", v: "Dengarkan dengan mindful, tanggapi dengan hormat. Setiap cara berbeda adalah pelajaran baru.", tone: "warn" },
       ],
     },
   },
   {
-    nomor: 16,
-    judul: "Metode AC Lanjut",
+    nomor: 13, judul: "Langkah T-Faktor",
     konten: {
       layout: "content",
-      kicker: "Metode 2 · Metode AC (a > 1)",
-      title: "Kelompokkan, Lalu Faktorkan",
-      sub: "Faktorisasi parsial dua-dua",
+      kicker: "Sintaks 6 · Generalization",
+      title: "5 Langkah T-Faktor",
+      sub: "Contoh: x^2 + 5x + 6 = 0",
       blocks: [
         { t: "steps", items: [
-          "2x^2 + 6x + 1x + 3 = 0",
-          "(2x^2 + 6x) + (x + 3) = 0",
-          "2x(x + 3) + 1(x + 3) = 0",
-          "(2x + 1)(x + 3) = 0",
+          "Langkah 1: Tentukan a, b, c → a = 1, b = 5, c = 6",
+          "Langkah 2: Cari dua bilangan → p x q = 6, p + q = 5 → p = 2, q = 3",
+          "Langkah 3: Tulis bentuk faktor → (x + 2)(x + 3) = 0",
+          "Langkah 4: Tentukan nilai x → x = -2 atau x = -3",
+          "Langkah 5: Cek substitusi → (-2)^2 + 5(-2) + 6 = 4 - 10 + 6 = 0 ✓",
         ] },
-        { t: "eq", v: "x = -1/2 atau x = -3", big: true },
-        { t: "box", title: "Kuncinya", v: "Kedua kelompok harus punya faktor (x + 3) yang sama. Itulah tanda langkahmu benar!", tone: "success" },
+        { t: "box", title: "INGAT", v: "p x q = c dan p + q = b. Selalu cek substitusi, 10 detik penyelamat jawabanmu!", tone: "success" },
       ],
     },
   },
   {
-    nomor: 17,
-    judul: "Ringkasan",
+    nomor: 14, judul: "Pola Tanda T-Faktor",
     konten: {
       layout: "content",
-      kicker: "Merangkum",
-      title: "Dua Senjata Kita Hari Ini",
-      sub: "Pilih sesuai nilai a",
+      kicker: "Generalization",
+      title: "Pola Tanda",
+      sub: "Tanda b dan c menentukan tanda p dan q",
       blocks: [
-        { t: "table", head: ["", "T-Faktor (a = 1)", "Metode AC (a > 1)"], rows: [
-          ["Kunci", "p + q = b, p.q = c", "p x q = a.c, p + q = b"],
-          ["Langkah", "Langsung (x + p)(x + q)", "Pecah suku tengah, kelompokkan"],
-          ["Contoh", "x^2 - 20x + 75", "2x^2 + 7x + 3"],
+        { t: "table", head: ["Tanda b", "Tanda c", "Tanda p, q", "Bentuk Faktor"], rows: [
+          ["b +", "c +", "(+, +)", "(x + p)(x + q)"],
+          ["b -", "c +", "(-, -)", "(x - p)(x - q)"],
+          ["b +", "c -", "(+, -)", "(x + p)(x - q)"],
+          ["b -", "c -", "(-, +)", "(x - p)(x + q)"],
         ] },
-        { t: "box", title: "Tips", v: "Selalu akhiri dengan sifat nol untuk mendapatkan akar-akar, lalu cek substitusi balik.", tone: "info" },
+        { t: "box", title: "Rumus Cepat", v: "c+ dan b+ → kedua positif; c+ dan b− → kedua negatif; c− → beda tanda.", tone: "info" },
       ],
     },
   },
   {
-    nomor: 18,
-    judul: "Siap Kuis?",
+    nomor: 15, judul: "Soal yang Tidak Bisa Difaktorkan",
+    konten: {
+      layout: "focus",
+      kicker: "Batasan T-Faktor",
+      title: "x^2 + 5x + 3 = 0",
+      sub: "coba cari dua bilangan dengan kali = 3 dan jumlah = 5",
+      blocks: [
+        { t: "check", eq: "1 x 3 = 3", result: "1 + 3 = 4 ≠ 5", ok: false },
+        { t: "check", eq: "(-1) x (-3) = 3", result: "-1 + (-3) = -4 ≠ 5", ok: false },
+        { t: "box", title: "Kesimpulan", v: "Tidak selalu bisa difaktorkan dengan bilangan bulat. Pertemuan depan kita pelajari Rumus ABC!", tone: "warn" },
+      ],
+    },
+  },
+  {
+    nomor: 16, judul: "Kuis Kompetisi",
+    konten: {
+      layout: "focus",
+      kicker: "Kuis",
+      title: "Kuis 10 Menit!",
+      sub: "5 soal, poin kecepatan",
+      blocks: [
+        { t: "eq", v: "Poin: 1st=20, 2nd=18, 3rd=16, 4th=14, 5th=12", big: true },
+        { t: "text", v: "Tunggu guru menekan Mulai, soal muncul serempak di semua HP. Jangan curang!" },
+      ],
+    },
+  },
+  {
+    nomor: 17, judul: "Leaderboard",
+    konten: {
+      layout: "focus",
+      kicker: "Hasil Kuis",
+      title: "Leaderboard Kelas",
+      sub: "peringkat yang terus hidup",
+      blocks: [
+        { t: "text", v: "Peringkat teratas, benar tersulit, dan rata-rata kelas, semua diproyeksikan langsung." },
+        { t: "box", title: "Soal Tersulit", v: "Biasanya soal substitusi / pembuktian akar. Pelajari lagi ya!", tone: "info" },
+      ],
+    },
+  },
+  {
+    nomor: 18, judul: "Penutup: Kesimpulan + PR + Doa",
     konten: {
       layout: "closing",
-      kicker: "Penutup Bagian Slide",
-      title: "Siap Menguji Senjatamu?",
-      sub: "Latihan dulu di Worksheet, lalu buktikan di Kuis berhadiah leaderboard!",
+      kicker: "Kegiatan Penutup",
+      title: "Apa yang Kita Pelajari Hari Ini?",
+      sub: "T-Faktor a = 1: dua bilangan, perkalian, penjumlahan, substitusi",
       blocks: [
-        { t: "eq", v: "(x + p)(x + q) = x^2 + (p + q)x + pq", big: true },
-        { t: "text", v: "Ingat cerita Rina: setiap persamaan kuadrat adalah masalah nyata yang menunggu dipecahkan." },
+        { t: "steps", items: [
+          "PR 1 · x^2 + 11x + 24 = 0",
+          "PR 2 · x^2 - 13x + 36 = 0",
+          "PR 3 · 2x^2 + 11x + 5 = 0",
+          "Tantangan: x^2 + 3x + 1 = 0 (bisa atau tidak? jelaskan!)",
+        ] },
+        { t: "box", title: "Sebelum Pulang", v: "Mari tutup dengan doa bersama. Sampai jumpa pada materi Rumus ABC!", tone: "success" },
       ],
     },
   },
 ];
 
-/* ============================ SOAL DIAGNOSTIK ============================ */
+/* ================= SOAL APERSEPSI (mandiri, sesuai Modul D) ============== */
 
-const DIAGNOSTIK: {
-  nomor: number;
-  pertanyaan: string;
-  tipe: string;
+const APERSEPSI: {
+  nomor: number; pertanyaan: string; tipe: string;
   opsi?: { A: string; B: string; C: string; D: string };
-  kunci: string;
-  skor: number;
+  kunci: string; skor: number;
 }[] = [
   {
     nomor: 1,
-    pertanyaan: "Nilai x dari 3x + 5 = 20 adalah …",
+    pertanyaan: "Masih ingat cara mengalikan dua bentuk aljabar? Coba kerjakan perkalian ini. Berapa hasilnya?||(x + 3)(x + 5)",
     tipe: "pg",
-    opsi: { A: "x = 3", B: "x = 5", C: "x = 7", D: "x = 15" },
-    kunci: "B",
-    skor: 20,
+    opsi: { A: "x^2 + 8x + 15", B: "x^2 + 15x + 8", C: "x^2 + 8x + 8", D: "x^2 + 2x + 15" },
+    kunci: "A", skor: 20,
   },
   {
     nomor: 2,
-    pertanyaan: "Hasil dari (x + 3)(x + 4) adalah …",
+    pertanyaan: "Tadi kita mengalikan dua kurung menjadi satu bentuk. Sekarang kita balik arahnya. Dua bilangan apa yang tepat mengisi titik-titik berikut?||x^2 + 8x + 15 = (x + ...)(x + ...)",
     tipe: "pg",
-    opsi: { A: "x^2 + 7x + 12", B: "x^2 + 12x + 7", C: "x^2 + 7x + 7", D: "x^2 + 12x + 12" },
-    kunci: "A",
-    skor: 20,
+    opsi: { A: "1 dan 15", B: "3 dan 5", C: "4 dan 4", D: "2 dan 6" },
+    kunci: "B", skor: 20,
   },
   {
     nomor: 3,
-    pertanyaan: "Pasangan faktor dari 12 yang jumlahnya 7 adalah …",
+    pertanyaan: "Supaya bisa membalik perkalian, kita perlu terbiasa mencari pasangan bilangan. Pasangan mana yang hasil kalinya 15 dan hasil jumlahnya 8?",
     tipe: "pg",
-    opsi: { A: "2 dan 6", B: "3 dan 4", C: "1 dan 12", D: "3 dan 5" },
-    kunci: "B",
-    skor: 20,
+    opsi: { A: "1 dan 15", B: "3 dan 5", C: "2 dan 6", D: "4 dan 4" },
+    kunci: "B", skor: 20,
   },
   {
     nomor: 4,
-    pertanyaan: "Bentuk faktor dari x^2 - 9 adalah …",
+    pertanyaan: "Sekarang yang sedikit lebih menantang karena memuat bilangan negatif. Pasangan mana yang hasil kalinya -12 dan hasil jumlahnya 1?",
     tipe: "pg",
-    opsi: { A: "(x - 3)(x - 3)", B: "(x + 3)(x - 3)", C: "(x - 9)(x + 1)", D: "(x + 9)(x - 1)" },
-    kunci: "B",
-    skor: 20,
+    opsi: { A: "3 dan -4", B: "-3 dan 4", C: "4 dan -3", D: "6 dan -2" },
+    kunci: "C", skor: 20,
   },
   {
     nomor: 5,
-    pertanyaan: "Jika x = -2, nilai dari x^2 + 3x + 2 adalah …",
+    pertanyaan: "Kegiatan membalik bentuk perkalian seperti tadi punya nama khusus dalam matematika. Apa nama kegiatan itu?",
     tipe: "pg",
-    opsi: { A: "0", B: "4", C: "-4", D: "12" },
-    kunci: "A",
-    skor: 20,
-  },
-  {
-    nomor: 6,
-    pertanyaan: "Manakah yang merupakan persamaan kuadrat?",
-    tipe: "pg",
-    opsi: { A: "2x + 5 = 0", B: "x^2 - 3x + 2 = 0", C: "x^3 - 1 = 0", D: "4x = 7" },
-    kunci: "B",
-    skor: 20,
-  },
-  {
-    nomor: 7,
-    pertanyaan: "Hasil pengembangan 5(x - 2) adalah …",
-    tipe: "pg",
-    opsi: { A: "5x - 2", B: "5x - 10", C: "x - 10", D: "5x + 10" },
-    kunci: "B",
-    skor: 20,
-  },
-  {
-    nomor: 8,
-    pertanyaan: "Pernahkah kamu berjualan atau berdagang? Misalnya jualan makanan, pulsa, atau online shop. Ceritakan singkat pengalamanmu!",
-    tipe: "terbuka",
-    kunci: "",
-    skor: 0,
+    opsi: { A: "Pemfaktoran", B: "Pengumpulan suku", C: "Substitusi", D: "Eliminasi" },
+    kunci: "A", skor: 20,
   },
 ];
 
-/* ============================= SOAL WORKSHEET ============================ */
-
-const WORKSHEET: {
-  nomor: number;
-  pertanyaan: string;
-  tipe: string;
-  timer: number;
-  data: WorksheetData;
-}[] = [
-  {
-    nomor: 1,
-    pertanyaan: "Faktorkan: x^2 + 7x + 12 = 0",
-    tipe: "t-faktor",
-    timer: 180,
-    data: {
-      a: 1, b: 7, c: 12, p: 3, q: 4,
-      fa1: 1, fb1: 3, fa2: 1, fb2: 4,
-      akar: [-3, -4],
-      hint: [
-        "Tuliskan semua pasangan faktor dari c = 12: (1,12), (2,6), (3,4).",
-        "Pasangan mana yang jumlahnya b = 7? Coba jumlahkan tiap pasangan.",
-        "p = 3 dan q = 4 karena 3 x 4 = 12 dan 3 + 4 = 7. Faktornya (x + 3)(x + 4).",
-      ],
-    },
-  },
-  {
-    nomor: 2,
-    pertanyaan: "Faktorkan: x^2 - 7x + 12 = 0",
-    tipe: "t-faktor",
-    timer: 180,
-    data: {
-      a: 1, b: -7, c: 12, p: -3, q: -4,
-      fa1: 1, fb1: -3, fa2: 1, fb2: -4,
-      akar: [3, 4],
-      hint: [
-        "Hasil kali positif (12) tetapi jumlah negatif (-7). Apa artinya tanda kedua bilangan?",
-        "Kedua bilangan harus negatif: coba (-3) dan (-4).",
-        "(-3) x (-4) = 12 dan (-3) + (-4) = -7. Faktornya (x - 3)(x - 4), akarnya x = 3 atau x = 4.",
-      ],
-    },
-  },
-  {
-    nomor: 3,
-    pertanyaan: "Faktorkan dengan Metode AC: 2x^2 + 7x + 3 = 0",
-    tipe: "metode-ac",
-    timer: 300,
-    data: {
-      a: 2, b: 7, c: 3, p: 6, q: 1,
-      fa1: 2, fb1: 1, fa2: 1, fb2: 3,
-      akar: [-0.5, -3],
-      hint: [
-        "Karena a = 2, hitung dulu a x c = 2 x 3 = 6. Cari p, q dengan p x q = 6 dan p + q = 7.",
-        "p = 6 dan q = 1. Pecah 7x menjadi 6x + 1x:  2x^2 + 6x + 1x + 3.",
-        "Kelompokkan: 2x(x + 3) + 1(x + 3) = (2x + 1)(x + 3). Akar: x = -1/2 atau x = -3.",
-      ],
-    },
-  },
-];
-
-/* =============================== SOAL KUIS =============================== */
+/* ====================== KUIS (5 soal, persis Modul G) ====================== */
 
 const KUIS: {
-  nomor: number;
-  pertanyaan: string;
-  tipe: string;
+  nomor: number; paket: number; pertanyaan: string; tipe: string;
   opsi?: { A: string; B: string; C: string; D: string };
-  kunci: string;
-  timer: number;
-  skor: number;
+  kunci: string; timer: number; skor: number;
 }[] = [
-  {
-    nomor: 1,
-    pertanyaan: "Faktorkan: x^2 - 7x + 12 = 0",
-    tipe: "pg",
-    opsi: {
-      A: "(x - 2)(x - 6) = 0",
-      B: "(x - 3)(x - 4) = 0",
-      C: "(x + 3)(x + 4) = 0",
-      D: "(x - 1)(x - 12) = 0",
-    },
-    kunci: "B",
-    timer: 60,
-    skor: 25,
-  },
-  {
-    nomor: 2,
-    pertanyaan: "Akar-akar dari x^2 + 7x + 12 = 0 adalah …",
-    tipe: "pg",
-    opsi: {
-      A: "x = 3 atau x = 4",
-      B: "x = -3 atau x = 4",
-      C: "x = -3 atau x = -4",
-      D: "x = 3 atau x = -4",
-    },
-    kunci: "C",
-    timer: 60,
-    skor: 25,
-  },
-  {
-    nomor: 3,
-    pertanyaan: "Faktorkan dengan Metode AC: 2x^2 + 7x + 3 = 0",
-    tipe: "pg",
-    opsi: {
-      A: "(2x + 3)(x + 1) = 0",
-      B: "(2x + 1)(x + 3) = 0",
-      C: "(x + 1)(x + 3) = 0",
-      D: "(2x - 1)(x - 3) = 0",
-    },
-    kunci: "B",
-    timer: 90,
-    skor: 25,
-  },
-  {
-    nomor: 4,
-    pertanyaan: "Ingat kisah Rina! Dari x^2 - 20x + 75 = 0, Rina impas saat menjual …",
-    tipe: "pg",
-    opsi: {
-      A: "5 atau 20 bungkus",
-      B: "15 atau 25 bungkus",
-      C: "5 atau 15 bungkus",
-      D: "3 atau 25 bungkus",
-    },
-    kunci: "C",
-    timer: 60,
-    skor: 25,
-  },
-  {
-    nomor: 5,
-    pertanyaan: "Faktorkan x^2 - 5x + 6 = 0. Tuliskan akar yang TERKECIL (angka saja).",
-    tipe: "isian",
-    kunci: "2",
-    timer: 75,
-    skor: 25,
-  },
+  // ---------- PAKET 1 (utama) ----------
+  { nomor: 1, paket: 1, pertanyaan: "Manakah yang merupakan persamaan kuadrat?", tipe: "pg",
+    opsi: { A: "2x + 3 = 0", B: "x^2 - 4 = 0", C: "5x = 10", D: "x + 7 = 0" },
+    kunci: "B", timer: 120, skor: 20 },
+  { nomor: 2, paket: 1, pertanyaan: "Ubah x^2 = 9 ke bentuk umum, lalu tuliskan a, b, c (pisahkan dengan koma).", tipe: "isian", kunci: "1,0,-9", timer: 120, skor: 20 },
+  { nomor: 3, paket: 1, pertanyaan: "Faktorkan x^2 + 7x + 12 = 0", tipe: "isian", kunci: "(x+3)(x+4)", timer: 120, skor: 20 },
+  { nomor: 4, paket: 1, pertanyaan: "Dari (x - 2)(x - 5) = 0, tentukan nilai x (pisahkan dengan koma).", tipe: "isian", kunci: "2,5", timer: 120, skor: 20 },
+  { nomor: 5, paket: 1, pertanyaan: "Buktikan x = 5 adalah akar dari x^2 - 20x + 75 = 0. Tuliskan hasil substitusinya.", tipe: "isian", kunci: "25-100+75=0", timer: 120, skor: 20 },
+
+  // ---------- PAKET 2 (cadangan) ----------
+  { nomor: 1, paket: 2, pertanyaan: "Manakah yang BUKAN persamaan kuadrat?", tipe: "pg",
+    opsi: { A: "x^2 + 2x = 0", B: "4x - 9 = 0", C: "x^2 = 16", D: "x^2 - 5x + 6 = 0" },
+    kunci: "B", timer: 120, skor: 20 },
+  { nomor: 2, paket: 2, pertanyaan: "Ubah 3x^2 - 7 = 2x ke bentuk umum, lalu tuliskan a, b, c (pisahkan dengan koma).", tipe: "isian", kunci: "3,-2,-7", timer: 120, skor: 20 },
+  { nomor: 3, paket: 2, pertanyaan: "Faktorkan x^2 + 9x + 20 = 0", tipe: "isian", kunci: "(x+4)(x+5)", timer: 120, skor: 20 },
+  { nomor: 4, paket: 2, pertanyaan: "Dari (x + 6)(x - 1) = 0, tentukan nilai x (pisahkan dengan koma).", tipe: "isian", kunci: "-6,1", timer: 120, skor: 20 },
+  { nomor: 5, paket: 2, pertanyaan: "Buktikan x = 3 adalah akar dari x^2 - 8x + 15 = 0. Tuliskan hasil substitusinya.", tipe: "isian", kunci: "9-24+15=0", timer: 120, skor: 20 },
+
+  // ---------- PAKET 3 (cadangan kedua) ----------
+  { nomor: 1, paket: 3, pertanyaan: "Pada persamaan x^2 - 6x + 8 = 0, berapakah nilai b?", tipe: "pg",
+    opsi: { A: "1", B: "-6", C: "6", D: "8" },
+    kunci: "B", timer: 120, skor: 20 },
+  { nomor: 2, paket: 3, pertanyaan: "Ubah x^2 + 4x = 12 ke bentuk umum, lalu tuliskan a, b, c (pisahkan dengan koma).", tipe: "isian", kunci: "1,4,-12", timer: 120, skor: 20 },
+  { nomor: 3, paket: 3, pertanyaan: "Faktorkan x^2 - 5x - 14 = 0", tipe: "isian", kunci: "(x-7)(x+2)", timer: 120, skor: 20 },
+  { nomor: 4, paket: 3, pertanyaan: "Dari (x - 8)(x + 3) = 0, tentukan nilai x (pisahkan dengan koma).", tipe: "isian", kunci: "8,-3", timer: 120, skor: 20 },
+  { nomor: 5, paket: 3, pertanyaan: "Buktikan x = 2 adalah akar dari x^2 - 5x + 6 = 0. Tuliskan hasil substitusinya.", tipe: "isian", kunci: "4-10+6=0", timer: 120, skor: 20 },
 ];
 
-/* ============================== SEED ENGINE ============================== */
+/* ========================= WORKSHEET HARD CODE (T-Faktor a=1) ============= */
+
+const WORKSHEET = [
+  { nomor: 1, pertanyaan: "Faktorkan: x^2 + 5x + 6 = 0 (T-Faktor)", tipe: "t-faktor", timer: 180,
+    data: { a: 1, b: 5, c: 6, p: 2, q: 3, fa1: 1, fb1: 2, fa2: 1, fb2: 3, akar: [-2, -3] as [number, number],
+      hint: ["c = 6. Pasangan faktor: (1,6) → jumlah 7? (2,3) → jumlah?", "2 x 3 = 6 dan 2 + 3 = 5", "p = 2, q = 3 → (x+2)(x+3) = 0 → x = -2 atau x = -3"] } },
+  { nomor: 2, pertanyaan: "Faktorkan: x^2 - 7x + 12 = 0 (T-Faktor)", tipe: "t-faktor", timer: 180,
+    data: { a: 1, b: -7, c: 12, p: -3, q: -4, fa1: 1, fb1: -3, fa2: 1, fb2: -4, akar: [3, 4] as [number, number],
+      hint: ["c = 12, b = -7. Dua bilangan negatif agar kali positif tapi jumlah negatif.", "(-3) x (-4) = 12 dan (-3) + (-4) = -7", "p = -3, q = -4 → (x-3)(x-4) = 0 → x = 3 atau x = 4"] } },
+  { nomor: 3, pertanyaan: "Faktorkan: x^2 + 2x - 15 = 0 (T-Faktor)", tipe: "t-faktor", timer: 180,
+    data: { a: 1, b: 2, c: -15, p: 5, q: -3, fa1: 1, fb1: 5, fa2: 1, fb2: -3, akar: [-5, 3] as [number, number],
+      hint: ["c = -15, b = 2. Pasangan beda tanda: (5,-3) atau (-3,5).", "5 x (-3) = -15 dan 5 + (-3) = 2", "p = 5, q = -3 → (x+5)(x-3) = 0 → x = -5 atau x = 3"] } },
+];
+
+/* ============================ SEED ENGINE ================================= */
 
 let seedPromise: Promise<void> | null = null;
 
-/** Idempotent — mengisi konten soal & slide jika tabel masih kosong */
+/** Idempotent, sinkronkan konten deck materi berdasar nomor slide */
 export async function ensureSeed(): Promise<void> {
   if (!seedPromise) {
     seedPromise = (async () => {
-      const existing = await db.select({ id: slide.id }).from(slide).limit(1);
-      if (existing.length > 0) return;
-      const now = new Date();
-      void now;
-      await db.insert(slide).values(
-        SLIDES.map((s) => ({ id: uid(), nomor: s.nomor, judul: s.judul, konten: s.konten }))
-      );
-      await db.insert(soalDiagnostik).values(
-        DIAGNOSTIK.map((s) => ({
-          id: uid(),
-          nomor: s.nomor,
-          pertanyaan: s.pertanyaan,
-          opsi: s.opsi ?? null,
-          kunci: s.kunci,
-          tipe: s.tipe,
-          skor: s.skor,
-        }))
-      );
-      await db.insert(soalWorksheet).values(
-        WORKSHEET.map((s) => ({
-          id: uid(),
-          nomor: s.nomor,
-          pertanyaan: s.pertanyaan,
-          tipe: s.tipe,
-          timer: s.timer,
-          data: s.data,
-        }))
-      );
-      await db.insert(soalKuis).values(
-        KUIS.map((s) => ({
-          id: uid(),
-          nomor: s.nomor,
-          pertanyaan: s.pertanyaan,
-          opsi: s.opsi ?? null,
-          kunci: s.kunci,
-          tipe: s.tipe,
-          timer: s.timer,
-          skor: s.skor,
-        }))
-      );
+      for (const s of SLIDES) {
+        await db
+          .insert(slide)
+          .values({ id: uid(), nomor: s.nomor, judul: s.judul, konten: s.konten })
+          .onConflictDoUpdate({
+            target: slide.nomor,
+            set: { judul: s.judul, konten: s.konten },
+          })
+          .catch(async () => {
+            const ex = await db.select({ id: slide.id }).from(slide).limit(1);
+            if (ex.length === 0) {
+              await db.insert(slide).values({ id: uid(), nomor: s.nomor, judul: s.judul, konten: s.konten });
+            }
+          });
+      }
+
+      const a = await db.select({ id: soalDiagnostik.id }).from(soalDiagnostik).limit(1);
+      if (a.length === 0) {
+        await db.insert(soalDiagnostik).values(APERSEPSI.map((s) => ({ id: uid(), nomor: s.nomor, pertanyaan: s.pertanyaan, opsi: s.opsi ?? null, kunci: s.kunci, tipe: s.tipe, skor: s.skor })));
+      }
+      const w = await db.select({ id: soalWorksheet.id }).from(soalWorksheet).limit(1);
+      if (w.length === 0) {
+        await db.insert(soalWorksheet).values(WORKSHEET.map((s) => ({ id: uid(), nomor: s.nomor, pertanyaan: s.pertanyaan, tipe: s.tipe, timer: s.timer, data: s.data })));
+      }
+      const k = await db.select({ id: soalKuis.id }).from(soalKuis).limit(1);
+      if (k.length === 0) {
+        await db.insert(soalKuis).values(KUIS.map((s) => ({ id: uid(), nomor: s.nomor, paket: s.paket, pertanyaan: s.pertanyaan, opsi: s.opsi ?? null, kunci: s.kunci, tipe: s.tipe, timer: s.timer, skor: s.skor })));
+      }
     })().catch((e) => {
       seedPromise = null;
       throw e;
     });
   }
   await seedPromise;
+}
+
+/** Dipakai sekali di dev untuk memaksa re-seed ulang tanpa restart (opsional) */
+export function resetSeedCache() {
+  seedPromise = null;
 }

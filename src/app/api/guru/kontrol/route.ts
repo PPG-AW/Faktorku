@@ -6,9 +6,9 @@ import { NextResponse } from "next/server";
 export const dynamic = "force-dynamic";
 
 const STAGES = [
-  "lobby", "sapaan", "apersepsi", "tujuan", "slide", "coba-coba", "cobax",
+  "lobby", "materi", "apersepsi", "vote-rina", "cobax",
   "aktivitas-think", "aktivitas-pair", "aktivitas-share",
-  "klasifikasi", "worksheet", "presentasi", "kuis", "refleksi", "penutup", "doa",
+  "kuis", "refleksi", "doa",
 ];
 
 async function tandaiKosong(sessionId: string, kelasId: string, soalId: string, timer: number) {
@@ -50,6 +50,16 @@ export async function POST(req: Request) {
         await db.update(kelas).set({ stage }).where(eq(kelas.id, kelasId));
         break;
       }
+      case "deckGoto": {
+        const v = (value ?? {}) as { nomor?: number; stage?: string };
+        const nomor = Math.max(1, Math.min(99, Number(v.nomor) || 1));
+        const stage = String(v.stage ?? "materi");
+        if (!STAGES.includes(stage)) {
+          return NextResponse.json({ error: "Stage tidak valid." }, { status: 400 });
+        }
+        await db.update(kelas).set({ slideAktif: nomor, stage }).where(eq(kelas.id, kelasId));
+        break;
+      }
       case "slideNext":
       case "slidePrev":
       case "slideSet": {
@@ -84,13 +94,14 @@ export async function POST(req: Request) {
         return NextResponse.json({ ok: true, logout: true });
       }
       case "kuisStart": {
+        const paket = Math.max(1, Math.min(3, Number(value) || 1));
         await db
           .update(kuisSession)
           .set({ aktif: false, endedAt: new Date() })
           .where(and(eq(kuisSession.kelasId, kelasId), eq(kuisSession.aktif, true)));
         const s = await db
           .insert(kuisSession)
-          .values({ id: crypto.randomUUID(), kelasId, aktif: true, soalAktif: 1, soalMulai: new Date() })
+          .values({ id: crypto.randomUUID(), kelasId, aktif: true, paket, soalAktif: 1, soalMulai: new Date() })
           .returning();
         await db.update(kelas).set({ stage: "kuis" }).where(eq(kelas.id, kelasId));
         return NextResponse.json({ ok: true, session: s[0] });
@@ -102,7 +113,7 @@ export async function POST(req: Request) {
         )[0];
         if (!s) return NextResponse.json({ error: "Tidak ada sesi kuis aktif." }, { status: 400 });
 
-        const soalRows = await db.select().from(soalKuis).orderBy(soalKuis.nomor);
+        const soalRows = (await db.select().from(soalKuis).orderBy(soalKuis.nomor)).filter((r) => r.paket === s.paket);
         const current = soalRows.find((r) => r.nomor === s.soalAktif);
         if (current) await tandaiKosong(s.id, kelasId, current.id, current.timer);
 

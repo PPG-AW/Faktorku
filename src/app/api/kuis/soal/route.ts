@@ -6,9 +6,11 @@ import { NextResponse } from "next/server";
 export const dynamic = "force-dynamic";
 
 /** Daftar soal kuis yang DISANITASI (tanpa kunci) untuk halaman siswa */
-export async function GET() {
+export async function GET(req: Request) {
   await ensureSeed();
-  const rows = await db.select().from(soalKuis).orderBy(soalKuis.nomor);
+  const { searchParams } = new URL(req.url);
+  const paket = Math.max(1, Math.min(3, Number(searchParams.get("paket")) || 1));
+  const rows = (await db.select().from(soalKuis).orderBy(soalKuis.nomor)).filter((r) => r.paket === paket);
   return NextResponse.json({
     soal: rows.map((s) => ({
       id: s.id,

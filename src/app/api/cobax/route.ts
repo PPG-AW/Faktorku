@@ -1,6 +1,6 @@
 import { db } from "@/db";
 import { cobaxJawaban, kelas, sesiAktif, siswa } from "@/db/schema";
-import { COBAX, hitungCobax } from "@/lib/aktivitas-data";
+import { hitungCobax } from "@/lib/aktivitas-data";
 import { uid } from "@/lib/utils";
 import { and, desc, eq } from "drizzle-orm";
 import { NextResponse } from "next/server";
@@ -21,9 +21,9 @@ async function getSesiAktif(kelasId: string) {
 export async function POST(req: Request) {
   try {
     const { siswaId, pilihan } = await req.json();
-    const p = Number(pilihan);
-    if (!siswaId || !COBAX.opsi.includes(p as (typeof COBAX.opsi)[number])) {
-      return NextResponse.json({ error: "Pilihan tidak valid." }, { status: 400 });
+    const p = Math.round(Number(pilihan));
+    if (!siswaId || !Number.isFinite(p) || p < 0 || p > 30) {
+      return NextResponse.json({ error: "Pilih angka antara 0 sampai 30." }, { status: 400 });
     }
 
     const sw = await db.select().from(siswa).where(eq(siswa.id, String(siswaId))).limit(1);
@@ -65,9 +65,7 @@ export async function GET(req: Request) {
   const sesi = await getSesiAktif(kelasId);
   if (!sesi) {
     return NextResponse.json({
-      sesi: null, terisi: 0, total,
-      opsi: COBAX.opsi.map((o) => ({ pilihan: o, count: 0, hasil: null, benar: null })),
-      reveal: false,
+      sesi: null, terisi: 0, total, sebaran: [],
     });
   }
 
@@ -75,20 +73,21 @@ export async function GET(req: Request) {
   const byOpsi = new Map<number, number>();
   for (const r of jawabanRows) byOpsi.set(r.pilihan, (byOpsi.get(r.pilihan) ?? 0) + 1);
 
+  const sebaran = [...byOpsi.entries()]
+    .map(([pilihan, count]) => ({
+      pilihan,
+      count,
+      nama: jawabanRows
+        .filter((r) => r.pilihan === pilihan)
+        .map((r) => siswaRows.find((s) => s.id === r.siswaId)?.nama ?? "Siswa"),
+    }))
+    .sort((a, b) => a.pilihan - b.pilihan);
+
+  void reveal;
   return NextResponse.json({
     sesi: { id: sesi.id, startedAt: sesi.startedAt.toISOString() },
     terisi: jawabanRows.length,
     total,
-    reveal,
-    opsi: COBAX.opsi.map((o) => ({
-      pilihan: o,
-      count: byOpsi.get(o) ?? 0,
-      hasil: reveal ? Math.round(hitungCobax(o).hasil) : null,
-      benar: reveal ? hitungCobax(o).benar : null,
-    })),
-    namaJawaban: jawabanRows.map((r) => ({
-      nama: siswaRows.find((s) => s.id === r.siswaId)?.nama ?? "Siswa",
-      pilihan: r.pilihan,
-    })),
+    sebaran,
   });
 }

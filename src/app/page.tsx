@@ -17,8 +17,8 @@ const TUJUAN = [
   },
   {
     icon: GraduationCap,
-    title: "Menggunakan Metode AC",
-    description: "Memfaktorkan persamaan dengan a > 1 melalui pecah suku tengah dan pengelompokan.",
+    title: "Membuktikan akar",
+    description: "Menentukan nilai x dari bentuk faktor, lalu membuktikannya dengan substitusi.",
   },
 ];
 
@@ -57,11 +57,10 @@ export default function Home() {
           </h1>
 
           <p className="mt-6 max-w-2xl text-base leading-[1.8] text-[var(--ink-2)] md:text-lg">
-            Belajar menemukan akar-akar persamaan kuadrat melalui faktorisasi,
-            menggunakan <strong className="text-[var(--ink)]">T-Faktor</strong> untuk{" "}
-            <span className="mono eq-badge px-2 py-0.5"><Eq>a = 1</Eq></span> dan{" "}
-            <strong className="text-[var(--ink)]">Metode AC</strong> untuk{" "}
-            <span className="mono eq-badge px-2 py-0.5"><Eq>a &gt; 1</Eq></span>.
+            Belajar menemukan akar-akar persamaan kuadrat melalui faktorisasi
+            dengan metode <strong className="text-[var(--ink)]">T-Faktor</strong> untuk
+            bentuk <span className="mono eq-badge px-2 py-0.5"><Eq>a = 1</Eq></span>,
+            lewat kisah usaha sablon kaos Rina.
           </p>
 
           <div className="mt-7 flex flex-wrap items-center gap-3">

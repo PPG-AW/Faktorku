@@ -42,13 +42,15 @@ export async function GET(
     let kuis = null;
     const s = sessionRows[0];
     if (s) {
-      const soal = soalRows.find((r) => r.nomor === s.soalAktif);
+      const paketRows = soalRows.filter((r) => r.paket === s.paket);
+      const soal = paketRows.find((r) => r.nomor === s.soalAktif);
       kuis = {
         sessionId: s.id,
         aktif: s.aktif,
         soalAktif: s.soalAktif,
         soalMulai: s.soalMulai.toISOString(),
-        totalSoal: soalRows.length,
+        paket: s.paket,
+        totalSoal: paketRows.length,
         timer: soal?.timer ?? 60,
         ended: !s.aktif && s.endedAt !== null,
       };

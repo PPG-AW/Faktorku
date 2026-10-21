@@ -27,6 +27,7 @@ export async function GET(
     return NextResponse.json({ session: null, entries: [], maxSkor, soalStats: [], totalSoal: soalRows.length });
   }
 
+  const paketSoal = soalRows.filter((r) => r.paket === session.paket);
   const siswaRows = await db.select().from(siswa).where(eq(siswa.kelasId, kelasId));
   const allJawaban = await db.select().from(kuisJawaban).where(eq(kuisJawaban.sessionId, session.id));
 
@@ -46,7 +47,7 @@ export async function GET(
     })
     .sort((a, b) => b.skor - a.skor || b.benar - a.benar || a.avgWaktu - b.avgWaktu);
 
-  const soalStats = soalRows.map((s) => {
+  const soalStats = paketSoal.map((s) => {
     const js = allJawaban.filter((j) => j.soalId === s.id);
     const answered = js.length;
     const benar = js.filter((j) => j.benar).length;
@@ -69,6 +70,7 @@ export async function GET(
     session: {
       id: session.id,
       aktif: session.aktif,
+      paket: session.paket,
       soalAktif: session.soalAktif,
       soalMulai: session.soalMulai.toISOString(),
       endedAt: session.endedAt?.toISOString() ?? null,
@@ -76,7 +78,7 @@ export async function GET(
     entries,
     maxSkor,
     soalStats,
-    totalSoal: soalRows.length,
+    totalSoal: paketSoal.length,
     totalSiswa: siswaRows.length,
   });
 }

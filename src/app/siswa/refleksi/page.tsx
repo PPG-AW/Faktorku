@@ -123,7 +123,7 @@ export default function RefleksiPage() {
         {sent && !edited && (
           <div className="anim-rise mt-5 flex items-center gap-3 border border-emerald-600/30 bg-emerald-50 px-4 py-3" style={{ borderRadius: 3 }}>
             <CircleCheckBig className="h-5 w-5 shrink-0 text-emerald-700" />
-            <p className="flex-1 text-sm text-emerald-700">Refleksimu sudah terkirim — lihat word cloud di papan!</p>
+            <p className="flex-1 text-sm text-emerald-700">Refleksimu sudah terkirim, lihat word cloud di papan!</p>
             <button onClick={() => setEdited(true)} className="btn btn-ghost px-3 py-1.5 text-xs"><PencilLine className="h-3.5 w-3.5" /> Ubah</button>
           </div>
         )}

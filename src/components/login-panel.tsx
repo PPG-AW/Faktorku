@@ -41,7 +41,7 @@ export function LoginPanel() {
     e.preventDefault();
     if (loading) return;
     if (kode.trim().length < 4) {
-      setError("Kode kelas terdiri dari 5 karakter — minta pada gurumu.");
+      setError("Kode kelas terdiri dari 5 karakter, minta pada gurumu.");
       return;
     }
     setLoading(true);
@@ -233,7 +233,7 @@ export function LoginPanel() {
           </div>
           <p className="mt-2 text-[0.7rem] text-[var(--ink-3)]">
             Setelah masuk, Anda dapat memilih kelas yang tersimpan atau membuat kelas
-            baru — kode kelas dibuat otomatis untuk dibagikan ke siswa.
+            baru, kode kelas dibuat otomatis untuk dibagikan ke siswa.
           </p>
           {error && <PesanError teks={error} />}
           <button type="submit" className="btn btn-primary mt-4 w-full py-3 text-sm">

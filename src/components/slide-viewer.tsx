@@ -1,7 +1,7 @@
 "use client";
 
 import type { SlideBlock, SlideKonten } from "@/db/schema";
-import { Eq } from "@/components/equation";
+import { Eq, EqText } from "@/components/equation";
 import { Check, X, ArrowDown, Lightbulb, AlertTriangle, Sparkles, Info } from "lucide-react";
 
 const TONE = {
@@ -18,7 +18,7 @@ function Block({ block, index }: { block: SlideBlock; index: number }) {
     case "text":
       return (
         <p className="anim-fade-up text-base leading-relaxed text-zinc-300 md:text-lg" style={delay}>
-          <Eq>{block.v}</Eq>
+          <EqText>{block.v}</EqText>
         </p>
       );
     case "big":
@@ -30,8 +30,8 @@ function Block({ block, index }: { block: SlideBlock; index: number }) {
     case "eq":
       return (
         <div
-          className={`anim-fade-up mono eq-badge mx-auto w-fit max-w-full overflow-x-auto px-5 py-3 text-center font-semibold tracking-wide text-indigo-100 ${
-            block.big ? "text-xl md:text-3xl py-4 px-7" : "text-base md:text-xl"
+          className={`anim-fade-up mono eq-badge mx-auto w-fit max-w-full px-5 py-3 text-center font-semibold tracking-wide text-indigo-100 ${
+            block.big ? "text-[clamp(1.15rem,3.1vw,2.1rem)] py-4 px-7" : "text-[clamp(1rem,2.2vw,1.45rem)]"
           }`}
           style={delay}
         >
@@ -54,7 +54,7 @@ function Block({ block, index }: { block: SlideBlock; index: number }) {
           <div>
             <p className={`text-xs font-bold uppercase tracking-widest ${tone.iconColor}`}>{block.title}</p>
             <p className="mt-1 text-sm leading-relaxed text-zinc-300 md:text-base">
-              <Eq>{block.v}</Eq>
+              <EqText>{block.v}</EqText>
             </p>
           </div>
         </div>
@@ -64,9 +64,9 @@ function Block({ block, index }: { block: SlideBlock; index: number }) {
       return (
         <ul className="anim-fade-up space-y-2.5" style={delay}>
           {block.items.map((it, i) => (
-            <li key={i} className="flex items-start gap-3 text-base text-zinc-300 md:text-lg">
-              <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-cyan-300 shadow-[0_0_8px_rgba(103,232,249,0.8)]" />
-              <Eq>{it}</Eq>
+            <li key={i} className="flex items-start gap-3 text-base leading-relaxed text-zinc-300 md:text-lg">
+              <span className="mt-2.5 h-1.5 w-1.5 shrink-0 rounded-full bg-[var(--red)]" />
+              <span className="min-w-0 flex-1"><EqText>{it}</EqText></span>
             </li>
           ))}
         </ul>
@@ -79,8 +79,8 @@ function Block({ block, index }: { block: SlideBlock; index: number }) {
               <span className="mono flex h-6 w-6 shrink-0 items-center justify-center rounded-md bg-indigo-500/25 text-xs font-bold text-indigo-200">
                 {i + 1}
               </span>
-              <span className="mono text-sm text-zinc-200 md:text-base">
-                <Eq>{it}</Eq>
+              <span className="mono min-w-0 flex-1 text-sm leading-relaxed text-zinc-200 md:text-base">
+                <EqText>{it}</EqText>
               </span>
             </div>
           ))}
@@ -92,7 +92,7 @@ function Block({ block, index }: { block: SlideBlock; index: number }) {
           <span className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-full ${block.ok ? "bg-emerald-400/20 text-emerald-300" : "bg-rose-400/20 text-rose-300"}`}>
             {block.ok ? <Check className="h-4 w-4" /> : <X className="h-4 w-4" />}
           </span>
-          <span className="mono text-sm text-zinc-200 md:text-base">
+          <span className="mono min-w-0 flex-1 text-sm text-zinc-200 md:text-base">
             <Eq>{block.eq}</Eq>
           </span>
           <span className={`mono ml-auto shrink-0 text-sm font-bold md:text-base ${block.ok ? "text-emerald-300" : "text-rose-300"}`}>
@@ -102,13 +102,13 @@ function Block({ block, index }: { block: SlideBlock; index: number }) {
       );
     case "table":
       return (
-        <div className="anim-fade-up overflow-hidden rounded-2xl border border-white/10" style={delay}>
+        <div className="anim-fade-up overflow-x-auto rounded-2xl border border-white/10" style={delay}>
           <table className="w-full text-sm md:text-base">
             <thead>
               <tr className="bg-indigo-500/15 text-indigo-200">
                 {block.head.map((h, i) => (
-                  <th key={i} className="px-4 py-2.5 text-left font-bold tracking-wide">
-                    <Eq>{h}</Eq>
+                  <th key={i} className={`px-3 py-2.5 font-bold tracking-wide ${i === block.head.length - 1 ? "text-right" : "text-left"}`}>
+                    {h}
                   </th>
                 ))}
               </tr>
@@ -117,8 +117,8 @@ function Block({ block, index }: { block: SlideBlock; index: number }) {
               {block.rows.map((row, ri) => (
                 <tr key={ri} className="border-t border-white/6 text-zinc-300">
                   {row.map((cell, ci) => (
-                    <td key={ci} className="mono px-4 py-2.5">
-                      <Eq>{cell}</Eq>
+                    <td key={ci} className={`px-3 py-2.5 ${ci === 0 ? "font-semibold" : "mono"} ${ci === row.length - 1 ? "whitespace-nowrap text-right" : ""}`}>
+                      {ci === 0 ? cell : <Eq>{cell}</Eq>}
                     </td>
                   ))}
                 </tr>
@@ -132,7 +132,19 @@ function Block({ block, index }: { block: SlideBlock; index: number }) {
   }
 }
 
-export function SlideViewer({ konten, nomor, total }: { konten: SlideKonten; nomor: number; total: number }) {
+export function SlideViewer({
+  konten,
+  nomor,
+  total,
+  tampil,
+}: {
+  konten: SlideKonten;
+  nomor: number;
+  total: number;
+  /** jumlah blok yang ditampilkan (untuk animasi bertahap); undefined = semua */
+  tampil?: number;
+}) {
+  const blocks = tampil === undefined ? konten.blocks : konten.blocks.slice(0, Math.max(0, tampil));
   const layout = konten.layout ?? "content";
   const isHero = layout === "title" || layout === "closing";
 
@@ -154,16 +166,16 @@ export function SlideViewer({ konten, nomor, total }: { konten: SlideKonten; nom
             {konten.title}
           </h1>
           {konten.sub && (
-            <p className="anim-fade-up anim-fade-up-2 mt-4 max-w-2xl text-base text-zinc-400 md:text-xl">{konten.sub}</p>
+            <p className="anim-fade-up anim-fade-up-2 mt-4 max-w-3xl text-base leading-relaxed text-zinc-400 md:text-xl">{konten.sub}</p>
           )}
           <div className="anim-fade-up anim-fade-up-3 mt-8 flex w-full max-w-2xl flex-col items-center gap-4">
-            {konten.blocks.map((b, i) => (
+            {blocks.map((b, i) => (
               <Block key={i} block={b} index={i + 3} />
             ))}
           </div>
         </>
       ) : (
-        <div className="mx-auto w-full max-w-3xl">
+        <div className="mx-auto w-full max-w-5xl">
           <div className="flex items-end justify-between gap-4">
             <h1 className="anim-fade-up anim-fade-up-1 text-3xl font-extrabold tracking-tight text-zinc-50 md:text-5xl">
               {konten.title}
@@ -173,10 +185,10 @@ export function SlideViewer({ konten, nomor, total }: { konten: SlideKonten; nom
             </span>
           </div>
           {konten.sub && (
-            <p className="anim-fade-up anim-fade-up-2 mt-2 text-sm text-indigo-300/90 md:text-base">{konten.sub}</p>
+            <p className="anim-fade-up anim-fade-up-2 mt-2 text-sm leading-relaxed text-indigo-300/90 md:text-base">{konten.sub}</p>
           )}
           <div className="anim-fade-up-3 mt-6 space-y-4 md:mt-8">
-            {konten.blocks.map((b, i) => (
+            {blocks.map((b, i) => (
               <Block key={i} block={b} index={i + 3} />
             ))}
           </div>

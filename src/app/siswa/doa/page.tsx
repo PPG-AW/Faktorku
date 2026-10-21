@@ -67,10 +67,10 @@ export default function SiswaDoaPage() {
 
           <div className="glass mt-8 w-full p-6" style={{ borderRadius: 3 }}>
             <p className="font-serif text-lg italic leading-relaxed text-[var(--ink-2)]">
-              “Ya Allah, terima kasih atas ilmu yang kami pelajari hari ini.
-              Jadikanlah ilmu ini bermanfaat bagi kami dan orang lain.”
+              Pembelajaran hari ini telah selesai. Semoga ilmu yang kita pelajari
+              menjadi bekal yang bermanfaat bagi diri sendiri maupun orang lain.
             </p>
-            <p className="mt-2 font-serif text-2xl font-bold italic text-[var(--red)]">Aamiin.</p>
+            <p className="mt-3 text-base font-bold text-[var(--ink-2)]">Mari kita tutup dengan berdoa menurut keyakinan masing-masing.</p>
           </div>
 
           <div className="mono mt-6 space-y-1.5 text-sm text-[var(--ink-2)]">

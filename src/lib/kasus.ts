@@ -12,26 +12,26 @@ export interface KasusData {
 export const KASUS: KasusData = {
   judul: "Usaha Keripik Pisang Rina",
   pembuka:
-    "Bacalah bersama-sama. Perhatikan setiap angka yang muncul — kita akan memakainya sebentar lagi.",
+    "Bacalah bersama-sama. Perhatikan setiap angka yang muncul, kita akan memakainya sebentar lagi.",
   paragraf: [
-    "Rina, siswa kelas X, membantu ibunya berjualan keripik pisang di depan sekolah. Setiap bungkus ia jual seharga 50 (dalam ratusan rupiah). Jika terjual x bungkus, maka uang yang masuk ke kantong Rina adalah 50x.",
-    "Tetapi berjualan tidak gratis. Rina harus membayar sewa lapak dan plastik kemasan sebesar 75, berapa pun jumlah yang terjual. Bahan baku pisang menghabiskan 30 untuk setiap bungkus, sehingga totalnya 30x.",
-    "Ada satu hal unik: semakin banyak Rina berproduksi, biaya promosinya ikut melonjak lebih cepat — ia harus mencetak brosur, membeli kuota untuk promosi online, dan memberi tester gratis. Biaya ini ternyata mengikuti pola x kali x, alias x².",
-    "Suatu sore Rina bertanya kepada dirinya sendiri: “Berapa bungkus yang harus terjual supaya aku tidak rugi — uang masuk tepat sama dengan uang keluar?”",
+    "Rina punya usaha sablon kaos. Setiap minggu dia memproduksi x kaos. Dia menjual satu kaos seharga 50 ribu. Jika terjual x kaos, uang yang masuk ke kantong Rina adalah 50x ribu.",
+    "Tetapi berjualan tidak gratis. Ada tiga biaya: bahan sablon 30 ribu untuk setiap kaos (total 30x), biaya tetap sewa dan listrik 75 ribu untuk seminggu penuh (tetap), dan biaya tenaga kerja sebesar x ribu untuk setiap kaos.",
+    "Yang paling menarik adalah biaya tenaga kerja itu. Karena jumlah kaos juga x, totalnya menjadi x kali x alias x^2. Inilah yang membuat masalah Rina bukan lagi soal aritmetika biasa, melainkan persamaan kuadrat.",
+    "Suatu sore, Rina berdiri di depan meja kerjanya dan bertanya: “Berapa kaos yang harus aku jual supaya uang masuk tepat sama dengan semua biaya? Tidak untung, tapi juga tidak rugi. Balik modal.”",
   ],
   tabel: [
-    { komponen: "Harga jual per bungkus", rincian: "50 per bungkus × x bungkus", rumus: "50x", nada: "masuk" },
-    { komponen: "Sewa lapak & kemasan", rincian: "tetap, berapa pun penjualan", rumus: "75", nada: "keluar" },
-    { komponen: "Bahan baku pisang", rincian: "30 per bungkus × x bungkus", rumus: "30x", nada: "keluar" },
-    { komponen: "Promosi (naik cepat)", rincian: "melonjak mengikuti pola kuadrat", rumus: "x^2", nada: "keluar" },
+    { komponen: "Harga jual per kaos", rincian: "50 ribu × x kaos", rumus: "50x", nada: "masuk" },
+    { komponen: "Bahan sablon per kaos", rincian: "30 ribu × x kaos", rumus: "30x", nada: "keluar" },
+    { komponen: "Tenaga kerja per kaos", rincian: "x ribu/kaos × x kaos (jumlah kaos = x)", rumus: "x^2", nada: "keluar" },
+    { komponen: "Sewa & listrik (tetap/minggu)", rincian: "75 ribu, tidak tergantung jumlah kaos", rumus: "75", nada: "keluar" },
   ],
   pertanyaanPemantik: [
-    "Pernahkah kamu berjualan? Apa yang kamu jual dan bagaimana rasanya?",
-    "Menurutmu, apa artinya “impas” atau “balik modal” bagi Rina?",
-    "Jika pendapatan harus sama dengan biaya, persamaan apa yang terbentuk?",
+    "Dari data ini, bisa tidak kita menentukan Rina untung atau rugi?",
+    "Informasi apa yang kita butuhkan untuk menjawab pertanyaan itu?",
+    "Mengapa biaya tenaga kerja menjadi x^2 dan bukan biasa x?",
   ],
   catatan:
-    "Simpan dulu rasa penasaranmu — jawaban soal diagnostik di HP kalian akan muncul langsung di layar ini.",
+    "Simpan dulu rasa penasaranmu, slide setelah ini kita akan melihat jawaban dan mulai memikirkan kembali lewat CobaX.",
 };
 
 export const KASUS_PERSAMAAN = {

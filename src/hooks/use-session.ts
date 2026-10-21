@@ -55,6 +55,7 @@ export interface KelasState {
     aktif: boolean;
     soalAktif: number;
     soalMulai: string;
+    paket: number;
     totalSoal: number;
     timer: number;
     ended: boolean;
@@ -92,8 +93,7 @@ export function useStageFollow(stage: string | undefined, current: string, enabl
 /* ------------------------------ PRESENCE ------------------------------ */
 
 const KNOWN_STAGES = new Set([
-  "sapaan", "apersepsi", "tujuan", "slide", "coba-coba", "cobax",
-  "klasifikasi", "worksheet", "presentasi", "kuis", "refleksi", "penutup", "doa",
+  "materi", "apersepsi", "vote-rina", "cobax", "kuis", "refleksi", "doa",
 ]);
 
 /** Heartbeat presence + lapor halaman yang sedang dibuka (infer dari URL) */

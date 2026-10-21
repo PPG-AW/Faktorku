@@ -1,6 +1,6 @@
 import {
-  FlaskConical, Flag, Goal, Hand, MonitorPlay, PenLine, Presentation,
-  Shapes, Sparkles, Speech, Target, Trophy, Users, type LucideIcon,
+  BarChart3, FlaskConical, Flag, Goal, MonitorPlay, PenLine, Shapes,
+  Sparkles, Speech, Target, Trophy, type LucideIcon,
 } from "lucide-react";
 import type { SlideKonten } from "@/db/schema";
 
@@ -11,79 +11,73 @@ export interface StageMeta {
   icon: LucideIcon;
 }
 
-/** Urutan lengkap sesuai RPP (Discovery Learning) */
+/** Urutan lengkap sesuai Modul Ajar (T-Faktor a=1), LKPD menyusul */
 export const STAGE_ORDER: StageMeta[] = [
-  { key: "sapaan", label: "Sapaan", fase: "Pendahuluan", icon: Hand },
+  { key: "cover", label: "Cover", fase: "-", icon: MonitorPlay },
   { key: "apersepsi", label: "Apersepsi", fase: "Pendahuluan", icon: Target },
   { key: "tujuan", label: "Tujuan", fase: "Pendahuluan", icon: Goal },
-  { key: "slide", label: "Stimulasi", fase: "F1", icon: MonitorPlay },
-  { key: "coba-coba", label: "Coba-coba", fase: "F2", icon: FlaskConical },
-  { key: "klasifikasi", label: "Klasifikasi", fase: "F3", icon: Shapes },
-  { key: "worksheet", label: "Worksheet", fase: "F3–F4", icon: PenLine },
-  { key: "presentasi", label: "Presentasi", fase: "F5", icon: Speech },
-  { key: "kuis", label: "Kuis", fase: "F6", icon: Trophy },
-  { key: "refleksi", label: "Refleksi", fase: "F6", icon: Sparkles },
+  { key: "materi", label: "Stimulasi", fase: "Fase 1", icon: MonitorPlay },
+  { key: "cobax", label: "CobaX", fase: "Fase 2", icon: FlaskConical },
+  { key: "lkpd", label: "LKPD", fase: "Fase 3–4", icon: PenLine },
+  { key: "klasifikasi", label: "Klasifikasi & Pola", fase: "Fase 3", icon: Shapes },
+  { key: "share", label: "SHARE", fase: "Fase 5", icon: Speech },
+  { key: "kuis", label: "Kuis", fase: "Fase 6", icon: Trophy },
+  { key: "refleksi", label: "Refleksi", fase: "Fase 6", icon: Sparkles },
   { key: "penutup", label: "Penutup", fase: "Penutup", icon: Flag },
-  { key: "lobby", label: "Lobi", fase: "—", icon: Users },
+  { key: "hasil", label: "Rekap Nilai", fase: "-", icon: BarChart3 },
 ];
 
 export function stageMeta(key: string): StageMeta {
   return STAGE_ORDER.find((s) => s.key === key) ?? STAGE_ORDER[STAGE_ORDER.length - 1];
 }
 
-/** Stage konten (hadir di halaman siswa & proyektor guru) */
-export const INFO_STAGES = ["tujuan", "presentasi", "penutup"] as const;
-
+/** Konten bawaan (jika kelas ingin ditampilkan langsung di deck) */
 export const INFO_KONTEN: Record<string, SlideKonten> = {
   tujuan: {
     layout: "content",
     kicker: "Pendahuluan · Tujuan Pembelajaran",
-    title: "Hari Ini Kita Akan…",
-    sub: "Sampaikan pertanyaanmu jika ada yang belum jelas",
+    title: "Tujuan Hari Ini",
+    sub: "Memahami dan menguasai T-Faktor untuk persamaan kuadrat a = 1",
     blocks: [
       { t: "steps", items: [
-        "Memahami pengertian persamaan kuadrat dari masalah nyata (pendapatan = biaya)",
-        "Memfaktorkan persamaan kuadrat bentuk a = 1 dengan metode T-Faktor",
-        "Memfaktorkan persamaan kuadrat bentuk a > 1 dengan Metode AC",
+        "1. Menyebutkan bentuk umum ax^2 + bx + c = 0 serta mengidentifikasi a, b, c.",
+        "2. Membedakan persamaan linear dan persamaan kuadrat.",
+        "3. Mencari dua bilangan dengan hasil kali = c dan jumlah = b.",
+        "4. Menuliskan bentuk faktor (x + p)(x + q) = 0 dan menentukan x.",
+        "5. Membuktikan akar lewat substitusi ke persamaan awal.",
       ] },
-      { t: "box", title: "Cara Kita Belajar", v: "Discovery Learning: kalian menemukan polanya sendiri, berdiskusi berpasangan, lalu mempresentasikan hasilnya. Semangat Mindful · Meaningful · Joyful!", tone: "violet" },
-      { t: "text", v: "Silakan angkat tangan dan tanyakan hal yang belum jelas sebelum kita mulai." },
+      { t: "box", title: "Target", v: "Benar minimal 3 dari 4 soal LKPD Bagian B + minimal 3 dari 5 soal Kuis.", tone: "warn" },
+      { t: "box", title: "Cara Belajar", v: "Discovery Learning: Think sendiri, Pair berdiskusi, Share mempresentasikan. Bukan guru yang menjelaskan, kamu yang menemukan pola!", tone: "info" },
     ],
   },
   presentasi: {
     layout: "content",
     kicker: "Fase 5 · Verification (Share)",
-    title: "Waktunya Berbagi!",
-    sub: "Presentasikan hasil penemuan pasanganmu di depan kelas",
+    title: "Waktunya Presentasi!",
+    sub: "Pasangan terpilih menjelaskan temuan polanya di depan kelas",
     blocks: [
       { t: "steps", items: [
-        "Perwakilan pasangan maju — jelaskan langkah T-Faktor / Metode AC yang kalian pakai",
-        "Ceritakan kesulitan yang kalian hadapi dan bagaimana mengatasinya",
-        "Pasangan lain menanggapi: bandingkan, adakah cara penyelesaian yang berbeda?",
+        "Jelaskan pola tanda b dan c terhadap tanda p dan q yang kalian temukan.",
+        "Ceritakan mengapa x^2 + 5x + 3 = 0 tidak bisa difaktorkan.",
+        "Bagikan kesulitan yang kalian hadapi dan cara mengatasinya.",
       ] },
-      { t: "box", title: "Etika Presentasi", v: "Dengarkan dengan mindful, tanggapi dengan hormat. Setiap cara yang berbeda adalah kesempatan belajar baru.", tone: "warn" },
-      { t: "box", title: "Tugas Pendengar", v: "Catat satu hal baru dari setiap presentasi — bisa jadi itu cara yang lebih cepat!", tone: "info" },
+      { t: "box", title: "Etika", v: "Dengarkan dengan mindful. Tanggapi dengan hormat, berbeda cara = belajar baru.", tone: "warn" },
     ],
   },
   penutup: {
     layout: "content",
     kicker: "Penutup · Kesimpulan & Tugas",
     title: "Apa yang Kita Pelajari Hari Ini?",
-    sub: "Persamaan kuadrat: variabel berpangkat dua (x^2) — dua senjata faktorisasi",
+    sub: "T-Faktor a = 1: kunci sederhana dari dua bilangan",
     blocks: [
-      { t: "table", head: ["Aspek", "T-Faktor (a = 1)", "Metode AC (a > 1)"], rows: [
-        ["Kunci", "p + q = b, p.q = c", "p x q = a.c, p + q = b"],
-        ["Ciri khas", "Langsung dua kurung", "Pecah suku tengah, kelompokkan"],
-      ] },
-      { t: "box", title: "Kesamaan Keduanya", v: "Sama-sama mencari dua bilangan dari hubungan perkalian dan penjumlahan koefisien.", tone: "info" },
-      { t: "box", title: "Penting!", v: "Tidak semua persamaan kuadrat bisa difaktorkan — coba x^2 + 5x + 3 = 0 di LKPD tadi. Pertemuan berikutnya kita pelajari Rumus ABC yang menyelesaikan SEMUA jenis persamaan kuadrat!", tone: "warn" },
       { t: "steps", items: [
-        "PR 1:  x^2 + 11x + 24 = 0",
-        "PR 2:  x^2 - 13x + 36 = 0",
-        "PR 3:  2x^2 + 11x + 5 = 0",
-        "TANTANGAN:  x^2 + 3x + 1 = 0",
+        "Pemfaktoran adalah kebalikan perkalian aljabar.",
+        "T-Faktor hanya berhasil bila ada dua bilangan bulat dengan kali = c dan jumlah = b.",
+        "Persamaan kuadrat punya dua akar, satu akar, atau tidak bisa difaktorkan dengan bilangan bulat.",
+        "Selalu buktikan akar lewat substitusi.",
       ] },
-      { t: "box", title: "Apresiasi & Doa", v: "Terima kasih atas kerja keras, keberanian mencoba, dan kejujuran kalian hari ini — termasuk saat ada soal yang belum berhasil. Mari tutup pembelajaran dengan doa bersama.", tone: "success" },
+      { t: "box", title: "Pertemuan Berikutnya", v: "Rumus ABC & Melengkapkan Kuadrat Sempurna, untuk persamaan yang tidak bisa difaktorkan.", tone: "info" },
+      { t: "steps", items: ["PR 1 · x^2 + 11x + 24 = 0", "PR 2 · x^2 - 13x + 36 = 0", "PR 3 · 2x^2 + 11x + 5 = 0", "Tantangan: x^2 + 3x + 1 = 0 (bisa atau tidak?)"] },
     ],
   },
 };

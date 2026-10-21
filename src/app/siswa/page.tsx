@@ -7,9 +7,7 @@ import { Logo } from "@/components/topbar";
 import { useKelasState, usePing, useSiswa } from "@/hooks/use-session";
 import { Hourglass, LogOut } from "lucide-react";
 import { clearSiswaSession } from "@/lib/session";
-import { STAGE_ORDER } from "@/lib/stages";
 
-const STAGES = STAGE_ORDER.filter((s) => s.key !== "lobby");
 
 export default function SiswaHub() {
   const { siswa, ready } = useSiswa();
@@ -62,19 +60,6 @@ export default function SiswaHub() {
               Begitu guru membuka aktivitas, layar ini otomatis berpindah. Duduk manis dulu.
             </p>
 
-            <div className="mt-7 flex flex-wrap items-center justify-center gap-x-1 gap-y-4">
-              {STAGES.map((s, i) => (
-                <div key={s.key} className="flex items-center">
-                  <div className="flex w-12 flex-col items-center gap-1.5">
-                    <span className="flex h-8 w-8 items-center justify-center rounded-xl border border-white/10 bg-white/5 text-zinc-500">
-                      <s.icon className="h-3.5 w-3.5" />
-                    </span>
-                    <span className="text-center text-[0.52rem] font-semibold uppercase leading-tight tracking-wide text-zinc-600">{s.label}</span>
-                  </div>
-                  {i < STAGES.length - 1 && <span className="mb-5 h-px w-1.5 bg-white/12" />}
-                </div>
-              ))}
-            </div>
           </div>
         </div>
       </div>

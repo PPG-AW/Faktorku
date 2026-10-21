@@ -4,7 +4,7 @@ import { useEffect, useMemo, useState } from "react";
 import useSWR from "swr";
 import { Ambient } from "@/components/ambient";
 import { Logo } from "@/components/topbar";
-import { Eq } from "@/components/equation";
+import { Eq, EqText } from "@/components/equation";
 import { fetcher, useKelasState, usePing, useSiswa, useStageFollow } from "@/hooks/use-session";
 import { cn, formatWaktu } from "@/lib/utils";
 import { Check, ChevronRight, MessageSquareText, PartyPopper, Send, Target } from "lucide-react";
@@ -100,7 +100,7 @@ export default function ApersepsiPage() {
             </span>
             <div>
               <h1 className="text-lg font-extrabold text-white">APERSEPSI</h1>
-              <p className="text-[0.7rem] text-zinc-500">Ukur kemampuan awalmu — santai saja</p>
+              <p className="text-[0.7rem] text-zinc-500">Ukur kemampuan awalmu, santai saja</p>
             </div>
           </div>
           <span className="mono chip !text-amber-300 border-amber-400/25 bg-amber-400/8 tabular">
@@ -145,7 +145,21 @@ export default function ApersepsiPage() {
           <div key={soal.id} className="anim-slide glass mt-5 rounded-3xl p-6 md:p-8">
             <p className="label">Soal {soal.nomor}</p>
             <h2 className="text-xl font-bold leading-snug text-white md:text-2xl">
-              <Eq>{soal.pertanyaan}</Eq>
+              {(() => {
+                const [pengantar, rumus] = soal.pertanyaan.split("||");
+                return (
+                  <>
+                    <span className="block text-lg leading-relaxed font-semibold text-[var(--ink-2)] md:text-xl">
+                      <EqText>{pengantar.trim()}</EqText>
+                    </span>
+                    {rumus && (
+                      <span className="mono eq-badge mt-3 block w-fit max-w-full px-4 py-2.5 text-xl font-extrabold md:text-2xl">
+                        <Eq>{rumus.trim()}</Eq>
+                      </span>
+                    )}
+                  </>
+                );
+              })()}
             </h2>
 
             {soal.tipe === "pg" && soal.opsi && (
@@ -170,7 +184,7 @@ export default function ApersepsiPage() {
                       )}>
                         {sending && active ? <span className="h-3.5 w-3.5 animate-spin rounded-full border-2 border-white/40 border-t-white" /> : key}
                       </span>
-                      <span className="text-sm font-semibold text-zinc-200 md:text-base"><Eq>{val}</Eq></span>
+                      <span className="mono min-w-0 flex-1 overflow-x-auto text-sm font-semibold text-zinc-200 md:text-base"><Eq>{val}</Eq></span>
                     </button>
                   );
                 })}

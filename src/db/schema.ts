@@ -17,10 +17,12 @@ export const kelas = pgTable("kelas", {
   kode: text("kode").notNull().unique(),
   nama: text("nama").notNull(),
   guru: text("guru").notNull(),
-  stage: text("stage").notNull().default("sapaan"),
+  stage: text("stage").notNull().default("lobby"),
   slideAktif: integer("slide_aktif").notNull().default(1),
   slideLocked: boolean("slide_locked").notNull().default(true),
-  loginDitutup: boolean("login_ditutup").notNull().default(false), // untuk Slide 0
+  loginDitutup: boolean("login_ditutup").notNull().default(false),
+  cobaxRevealed: boolean("cobax_revealed").notNull().default(false),
+  rina1Revealed: boolean("rina1_revealed").notNull().default(false),
   createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
 });
 
@@ -154,6 +156,7 @@ export const kuisSession = pgTable(
     id: text("id").primaryKey(),
     kelasId: text("kelas_id").notNull().references(() => kelas.id),
     aktif: boolean("aktif").notNull().default(false),
+    paket: integer("paket").notNull().default(1),
     soalAktif: integer("soal_aktif").notNull().default(1),
     soalMulai: timestamp("soal_mulai", { withTimezone: true }).notNull().defaultNow(),
     startedAt: timestamp("started_at", { withTimezone: true }).notNull().defaultNow(),
@@ -165,6 +168,7 @@ export const kuisSession = pgTable(
 export const soalKuis = pgTable("soal_kuis", {
   id: text("id").primaryKey(),
   nomor: integer("nomor").notNull(),
+  paket: integer("paket").notNull().default(1),
   pertanyaan: text("pertanyaan").notNull(),
   opsi: jsonb("opsi").$type<{ A: string; B: string; C: string; D: string }>(),
   kunci: text("kunci").notNull().default(""),
@@ -257,6 +261,41 @@ export const klasifikasi = pgTable(
     createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
   },
   (t) => [uniqueIndex("klasifikasi_siswa_uniq").on(t.siswaId)]
+);
+
+/* ================= ANNOTATION CORET GURU (STIKER) ======================== */
+
+export const annotationStiker = pgTable(
+  "annotation_stiker",
+  {
+    id: text("id").primaryKey(),
+    kelasId: text("kelas_id").notNull().references(() => kelas.id),
+    stage: text("stage").notNull(), // slide deck key: "materi", "impas" dll
+    x: doublePrecision("x").notNull(), // 0..1
+    y: doublePrecision("y").notNull(), // 0..1
+    warna: text("warna").notNull().default("red"),
+    ikon: text("ikon").notNull().default("star"), // star | star3 | exclaim | thought | heart | check | question
+    createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => [index("stiker_kelas_stage_idx").on(t.kelasId, t.stage)]
+);
+
+/* ================= VOTING UMUM (mis. untung/rugi Rina) =================== */
+
+export const voting = pgTable(
+  "voting",
+  {
+    id: text("id").primaryKey(),
+    kelasId: text("kelas_id").notNull().references(() => kelas.id),
+    siswaId: text("siswa_id").notNull().references(() => siswa.id),
+    topik: text("topik").notNull(),
+    pilihan: text("pilihan").notNull(),
+    createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => [
+    index("voting_kelas_topik_idx").on(t.kelasId, t.topik),
+    uniqueIndex("voting_siswa_topik_uniq").on(t.siswaId, t.topik),
+  ]
 );
 
 /* ================= SLIDE 9: COBAX PILIHAN ENAM ANGKA ====================== */

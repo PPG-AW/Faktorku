@@ -103,7 +103,7 @@ export default function SiswaAktivitasPage() {
           )}
           {sisa === 0 && (
             <p className="anim-pop mt-4 text-lg font-extrabold text-emerald-700">
-              Waktu habis — perhatikan instruksi guru.
+              Waktu habis, perhatikan instruksi guru.
             </p>
           )}
         </div>

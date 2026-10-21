@@ -133,7 +133,7 @@ export default function KuisPage() {
       <div className="relative z-10 mx-auto flex min-h-screen max-w-2xl flex-col px-5 py-6">
         <div className="flex items-center justify-between">
           <Logo />
-          <span className="chip"><ShieldAlert className="h-3.5 w-3.5 text-amber-300" /> Opsi diacak — jangan contek!</span>
+          <span className="chip"><ShieldAlert className="h-3.5 w-3.5 text-amber-300" /> Opsi diacak, jangan contek!</span>
         </div>
 
         {/* ============ MENUNGGU MULAI ============ */}
@@ -206,7 +206,7 @@ export default function KuisPage() {
               )}
 
               <p className="mt-5 text-center text-xs text-zinc-500">
-                Terkunci otomatis saat waktu habis — jawab sebelum timer berakhir!
+                Terkunci otomatis saat waktu habis, jawab sebelum timer berakhir!
               </p>
             </div>
           </>
@@ -230,7 +230,7 @@ export default function KuisPage() {
                 <h2 className="mt-4 text-3xl font-extrabold text-white">Jawaban Terkirim</h2>
                 <p className="mt-2 max-w-sm text-sm text-zinc-400">
                   {justAnswered === "benar"
-                    ? "Mantap — hasilnya masuk leaderboard di papan. Menunggu soal berikutnya…"
+                    ? "Mantap, hasilnya masuk leaderboard di papan. Menunggu soal berikutnya…"
                     : "Terkunci! Menunggu guru membuka soal berikutnya…"}
                 </p>
               </>
