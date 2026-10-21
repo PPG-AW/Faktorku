@@ -261,10 +261,11 @@ export default function GuruDeck() {
             {slide.interaktif && (
               <div className={cn(punyaKonten && "mt-6 border-t-2 border-dashed border-[var(--hairline-strong)] pt-6")}>
                 {slide.interaktif === "presensi" && <DeckPresensi {...panelProps} />}
-                {slide.interaktif === "apersepsi" && <DeckApersepsi {...panelProps} />}
-                {slide.interaktif === "vote-rina" && <DeckVoteRina {...panelProps} />}
+                {slide.interaktif === "apersepsi" && <DeckApersepsi {...panelProps} onKontrol={kontrol} />}
+                {slide.interaktif === "vote-rina" && <DeckVoteRina {...panelProps} onKontrol={kontrol} />}
                 {slide.interaktif === "cobax" && <DeckCobax {...panelProps} onReveal={() => kontrol("sesiStart")} />}
-                {slide.interaktif === "lkpd" && <DeckLkpd />}
+                {slide.interaktif === "lkpd" && <DeckLkpd initialBagian="a" />}
+                {slide.interaktif === "lkpd-pair" && <DeckLkpd initialBagian="c" />}
                 {slide.interaktif === "share" && <DeckLkpd modeShare />}
                 {slide.interaktif === "kuis" && <DeckKuis {...panelProps} offset={offset} onKontrol={(a, v) => kontrol(a, v)} />}
                 {slide.interaktif === "leaderboard" && <DeckLeaderboard {...panelProps} />}
@@ -283,9 +284,12 @@ export default function GuruDeck() {
             <DrawCanvas slideKey={slide.key} active={draw} onClose={() => setDraw(false)} />
           </div>
 
-          {/* Timer melayang hanya pada LKPD & Share */}
+          {/* Timer melayang hanya pada LKPD (Think, Pair) & Share */}
           {slide.timer && (
-            <FloatingTimer stageKey={`aktivitas-${slide.timer}` as "aktivitas-think" | "aktivitas-pair" | "aktivitas-share"} />
+            <FloatingTimer
+              stageKey={`aktivitas-${slide.timer}` as "aktivitas-think" | "aktivitas-pair" | "aktivitas-share"}
+              onKontrol={kontrol}
+            />
           )}
         </div>
 

@@ -55,17 +55,17 @@ export const WIZARD_STAGE: Record<
   "aktivitas-think": {
     label: "THINK — Kerja Mandiri",
     durasi: 20 * 60,
-    cara: "Buka LKPD bagian A & B di bukumu. Kerjakan sendiri, fokus penuh.",
+    cara: "Kerjakan LKPD Bagian A & B yang sudah diberikan oleh guru. Fokus mandiri.",
   },
   "aktivitas-pair": {
     label: "PAIR — Diskusi Berpasangan",
-    durasi: 10 * 60,
-    cara: "Buka LKPD bagian C. Diskusikan dengan teman sebangku, cek silang.",
+    durasi: 12 * 60,
+    cara: "Diskusikan LKPD Bagian C yang sudah diberikan oleh guru bersama teman sebangku.",
   },
   "aktivitas-share": {
     label: "SHARE — Presentasi Temuan",
     durasi: 8 * 60,
-    cara: "Brbagi langkahmu lewat proyektor. Catat coretan guru di bukumu.",
+    cara: "Perhatikan presentasi teman di depan kelas dan catat penjelasan penting dari guru.",
   },
 };
 

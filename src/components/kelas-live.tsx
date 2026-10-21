@@ -177,20 +177,18 @@ export function KelasLive({ kelasId, aktifStage }: { kelasId: string; aktifStage
       {/* Agregat per langkah */}
       <div className="mt-4 flex flex-wrap gap-2 border-t border-white/6 pt-4">
         {([
-          { key: "sapaan", n: data?.agg.sapaan ?? 0, total: data?.agg.total ?? 0 },
-          { key: "apersepsi", n: siswa.filter((s) => s.progress.apersepsi >= 8).length, total: data?.agg.total ?? 0 },
-          { key: "coba-coba", n: siswa.filter((s) => s.progress.cobacoba.roots.length >= 2).length, total: data?.agg.total ?? 0 },
-          { key: "klasifikasi", n: data?.agg.klasifikasi.submitted ?? 0, total: data?.agg.total ?? 0 },
-          { key: "worksheet", n: siswa.filter((s) => s.progress.worksheet >= 3).length, total: data?.agg.total ?? 0 },
-          { key: "kuis", n: siswa.filter((s) => s.progress.kuis.answered > 0).length, total: data?.agg.total ?? 0 },
-          { key: "refleksi", n: data?.agg.refleksi ?? 0, total: data?.agg.total ?? 0 },
-        ] as const).map(({ key, n, total }) => {
+          { key: "apersepsi", label: "Apersepsi", n: siswa.filter((s) => s.progress.apersepsi >= 5).length, total: data?.agg.total ?? 0 },
+          { key: "cobax", label: "CobaX", n: siswa.filter((s) => s.progress.cobacoba.roots.length >= 1).length, total: data?.agg.total ?? 0 },
+          { key: "aktivitas-think", label: "LKPD Think", n: diHalamanIni.length, total: data?.agg.total ?? 0 },
+          { key: "kuis", label: "Kuis", n: siswa.filter((s) => s.progress.kuis.answered > 0).length, total: data?.agg.total ?? 0 },
+          { key: "refleksi", label: "Refleksi", n: data?.agg.refleksi ?? 0, total: data?.agg.total ?? 0 },
+        ] as const).map(({ key, label, n, total }) => {
           const m = stageMeta(key);
           const done = total > 0 && n >= total;
           return (
             <span key={key} className={cn("chip !text-[0.67rem]", done ? "!text-emerald-300 border-emerald-400/25 bg-emerald-400/8" : "text-zinc-400")}>
               <m.icon className="h-3 w-3" />
-              {m.label} <span className="mono font-extrabold tabular">{n}/{total}</span>
+              {label} <span className="mono font-extrabold tabular">{n}/{total}</span>
             </span>
           );
         })}

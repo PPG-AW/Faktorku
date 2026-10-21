@@ -73,7 +73,7 @@ interface SoalHasil {
   kunci: string; terjawab: number; benar: number; opsiCount: Record<string, number>;
 }
 
-export function DeckApersepsi({ kelasId }: PanelProps) {
+export function DeckApersepsi({ kelasId, onKontrol }: PanelProps & { onKontrol?: (action: string, value?: unknown) => Promise<void> }) {
   const { data } = useSWR<{ soal: SoalHasil[]; totalSiswa: number; siswaMenjawab: number }>(
     `/api/apersepsi/hasil/${kelasId}`, fetcher, { refreshInterval: 1800 }
   );
@@ -81,7 +81,10 @@ export function DeckApersepsi({ kelasId }: PanelProps) {
   const [idx, setIdx] = useState(0);
   const [reveal, setReveal] = useState(false);
 
-  useEffect(() => { setReveal(false); }, [idx]);
+  useEffect(() => {
+    setReveal(false);
+    onKontrol?.("setApersepsiSoal", idx + 1);
+  }, [idx, onKontrol]);
 
   const s = soal[idx];
   const total = soal.length;
@@ -89,6 +92,11 @@ export function DeckApersepsi({ kelasId }: PanelProps) {
 
   if (!s) {
     return <p className="py-16 text-center text-sm text-[var(--ink-3)]">Memuat soal apersepsi…</p>;
+  }
+
+  function handleReveal(status: boolean) {
+    setReveal(status);
+    onKontrol?.("setApersepsiReveal", status);
   }
 
   return (
@@ -126,7 +134,7 @@ export function DeckApersepsi({ kelasId }: PanelProps) {
           );
         })()}
 
-        {/* opsi + bar jawaban siswa */}
+        {/* opsi + bar jawaban siswa (hanya tampil saat guru klik Tampilkan Jawaban) */}
         <div className="mt-6 space-y-2.5">
           {(Object.entries(s.opsi ?? {}) as [string, string][]).map(([key, val], i) => {
             const n = s.opsiCount[key] ?? 0;
@@ -150,17 +158,19 @@ export function DeckApersepsi({ kelasId }: PanelProps) {
                   {reveal ? (benar ? <Check className="h-5 w-5" /> : <X className="h-4 w-4" />) : key}
                 </span>
                 <span className="mono min-w-0 flex-1 overflow-x-auto text-lg font-semibold"><Eq>{val}</Eq></span>
-                <div className="h-7 w-32 shrink-0 overflow-hidden border border-[var(--hairline)] bg-[var(--paper-2)] sm:w-40">
-                  <div
-                    className="bar-grow flex h-full items-center px-2"
-                    style={{
-                      width: `${Math.max(n === 0 ? 0 : 12, (n / maxCount) * 100)}%`,
-                      background: benar ? "linear-gradient(90deg,#15803d,#34d399)" : "linear-gradient(90deg,#141414,#4b4b4b)",
-                    }}
-                  >
-                    <span className="mono text-xs font-bold tabular text-white">{n}</span>
+                {reveal && (
+                  <div className="h-7 w-32 shrink-0 overflow-hidden border border-[var(--hairline)] bg-[var(--paper-2)] sm:w-40">
+                    <div
+                      className="bar-grow flex h-full items-center px-2"
+                      style={{
+                        width: `${Math.max(n === 0 ? 0 : 12, (n / maxCount) * 100)}%`,
+                        background: benar ? "linear-gradient(90deg,#15803d,#34d399)" : "linear-gradient(90deg,#141414,#4b4b4b)",
+                      }}
+                    >
+                      <span className="mono text-xs font-bold tabular text-white">{n}</span>
+                    </div>
                   </div>
-                </div>
+                )}
               </div>
             );
           })}
@@ -179,11 +189,13 @@ export function DeckApersepsi({ kelasId }: PanelProps) {
           <ChevronLeft className="h-4 w-4" /> Soal sebelumnya
         </button>
         {!reveal ? (
-          <button onClick={() => setReveal(true)} className="btn btn-amber px-6 py-2.5 text-sm">
+          <button onClick={() => handleReveal(true)} className="btn btn-amber px-6 py-2.5 text-sm">
             <Eye className="h-4 w-4" /> Tampilkan Jawaban
           </button>
         ) : (
-          <span className="chip !text-emerald-700 border-emerald-600/30"><Check className="h-3.5 w-3.5" /> Jawaban dibuka</span>
+          <button onClick={() => handleReveal(false)} className="btn btn-ghost px-4 py-2.5 text-sm text-emerald-700">
+            <Check className="h-3.5 w-3.5" /> Jawaban dibuka (Klik untuk sembunyikan)
+          </button>
         )}
         <button onClick={() => setIdx((i) => Math.min(total - 1, i + 1))} disabled={idx >= total - 1} className="btn btn-primary px-4 py-2.5 text-sm">
           Soal berikutnya <ChevronRight className="h-4 w-4" />
@@ -201,13 +213,18 @@ const OPSI_VOTE = [
   { key: "impas", label: "Pas, tidak untung tidak rugi" },
 ];
 
-export function DeckVoteRina({ kelasId }: PanelProps) {
+export function DeckVoteRina({ kelasId, onKontrol }: PanelProps & { onKontrol?: (action: string, value?: unknown) => Promise<void> }) {
   const { data } = useSWR<{ total: number; terisi: number; hitung: Record<string, number> }>(
     `/api/voting?kelasId=${kelasId}&topik=untung-rugi`, fetcher, { refreshInterval: 1800 }
   );
   const [reveal, setReveal] = useState(false);
   const hitung = data?.hitung ?? {};
   const maxN = Math.max(1, ...OPSI_VOTE.map((o) => hitung[o.key] ?? 0));
+
+  function handleReveal(status: boolean) {
+    setReveal(status);
+    onKontrol?.("setRina1Reveal", status);
+  }
 
   return (
     <div className="mx-auto w-full max-w-4xl">
@@ -239,17 +256,19 @@ export function DeckVoteRina({ kelasId }: PanelProps) {
               style={{ animationDelay: `${i * 0.08}s` }}
             >
               <span className="min-w-0 flex-1 text-lg font-bold leading-snug">{o.label}</span>
-              <div className="h-9 w-40 shrink-0 overflow-hidden border border-[var(--hairline)] bg-[var(--paper-2)] sm:w-56">
-                <div
-                  className="bar-grow flex h-full items-center px-2.5"
-                  style={{
-                    width: `${Math.max(n === 0 ? 0 : 10, (n / maxN) * 100)}%`,
-                    background: jawabanBenar ? "linear-gradient(90deg,#15803d,#34d399)" : "linear-gradient(90deg,#141414,#4b4b4b)",
-                  }}
-                >
-                  <span className="mono text-sm font-bold tabular text-white">{n}</span>
+              {reveal && (
+                <div className="h-9 w-40 shrink-0 overflow-hidden border border-[var(--hairline)] bg-[var(--paper-2)] sm:w-56">
+                  <div
+                    className="bar-grow flex h-full items-center px-2.5"
+                    style={{
+                      width: `${Math.max(n === 0 ? 0 : 10, (n / maxN) * 100)}%`,
+                      background: jawabanBenar ? "linear-gradient(90deg,#15803d,#34d399)" : "linear-gradient(90deg,#141414,#4b4b4b)",
+                    }}
+                  >
+                    <span className="mono text-sm font-bold tabular text-white">{n}</span>
+                  </div>
                 </div>
-              </div>
+              )}
             </div>
           );
         })}
@@ -257,7 +276,7 @@ export function DeckVoteRina({ kelasId }: PanelProps) {
 
       <div className="mt-5 flex justify-center">
         {!reveal ? (
-          <button onClick={() => setReveal(true)} className="btn btn-amber px-7 py-3 text-base">
+          <button onClick={() => handleReveal(true)} className="btn btn-amber px-7 py-3 text-base">
             <Eye className="h-4.5 w-4.5" /> Bahas Jawaban Bersama
           </button>
         ) : (

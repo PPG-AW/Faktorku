@@ -33,7 +33,7 @@ export async function GET(
         texts: js.map((j) => j.jawaban),
       };
     }
-    const opsiCount: Record<string, number> = { A: 0, B: 0, C: 0, D: 0 };
+    const opsiCount: Record<string, number> = { A: 0, B: 0, C: 0, D: 0, E: 0 };
     let benarCount = 0;
     for (const j of js) {
       opsiCount[j.jawaban] = (opsiCount[j.jawaban] ?? 0) + 1;

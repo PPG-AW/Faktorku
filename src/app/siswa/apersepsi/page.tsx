@@ -37,8 +37,26 @@ export default function ApersepsiPage() {
   const [sending, setSending] = useState(false);
   const [elapsed, setElapsed] = useState(0);
 
+  // Nomor soal yang diatur oleh guru
+  const soalNomorGuru = state?.kelas.apersepsiSoalAktif ?? 1;
+  const guruRevealed = state?.kelas.apersepsiRevealed ?? false;
+
   const soals = useMemo(() => data?.soal ?? [], [data]);
   const answeredMap = data?.jawaban ?? {};
+
+  // Selalu arahkan ke soal yang dibuka guru jika ada, jika tidak fallback ke idx
+  const targetIdx = useMemo(() => {
+    if (!soals.length) return 0;
+    const foundIdx = soals.findIndex((s) => s.nomor === soalNomorGuru);
+    return foundIdx >= 0 ? foundIdx : 0;
+  }, [soals, soalNomorGuru]);
+
+  useEffect(() => {
+    setIdx(targetIdx);
+    setElapsed(0);
+    setPilihan(null);
+  }, [targetIdx]);
+
   const soal = soals[idx];
   const terjawab = soals.filter((s) => answeredMap[s.id]).length;
   const selesai = soals.length > 0 && terjawab >= soals.length;
@@ -47,13 +65,6 @@ export default function ApersepsiPage() {
     const iv = setInterval(() => setElapsed((e) => e + 1), 1000);
     return () => clearInterval(iv);
   }, [idx]);
-
-  // Lompat ke soal pertama yang belum dijawab saat data tiba
-  useEffect(() => {
-    if (!soals.length) return;
-    const firstUnanswered = soals.findIndex((s) => !answeredMap[s.id]);
-    if (firstUnanswered >= 0) setIdx(firstUnanswered);
-  }, [data]);
 
   if (!ready || !siswa) return null;
 
@@ -69,10 +80,6 @@ export default function ApersepsiPage() {
       await mutate();
       setPilihan(null);
       setTeks("");
-      setElapsed(0);
-      setTimeout(() => {
-        setIdx((i) => Math.min(i + 1, soals.length - 1));
-      }, 350);
     } finally {
       setSending(false);
     }
@@ -229,7 +236,7 @@ export default function ApersepsiPage() {
           </div>
         )}
 
-        {/* Sudah dijawab → tampil ringkas */}
+        {/* Sudah dijawab → tampil menunggu guru / soal berikutnya */}
         {data && !selesai && soal && answeredMap[soal.id] && (
           <div className="glass mt-5 rounded-3xl p-6 md:p-8">
             <div className="flex items-center gap-3">
@@ -239,20 +246,10 @@ export default function ApersepsiPage() {
               <div>
                 <p className="font-bold text-white">Soal {soal.nomor} sudah kamu jawab</p>
                 <p className="text-sm text-zinc-400">
-                  {soal.tipe === "terbuka" ? "Cerita terekam. Terima kasih!" : answeredMap[soal.id].benar ? "Jawabanmu benar!" : "Jawaban terekam."}
+                  {guruRevealed ? "Guru sedang membahas jawaban di layar depan." : "Jawaban terekam! Menunggu guru membuka soal berikutnya…"}
                 </p>
               </div>
             </div>
-            <button
-              onClick={() => {
-                const next = soals.findIndex((s) => !answeredMap[s.id]);
-                setIdx(next >= 0 ? next : idx);
-                setElapsed(0);
-              }}
-              className="btn btn-primary mt-5 px-5 py-2.5"
-            >
-              Lanjut <ChevronRight className="h-4 w-4" />
-            </button>
           </div>
         )}
 

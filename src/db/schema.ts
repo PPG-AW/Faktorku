@@ -23,6 +23,12 @@ export const kelas = pgTable("kelas", {
   loginDitutup: boolean("login_ditutup").notNull().default(false),
   cobaxRevealed: boolean("cobax_revealed").notNull().default(false),
   rina1Revealed: boolean("rina1_revealed").notNull().default(false),
+  apersepsiSoalAktif: integer("apersepsi_soal_aktif").notNull().default(1),
+  apersepsiRevealed: boolean("apersepsi_revealed").notNull().default(false),
+  timerJalan: boolean("timer_jalan").notNull().default(false),
+  timerTotal: integer("timer_total").notNull().default(600),
+  timerSisa: integer("timer_sisa").notNull().default(600),
+  timerUpdatedAt: timestamp("timer_updated_at", { withTimezone: true }),
   createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
 });
 
@@ -59,7 +65,7 @@ export const soalDiagnostik = pgTable("soal_diagnostik", {
   id: text("id").primaryKey(),
   nomor: integer("nomor").notNull(),
   pertanyaan: text("pertanyaan").notNull(),
-  opsi: jsonb("opsi").$type<{ A: string; B: string; C: string; D: string }>(),
+  opsi: jsonb("opsi").$type<{ A: string; B: string; C: string; D: string; E: string }>(),
   kunci: text("kunci").notNull().default(""),
   tipe: text("tipe").notNull().default("pg"),
   skor: integer("skor").notNull().default(20),

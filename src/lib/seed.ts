@@ -291,46 +291,76 @@ const SLIDES: { nomor: number; judul: string; konten: SlideKonten }[] = [
   },
 ];
 
-/* ================= SOAL APERSEPSI (mandiri, sesuai Modul D) ============== */
+/* ================= SOAL APERSEPSI (mandiri, sesuai Modul D, opsi A-E) ============== */
 
 const APERSEPSI: {
   nomor: number; pertanyaan: string; tipe: string;
-  opsi?: { A: string; B: string; C: string; D: string };
+  opsi: { A: string; B: string; C: string; D: string; E: string };
   kunci: string; skor: number;
 }[] = [
   {
     nomor: 1,
     pertanyaan: "Masih ingat cara mengalikan dua bentuk aljabar? Coba kerjakan perkalian ini. Berapa hasilnya?||(x + 3)(x + 5)",
     tipe: "pg",
-    opsi: { A: "x^2 + 8x + 15", B: "x^2 + 15x + 8", C: "x^2 + 8x + 8", D: "x^2 + 2x + 15" },
+    opsi: {
+      A: "x^2 + 8x + 15",
+      B: "x^2 + 15x + 8",
+      C: "x^2 + 8x + 8",
+      D: "x^2 + 2x + 15",
+      E: "x^2 + 15x + 15",
+    },
     kunci: "A", skor: 20,
   },
   {
     nomor: 2,
     pertanyaan: "Tadi kita mengalikan dua kurung menjadi satu bentuk. Sekarang kita balik arahnya. Dua bilangan apa yang tepat mengisi titik-titik berikut?||x^2 + 8x + 15 = (x + ...)(x + ...)",
     tipe: "pg",
-    opsi: { A: "1 dan 15", B: "3 dan 5", C: "4 dan 4", D: "2 dan 6" },
+    opsi: {
+      A: "1 dan 15",
+      B: "3 dan 5",
+      C: "4 dan 4",
+      D: "2 dan 6",
+      E: "5 dan 5",
+    },
     kunci: "B", skor: 20,
   },
   {
     nomor: 3,
     pertanyaan: "Supaya bisa membalik perkalian, kita perlu terbiasa mencari pasangan bilangan. Pasangan mana yang hasil kalinya 15 dan hasil jumlahnya 8?",
     tipe: "pg",
-    opsi: { A: "1 dan 15", B: "3 dan 5", C: "2 dan 6", D: "4 dan 4" },
+    opsi: {
+      A: "1 dan 15",
+      B: "3 dan 5",
+      C: "2 dan 6",
+      D: "4 dan 4",
+      E: "-3 dan -5",
+    },
     kunci: "B", skor: 20,
   },
   {
     nomor: 4,
     pertanyaan: "Sekarang yang sedikit lebih menantang karena memuat bilangan negatif. Pasangan mana yang hasil kalinya -12 dan hasil jumlahnya 1?",
     tipe: "pg",
-    opsi: { A: "3 dan -4", B: "-3 dan 4", C: "4 dan -3", D: "6 dan -2" },
+    opsi: {
+      A: "3 dan -4",
+      B: "-3 dan 4",
+      C: "4 dan -3",
+      D: "6 dan -2",
+      E: "-6 dan 2",
+    },
     kunci: "C", skor: 20,
   },
   {
     nomor: 5,
     pertanyaan: "Kegiatan membalik bentuk perkalian seperti tadi punya nama khusus dalam matematika. Apa nama kegiatan itu?",
     tipe: "pg",
-    opsi: { A: "Pemfaktoran", B: "Pengumpulan suku", C: "Substitusi", D: "Eliminasi" },
+    opsi: {
+      A: "Pemfaktoran",
+      B: "Pengumpulan suku",
+      C: "Substitusi",
+      D: "Eliminasi",
+      E: "Distribusi aljabar",
+    },
     kunci: "A", skor: 20,
   },
 ];
@@ -582,8 +612,13 @@ export async function ensureSeed(): Promise<void> {
           });
       }
 
-      const a = await db.select({ id: soalDiagnostik.id }).from(soalDiagnostik).limit(1);
-      if (a.length === 0) {
+      // Pastikan data apersepsi selalu ter-update dengan struktur terbaru (semua PG A-E)
+      const existingDiag = await db.select({ id: soalDiagnostik.id, opsi: soalDiagnostik.opsi }).from(soalDiagnostik);
+      const perluUpdateDiag = existingDiag.length === 0 || existingDiag.some((s) => !s.opsi || !("E" in (s.opsi as object)));
+      if (perluUpdateDiag) {
+        if (existingDiag.length > 0) {
+          await db.delete(soalDiagnostik);
+        }
         await db.insert(soalDiagnostik).values(APERSEPSI.map((s) => ({ id: uid(), nomor: s.nomor, pertanyaan: s.pertanyaan, opsi: s.opsi ?? null, kunci: s.kunci, tipe: s.tipe, skor: s.skor })));
       }
       const w = await db.select({ id: soalWorksheet.id }).from(soalWorksheet).limit(1);

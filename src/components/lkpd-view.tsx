@@ -202,43 +202,125 @@ export function LkpdPanel({ bagian }: { bagian: LkpdBagian }) {
 
 /* ------------------------- timer melayang ------------------------- */
 
-const DURASI: Record<string, number> = { "aktivitas-think": 20 * 60, "aktivitas-share": 8 * 60 };
+const DURASI: Record<string, number> = {
+  "aktivitas-think": 20 * 60,
+  "aktivitas-pair": 12 * 60,
+  "aktivitas-share": 8 * 60,
+};
 
-export function FloatingTimer({ stageKey }: { stageKey: string }) {
+export function FloatingTimer({
+  stageKey,
+  onKontrol,
+}: {
+  stageKey: string;
+  onKontrol?: (action: string, value?: unknown) => Promise<void>;
+}) {
   const total = DURASI[stageKey] ?? 10 * 60;
   const [jalan, setJalan] = useState(false);
   const [sisa, setSisa] = useState(total);
   const ivRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
-  useEffect(() => { setSisa(total); setJalan(false); }, [total]);
+  // Drag and drop state
+  const [pos, setPos] = useState({ x: 20, y: 110 }); // right: 20px, top: 110px
+  const [dragging, setDragging] = useState(false);
+  const dragRef = useRef<{ startX: number; startY: number; initX: number; initY: number }>({
+    startX: 0,
+    startY: 0,
+    initX: 20,
+    initY: 110,
+  });
+
+  useEffect(() => {
+    setSisa(total);
+    setJalan(false);
+    onKontrol?.("timerUpdate", { jalan: false, total, sisa: total });
+  }, [total, stageKey]);
 
   useEffect(() => {
     if (jalan) {
       ivRef.current = setInterval(() => {
-        setSisa((s) => { if (s <= 1) { setJalan(false); return 0; } return s - 1; });
+        setSisa((s) => {
+          if (s <= 1) {
+            setJalan(false);
+            onKontrol?.("timerUpdate", { jalan: false, sisa: 0 });
+            return 0;
+          }
+          const next = s - 1;
+          if (next % 5 === 0) {
+            onKontrol?.("timerUpdate", { jalan: true, sisa: next });
+          }
+          return next;
+        });
       }, 1000);
     }
-    return () => { if (ivRef.current) clearInterval(ivRef.current); };
-  }, [jalan]);
+    return () => {
+      if (ivRef.current) clearInterval(ivRef.current);
+    };
+  }, [jalan, onKontrol]);
+
+  function togglePlay() {
+    const nextJalan = !jalan;
+    setJalan(nextJalan);
+    onKontrol?.("timerUpdate", { jalan: nextJalan, total, sisa });
+  }
+
+  function handleReset() {
+    setJalan(false);
+    setSisa(total);
+    onKontrol?.("timerUpdate", { jalan: false, total, sisa: total });
+  }
+
+  function handlePointerDown(e: React.PointerEvent) {
+    if ((e.target as HTMLElement).closest("button")) return;
+    setDragging(true);
+    e.currentTarget.setPointerCapture(e.pointerId);
+    dragRef.current = {
+      startX: e.clientX,
+      startY: e.clientY,
+      initX: pos.x,
+      initY: pos.y,
+    };
+  }
+
+  function handlePointerMove(e: React.PointerEvent) {
+    if (!dragging) return;
+    const dx = dragRef.current.startX - e.clientX; // drag left increases offset from right
+    const dy = e.clientY - dragRef.current.startY; // drag down increases offset from top
+    setPos({
+      x: Math.max(10, Math.min(window.innerWidth - 180, dragRef.current.initX + dx)),
+      y: Math.max(60, Math.min(window.innerHeight - 180, dragRef.current.initY + dy)),
+    });
+  }
+
+  function handlePointerUp() {
+    setDragging(false);
+  }
 
   const merah = sisa <= 60 && sisa > 0;
 
   return (
-    <div className={cn(
-      "fixed right-5 top-28 z-40 flex flex-col items-center border-2 border-[var(--ink)] bg-[var(--card)] px-4 py-3 shadow-[4px_4px_0_var(--ink)]",
-      merah && "border-[var(--red)]"
-    )}>
+    <div
+      onPointerDown={handlePointerDown}
+      onPointerMove={handlePointerMove}
+      onPointerUp={handlePointerUp}
+      onPointerCancel={handlePointerUp}
+      style={{ right: `${pos.x}px`, top: `${pos.y}px`, cursor: dragging ? "grabbing" : "grab" }}
+      className={cn(
+        "fixed z-40 flex flex-col items-center border-2 border-[var(--ink)] bg-[var(--card)] px-4 py-3 shadow-[4px_4px_0_var(--ink)] select-none",
+        merah && "border-[var(--red)]"
+      )}
+    >
       <span className="flex items-center gap-1 text-[0.6rem] font-extrabold uppercase tracking-widest text-[var(--ink-3)]">
-        <Clock3 className="h-3.5 w-3.5" /> Waktu
+        <Clock3 className="h-3.5 w-3.5" /> Waktu (Geser)
       </span>
       <span className={cn("mono mt-0.5 text-3xl font-extrabold leading-none tabular", merah ? "text-[var(--red)]" : "text-[var(--ink)]")}>
         {formatWaktu(sisa)}
       </span>
       <div className="mt-2 flex gap-1.5">
-        <button onClick={() => setJalan((j) => !j)} disabled={sisa === 0} className="border-2 border-[var(--ink)] bg-[var(--card)] p-1.5 disabled:opacity-40">
+        <button onClick={togglePlay} disabled={sisa === 0} className="border-2 border-[var(--ink)] bg-[var(--card)] p-1.5 disabled:opacity-40 hover:bg-[var(--paper-2)]">
           {jalan ? <Pause className="h-3.5 w-3.5" /> : <Play className="h-3.5 w-3.5" />}
         </button>
-        <button onClick={() => { setJalan(false); setSisa(total); }} className="border-2 border-[var(--ink)] bg-[var(--card)] p-1.5">
+        <button onClick={handleReset} className="border-2 border-[var(--ink)] bg-[var(--card)] p-1.5 hover:bg-[var(--paper-2)]">
           <RotateCcw className="h-3.5 w-3.5" />
         </button>
       </div>
@@ -248,9 +330,8 @@ export function FloatingTimer({ stageKey }: { stageKey: string }) {
 
 /* --------------------------- panel deck LKPD --------------------------- */
 
-export function DeckLkpd({ modeShare = false }: { modeShare?: boolean }) {
-  const [bagianKey, setBagianKey] = useState<"a" | "b" | "c">(modeShare ? "c" : "a");
-  const [kunci, setKunci] = useState(false);
+export function DeckLkpd({ modeShare = false, initialBagian }: { modeShare?: boolean; initialBagian?: "a" | "b" | "c" }) {
+  const [bagianKey, setBagianKey] = useState<"a" | "b" | "c">(initialBagian ?? (modeShare ? "c" : "a"));
   const bagian = LKPD.find((b) => b.key === bagianKey) ?? LKPD[0];
 
   return (
@@ -268,30 +349,10 @@ export function DeckLkpd({ modeShare = false }: { modeShare?: boolean }) {
             </button>
           ))}
         </div>
-        <button onClick={() => setKunci((v) => !v)} className={cn("btn px-4 py-2 text-xs", kunci ? "btn-amber" : "btn-ghost")}>
-          {kunci ? <EyeOff className="h-3.5 w-3.5" /> : <Eye className="h-3.5 w-3.5" />}
-          {kunci ? "Tutup Kunci" : "Kunci Guru"}
-        </button>
       </div>
 
       <div className="flex-1">
         <LkpdPanel bagian={bagian} />
-
-        {kunci && (
-          <div className="anim-rise mt-4 border-2 border-[#D90429] bg-[#FFF3F3] p-4">
-            <p className="mb-3 flex items-center gap-2 text-base font-extrabold uppercase tracking-wider text-[#D90429]">
-              <KeyRound className="h-4.5 w-4.5" /> Kunci Jawaban, Bagian {bagianKey.toUpperCase()}
-            </p>
-            <div className="space-y-1.5">
-              {LKPD_KUNCI[bagianKey].map(([no, jwb]) => (
-                <div key={no} className="flex gap-3 border border-black bg-white px-3 py-2">
-                  <span className="mono w-24 shrink-0 text-xs font-extrabold text-[#1D3557]">{no}</span>
-                  <span className="text-sm font-semibold"><Eq>{jwb}</Eq></span>
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
       </div>
     </div>
   );

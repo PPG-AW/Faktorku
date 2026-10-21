@@ -131,6 +131,28 @@ export async function POST(req: Request) {
           .where(and(eq(kuisSession.kelasId, kelasId), eq(kuisSession.aktif, true)));
         break;
       }
+      case "setApersepsiSoal": {
+        const no = Math.max(1, Number(value) || 1);
+        await db.update(kelas).set({ apersepsiSoalAktif: no, apersepsiRevealed: false }).where(eq(kelas.id, kelasId));
+        break;
+      }
+      case "setApersepsiReveal": {
+        await db.update(kelas).set({ apersepsiRevealed: Boolean(value) }).where(eq(kelas.id, kelasId));
+        break;
+      }
+      case "setRina1Reveal": {
+        await db.update(kelas).set({ rina1Revealed: Boolean(value) }).where(eq(kelas.id, kelasId));
+        break;
+      }
+      case "timerUpdate": {
+        const t = (value ?? {}) as { jalan?: boolean; total?: number; sisa?: number };
+        const updates: Record<string, unknown> = { timerUpdatedAt: new Date() };
+        if (typeof t.jalan === "boolean") updates.timerJalan = t.jalan;
+        if (typeof t.total === "number") updates.timerTotal = t.total;
+        if (typeof t.sisa === "number") updates.timerSisa = t.sisa;
+        await db.update(kelas).set(updates).where(eq(kelas.id, kelasId));
+        break;
+      }
       default:
         return NextResponse.json({ error: "Action tidak dikenal." }, { status: 400 });
     }

@@ -223,17 +223,22 @@ export const DECK: DeckItem[] = [
     konten: null,
   },
   {
-    nomor: 12, key: "lkpd", grup: "Kegiatan Inti", label: "LKPD, Think & Pair", fase: "Fase 3–4",
+    nomor: 12, key: "lkpd-think", grup: "Kegiatan Inti", label: "LKPD, Think (Mandiri)", fase: "Fase 3 · Think",
     stage: "aktivitas-think", interaktif: "lkpd", timer: "think", icon: PenLine,
     konten: null,
   },
   {
-    nomor: 13, key: "share", grup: "Kegiatan Inti", label: "SHARE, Presentasi", fase: "Fase 5 · Verification",
+    nomor: 13, key: "lkpd-pair", grup: "Kegiatan Inti", label: "LKPD, Pair (Pasangan)", fase: "Fase 4 · Pair",
+    stage: "aktivitas-pair", interaktif: "lkpd-pair", timer: "pair", icon: Handshake,
+    konten: null,
+  },
+  {
+    nomor: 14, key: "share", grup: "Kegiatan Inti", label: "SHARE, Presentasi", fase: "Fase 5 · Verification",
     stage: "aktivitas-share", interaktif: "share", timer: "share", icon: Speech,
     konten: null,
   },
   {
-    nomor: 14, key: "langkah", grup: "Kegiatan Inti", label: "5 Langkah T-Faktor", fase: "Fase 6 · Generalization",
+    nomor: 15, key: "langkah", grup: "Kegiatan Inti", label: "5 Langkah T-Faktor", fase: "Fase 6 · Generalization",
     stage: "materi", interaktif: null, bertahap: true, icon: ListChecks,
     konten: {
       layout: "content",
@@ -252,7 +257,7 @@ export const DECK: DeckItem[] = [
     },
   },
   {
-    nomor: 15, key: "pola", grup: "Kegiatan Inti", label: "Pola Tanda", fase: "Fase 6 · Generalization",
+    nomor: 16, key: "pola", grup: "Kegiatan Inti", label: "Pola Tanda", fase: "Fase 6 · Generalization",
     stage: "materi", interaktif: null, icon: TrendingUp,
     konten: {
       layout: "content",
@@ -271,7 +276,7 @@ export const DECK: DeckItem[] = [
     },
   },
   {
-    nomor: 16, key: "batas", grup: "Kegiatan Inti", label: "Yang Tidak Bisa Difaktorkan", fase: "Fase 6",
+    nomor: 17, key: "batas", grup: "Kegiatan Inti", label: "Yang Tidak Bisa Difaktorkan", fase: "Fase 6",
     stage: "materi", interaktif: null, bertahap: true, icon: BookOpen,
     konten: {
       layout: "focus",
@@ -288,22 +293,22 @@ export const DECK: DeckItem[] = [
 
   /* =========================== PENUTUP =========================== */
   {
-    nomor: 17, key: "kuis", grup: "Penutup", label: "Kuis Kompetisi", fase: "Fase 6 · Sumatif",
+    nomor: 18, key: "kuis", grup: "Penutup", label: "Kuis Kompetisi", fase: "Fase 6 · Sumatif",
     stage: "kuis", interaktif: "kuis", icon: Trophy,
     konten: null,
   },
   {
-    nomor: 18, key: "leaderboard", grup: "Penutup", label: "Leaderboard", fase: "Fase 6",
+    nomor: 19, key: "leaderboard", grup: "Penutup", label: "Leaderboard", fase: "Fase 6",
     stage: "kuis", interaktif: "leaderboard", icon: Trophy,
     konten: null,
   },
   {
-    nomor: 19, key: "refleksi", grup: "Penutup", label: "Refleksi & Word Cloud", fase: "Fase 6 · Reflektif",
+    nomor: 20, key: "refleksi", grup: "Penutup", label: "Refleksi & Word Cloud", fase: "Fase 6 · Reflektif",
     stage: "refleksi", interaktif: "refleksi", icon: Sparkles,
     konten: null,
   },
   {
-    nomor: 20, key: "kesimpulan", grup: "Penutup", label: "Kesimpulan Bersama", fase: "Penutup",
+    nomor: 21, key: "kesimpulan", grup: "Penutup", label: "Kesimpulan Bersama", fase: "Penutup",
     stage: "materi", interaktif: null, bertahap: true, icon: ListChecks,
     konten: {
       layout: "content",
@@ -320,7 +325,7 @@ export const DECK: DeckItem[] = [
     },
   },
   {
-    nomor: 21, key: "preview", grup: "Penutup", label: "Pertemuan Berikutnya", fase: "Penutup",
+    nomor: 22, key: "preview", grup: "Penutup", label: "Pertemuan Berikutnya", fase: "Penutup",
     stage: "materi", interaktif: null, icon: MonitorPlay,
     konten: {
       layout: "content",
@@ -334,7 +339,7 @@ export const DECK: DeckItem[] = [
     },
   },
   {
-    nomor: 22, key: "doa", grup: "Penutup", label: "Doa Penutup", fase: "Penutup",
+    nomor: 23, key: "doa", grup: "Penutup", label: "Doa Penutup", fase: "Penutup",
     stage: "doa", interaktif: "logout", icon: Flag,
     konten: null,
   },

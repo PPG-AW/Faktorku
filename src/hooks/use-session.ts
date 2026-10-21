@@ -46,6 +46,13 @@ export interface KelasState {
     slideAktif: number;
     slideLocked: boolean;
     slideTotal: number;
+    apersepsiSoalAktif?: number;
+    apersepsiRevealed?: boolean;
+    rina1Revealed?: boolean;
+    timerJalan?: boolean;
+    timerTotal?: number;
+    timerSisa?: number;
+    timerUpdatedAt?: string | null;
   };
   siswaOnline: number;
   totalSiswa: number;

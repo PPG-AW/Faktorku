@@ -52,16 +52,41 @@ export default function SiswaVotePage() {
           <span className="chip">{siswa.nama}</span>
         </div>
 
-        <div className="flex flex-1 flex-col justify-center py-8">
+        <div className="flex flex-1 flex-col justify-center py-6">
           <span className="chip mx-auto uppercase tracking-[0.2em] !text-[var(--red)] border-[var(--red)]/30 bg-[var(--red)]/8">
             <Vote className="h-3.5 w-3.5" /> Pendapatmu
           </span>
-          <h1 className="mt-5 text-center text-2xl sm:text-3xl leading-tight break-words md:text-4xl" style={{ fontFamily: '"Playfair Display", serif' }}>
+          <h1 className="mt-4 text-center text-xl sm:text-2xl leading-tight break-words font-extrabold md:text-3xl" style={{ fontFamily: '"Playfair Display", serif' }}>
             Rina menerima pesanan 30 kaos. Menurutmu dia{" "}
             <em className="ff-italic text-[var(--red)]">untung atau rugi</em>?
           </h1>
 
-          <div className="mt-8 space-y-3">
+          {/* Rincian data pesanan 30 kaos agar siswa dapat membaca konteks */}
+          <div className="mt-4 border-2 border-[var(--hairline-strong)] bg-[var(--card)] p-3 text-xs sm:text-sm">
+            <p className="font-bold text-[var(--ink)] mb-2 text-center text-xs uppercase tracking-wider text-[var(--red)]">
+              Data Pesanan 30 Kaos
+            </p>
+            <div className="space-y-1.5 mono">
+              <div className="flex justify-between border-b border-dashed border-[var(--hairline)] pb-1">
+                <span>Uang masuk (50 × 30):</span>
+                <b className="text-emerald-700">1,5 juta</b>
+              </div>
+              <div className="flex justify-between border-b border-dashed border-[var(--hairline)] pb-1">
+                <span>Bahan sablon (30 × 30):</span>
+                <span>900 ribu</span>
+              </div>
+              <div className="flex justify-between border-b border-dashed border-[var(--hairline)] pb-1">
+                <span>Upah tenaga (30 × 30):</span>
+                <span>900 ribu</span>
+              </div>
+              <div className="flex justify-between">
+                <span>Sewa & listrik tetap:</span>
+                <span>75 ribu</span>
+              </div>
+            </div>
+          </div>
+
+          <div className="mt-5 space-y-2.5">
             {OPSI.map((o) => {
               const aktif = pilih === o.key;
               return (
@@ -69,11 +94,11 @@ export default function SiswaVotePage() {
                   key={o.key}
                   onClick={() => kirim(o.key)}
                   className={cn(
-                    "flex w-full items-center gap-3 border-2 px-4 py-4 text-left text-base font-bold transition-all",
+                    "flex w-full items-center gap-3 border-2 px-4 py-3 text-left text-sm sm:text-base font-bold transition-all",
                     aktif ? "border-[var(--red)] bg-[var(--red)] text-white" : "border-[var(--hairline-strong)] bg-[var(--card)] hover:-translate-y-0.5"
                   )}
                 >
-                  <span className={cn("grid h-7 w-7 shrink-0 place-items-center border-2", aktif ? "border-white bg-white text-[var(--red)]" : "border-[var(--ink-3)]")}>
+                  <span className={cn("grid h-6 w-6 shrink-0 place-items-center border-2", aktif ? "border-white bg-white text-[var(--red)]" : "border-[var(--ink-3)]")}>
                     {aktif && <Check className="h-4 w-4" strokeWidth={3} />}
                   </span>
                   {o.label}
@@ -83,11 +108,11 @@ export default function SiswaVotePage() {
           </div>
 
           {pilih && (
-            <p className="anim-rise mt-5 text-center text-sm text-emerald-700">
-              Pilihanmu tercatat, lihat layar depan untuk hasil seluruh kelas.
+            <p className="anim-rise mt-4 text-center text-sm font-semibold text-emerald-700">
+              Pilihanmu tercatat! Perhatikan guru saat membahas jawaban bersama di layar.
             </p>
           )}
-          <p className="mono mt-3 text-center text-xs tabular text-[var(--ink-3)]">
+          <p className="mono mt-2 text-center text-xs tabular text-[var(--ink-3)]">
             {data?.terisi ?? 0}/{data?.total ?? 0} teman sudah memilih
           </p>
         </div>

@@ -10,7 +10,7 @@ import { Hourglass, MonitorUp } from "lucide-react";
 export default function SiswaMateriPage() {
   const { siswa, ready } = useSiswa();
   usePing(siswa?.siswaId);
-  const { state } = useKelasState(siswa?.kelasKode, 1500);
+  const { state } = useKelasState(siswa?.kelasKode, 1000);
   useStageFollow(state?.kelas.stage, "materi", state?.kelas.stage !== "materi");
 
   if (!ready || !siswa) return null;

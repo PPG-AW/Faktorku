@@ -16,15 +16,15 @@ export const STAGE_ORDER: StageMeta[] = [
   { key: "cover", label: "Cover", fase: "-", icon: MonitorPlay },
   { key: "apersepsi", label: "Apersepsi", fase: "Pendahuluan", icon: Target },
   { key: "tujuan", label: "Tujuan", fase: "Pendahuluan", icon: Goal },
-  { key: "materi", label: "Stimulasi", fase: "Fase 1", icon: MonitorPlay },
+  { key: "materi", label: "Materi / Stimulasi", fase: "Fase 1", icon: MonitorPlay },
+  { key: "vote-rina", label: "Vote Kasus Rina", fase: "Fase 1", icon: Target },
   { key: "cobax", label: "CobaX", fase: "Fase 2", icon: FlaskConical },
-  { key: "lkpd", label: "LKPD", fase: "Fase 3–4", icon: PenLine },
-  { key: "klasifikasi", label: "Klasifikasi & Pola", fase: "Fase 3", icon: Shapes },
-  { key: "share", label: "SHARE", fase: "Fase 5", icon: Speech },
+  { key: "aktivitas-think", label: "LKPD Think (Mandiri)", fase: "Fase 3", icon: PenLine },
+  { key: "aktivitas-pair", label: "LKPD Pair (Pasangan)", fase: "Fase 4", icon: Shapes },
+  { key: "aktivitas-share", label: "SHARE Presentasi", fase: "Fase 5", icon: Speech },
   { key: "kuis", label: "Kuis", fase: "Fase 6", icon: Trophy },
   { key: "refleksi", label: "Refleksi", fase: "Fase 6", icon: Sparkles },
-  { key: "penutup", label: "Penutup", fase: "Penutup", icon: Flag },
-  { key: "hasil", label: "Rekap Nilai", fase: "-", icon: BarChart3 },
+  { key: "doa", label: "Penutup & Doa", fase: "Penutup", icon: Flag },
 ];
 
 export function stageMeta(key: string): StageMeta {
