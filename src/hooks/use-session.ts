@@ -70,10 +70,21 @@ export interface KelasState {
 }
 
 export function useKelasState(kode: string | null | undefined, refreshMs = 1800) {
+  const router = useRouter();
   const { data, error, mutate } = useSWR<KelasState>(
     kode ? `/api/kelas/${kode}/state` : null,
     fetcher,
-    { refreshInterval: refreshMs, revalidateOnFocus: true }
+    {
+      refreshInterval: refreshMs,
+      revalidateOnFocus: true,
+      onError: (err) => {
+        // Jika server merespon 404 (kelas lama sudah terhapus atau tidak ada di database)
+        if (err?.message?.includes("404") || err?.status === 404) {
+          clearSiswaSession();
+          router.replace("/join");
+        }
+      },
+    }
   );
   const offset = useMemo(() => {
     if (!data?.serverNow) return 0;
