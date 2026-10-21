@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { useRouter, usePathname } from "next/navigation";
 import useSWR from "swr";
-import { getSiswaSession, getGuruKode, type SiswaSession } from "@/lib/session";
+import { getSiswaSession, clearSiswaSession, getGuruKode, type SiswaSession } from "@/lib/session";
 
 export const fetcher = (url: string) =>
   fetch(url).then(async (r) => {
