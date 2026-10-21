@@ -110,6 +110,16 @@ export function DrawCanvas({
     return () => ro.disconnect();
   }, [paint]);
 
+  // Cegah scroll global saat mode draw aktif (safety net untuk iOS Safari)
+  useEffect(() => {
+    if (!active) return;
+    const prevent = (e: TouchEvent) => {
+      if (drawingRef.current) e.preventDefault();
+    };
+    document.addEventListener("touchmove", prevent, { passive: false });
+    return () => document.removeEventListener("touchmove", prevent);
+  }, [active]);
+
   /* ---------- pointer ---------- */
   function rel(e: React.PointerEvent) {
     const r = wrapRef.current!.getBoundingClientRect();
@@ -118,6 +128,7 @@ export function DrawCanvas({
 
   function down(e: React.PointerEvent) {
     if (!active) return;
+    e.preventDefault();
     e.currentTarget.setPointerCapture(e.pointerId);
     drawingRef.current = true;
     currentRef.current = { tool, color, width, pts: [rel(e)] };
@@ -126,13 +137,17 @@ export function DrawCanvas({
 
   function move(e: React.PointerEvent) {
     if (!active || !drawingRef.current || !currentRef.current) return;
+    e.preventDefault();
     currentRef.current.pts.push(rel(e));
     paint();
   }
 
-  function up() {
+  function up(e?: React.PointerEvent) {
     if (!drawingRef.current || !currentRef.current) return;
     drawingRef.current = false;
+    if (e) {
+      try { e.currentTarget.releasePointerCapture(e.pointerId); } catch {}
+    }
     const s = currentRef.current;
     currentRef.current = null;
     if (s.pts.length > 1) {
@@ -172,14 +187,24 @@ export function DrawCanvas({
     <>
       <div
         ref={wrapRef}
-        className={cn("absolute inset-0 z-30", active ? "pointer-events-auto" : "pointer-events-none")}
-        style={{ cursor: active ? (tool === "eraser" ? "cell" : "crosshair") : "default" }}
+        className={cn(
+          "absolute inset-0 z-30",
+          active ? "pointer-events-auto" : "pointer-events-none"
+        )}
+        style={{
+          cursor: active ? (tool === "eraser" ? "cell" : "crosshair") : "default",
+          touchAction: active ? "none" : "auto",
+          WebkitUserSelect: "none",
+          userSelect: "none",
+          WebkitTouchCallout: "none",
+          overscrollBehavior: "contain",
+        }}
         onPointerDown={down}
         onPointerMove={move}
         onPointerUp={up}
-        onPointerLeave={up}
+        onPointerCancel={up}
       >
-        <canvas ref={canvasRef} className="h-full w-full" />
+        <canvas ref={canvasRef} className="h-full w-full block" />
       </div>
 
       {active && (
@@ -194,7 +219,10 @@ export function DrawCanvas({
               key={k}
               onClick={() => setTool(k)}
               title={label}
-              className={cn("border-2 border-[var(--ink)] p-2 transition-colors", tool === k ? "bg-[var(--ink)] text-[var(--paper)]" : "bg-[var(--card)] hover:bg-[var(--paper-2)]")}
+              className={cn(
+                "border-2 border-[var(--ink)] p-2 transition-colors",
+                tool === k ? "bg-[var(--ink)] text-[var(--paper)]" : "bg-[var(--card)] hover:bg-[var(--paper-2)]"
+              )}
             >
               <Icon className="h-4 w-4" />
             </button>
@@ -207,7 +235,10 @@ export function DrawCanvas({
             <button
               key={w.key}
               onClick={() => { setColor(w.v); if (tool === "eraser") setTool("pen"); }}
-              className={cn("h-7 w-7 border-2 border-[var(--ink)] transition-transform", color === w.v && tool !== "eraser" && "scale-110 ring-2 ring-[var(--ink)] ring-offset-1")}
+              className={cn(
+                "h-7 w-7 border-2 border-[var(--ink)] transition-transform",
+                color === w.v && tool !== "eraser" && "scale-110 ring-2 ring-[var(--ink)] ring-offset-1"
+              )}
               style={{ backgroundColor: w.v }}
               title={w.key}
             />
@@ -220,25 +251,54 @@ export function DrawCanvas({
             <button
               key={t.key}
               onClick={() => setWidth(t.v)}
-              className={cn("grid h-7 w-7 place-items-center border-2 border-[var(--ink)]", width === t.v ? "bg-[var(--ink)]" : "bg-[var(--card)]")}
+              className={cn(
+                "grid h-7 w-7 place-items-center border-2 border-[var(--ink)]",
+                width === t.v ? "bg-[var(--ink)]" : "bg-[var(--card)]"
+              )}
               title={`Tebal ${t.key}`}
             >
-              <span className="rounded-full" style={{ width: t.v + 2, height: t.v + 2, background: width === t.v ? "var(--paper)" : "var(--ink)" }} />
+              <span
+                className="rounded-full"
+                style={{
+                  width: t.v + 2,
+                  height: t.v + 2,
+                  background: width === t.v ? "var(--paper)" : "var(--ink)",
+                }}
+              />
             </button>
           ))}
 
           <span className="mx-1 h-7 w-px bg-[var(--hairline-strong)]" />
 
-          <button onClick={undo} disabled={strokes.length === 0} className="border-2 border-[var(--ink)] bg-[var(--card)] p-2 disabled:opacity-35 hover:bg-[var(--paper-2)]" title="Undo">
+          <button
+            onClick={undo}
+            disabled={strokes.length === 0}
+            className="border-2 border-[var(--ink)] bg-[var(--card)] p-2 disabled:opacity-35 hover:bg-[var(--paper-2)]"
+            title="Undo"
+          >
             <Undo2 className="h-4 w-4" />
           </button>
-          <button onClick={redoFn} disabled={(redo[slideKey] ?? []).length === 0} className="border-2 border-[var(--ink)] bg-[var(--card)] p-2 disabled:opacity-35 hover:bg-[var(--paper-2)]" title="Redo">
+          <button
+            onClick={redoFn}
+            disabled={(redo[slideKey] ?? []).length === 0}
+            className="border-2 border-[var(--ink)] bg-[var(--card)] p-2 disabled:opacity-35 hover:bg-[var(--paper-2)]"
+            title="Redo"
+          >
             <Redo2 className="h-4 w-4" />
           </button>
-          <button onClick={clearAll} disabled={strokes.length === 0} className="border-2 border-[var(--ink)] bg-[var(--card)] p-2 disabled:opacity-35 hover:bg-[var(--paper-2)]" title="Bersihkan">
+          <button
+            onClick={clearAll}
+            disabled={strokes.length === 0}
+            className="border-2 border-[var(--ink)] bg-[var(--card)] p-2 disabled:opacity-35 hover:bg-[var(--paper-2)]"
+            title="Bersihkan"
+          >
             <Trash2 className="h-4 w-4" />
           </button>
-          <button onClick={onClose} className="border-2 border-[var(--red)] bg-[var(--red)] p-2 text-white" title="Tutup mode coret">
+          <button
+            onClick={onClose}
+            className="border-2 border-[var(--red)] bg-[var(--red)] p-2 text-white"
+            title="Tutup mode coret"
+          >
             <X className="h-4 w-4" />
           </button>
         </div>
