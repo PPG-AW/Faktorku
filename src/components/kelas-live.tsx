@@ -44,29 +44,20 @@ function inisial(nama: string) {
 function progresLabel(s: MonitorSiswa): string | null {
   const p = s.progress;
   switch (s.currentStage) {
-    case "lobby":
-      return "di lobi";
-    case "materi":
-      return "menyimak slide";
+    case "sapaan":
+      return p.sapaan ? "sudah menyapa" : "belum menyapa";
     case "apersepsi":
       return `${p.apersepsi}/8 soal`;
-    case "vote-rina":
-      return "untung/rugi";
-    case "cobax":
     case "coba-coba":
-      return `${p.cobacoba.attempts}× coba`;
-    case "aktivitas-think":
-      return "LKPD Think";
-    case "aktivitas-pair":
-      return "LKPD Pair";
-    case "aktivitas-share":
-      return "LKPD Share";
+      return `${p.cobacoba.attempts}× coba · ${p.cobacoba.roots.length}/2 akar`;
+    case "klasifikasi":
+      return p.klasifikasi ? `${p.klasifikasi.sortBenar + p.klasifikasi.polaBenar}/12 benar` : "sedang mengisi";
+    case "worksheet":
+      return `${p.worksheet}/3 soal`;
     case "kuis":
-      return `${p.kuis.answered}/5 soal · ${p.kuis.skor} pt`;
+      return `${p.kuis.answered}/5 soal · ${p.kuis.skor} poin`;
     case "refleksi":
       return p.refleksi ? "refleksi terkirim" : "sedang mengisi";
-    case "doa":
-      return "doa penutup";
     default:
       return null;
   }
@@ -186,9 +177,11 @@ export function KelasLive({ kelasId, aktifStage }: { kelasId: string; aktifStage
       {/* Agregat per langkah */}
       <div className="mt-4 flex flex-wrap gap-2 border-t border-white/6 pt-4">
         {([
-          { key: "apersepsi", n: siswa.filter((s) => s.progress.apersepsi >= 4).length, total: data?.agg.total ?? 0 },
-          { key: "cobax", n: data?.agg.cobaCoba?.totalAttempts ? 1 : 0, total: 1 },
-          { key: "aktivitas-think", n: siswa.filter((s) => s.currentStage.startsWith("aktivitas-")).length, total: data?.agg.total ?? 0 },
+          { key: "sapaan", n: data?.agg.sapaan ?? 0, total: data?.agg.total ?? 0 },
+          { key: "apersepsi", n: siswa.filter((s) => s.progress.apersepsi >= 8).length, total: data?.agg.total ?? 0 },
+          { key: "coba-coba", n: siswa.filter((s) => s.progress.cobacoba.roots.length >= 2).length, total: data?.agg.total ?? 0 },
+          { key: "klasifikasi", n: data?.agg.klasifikasi.submitted ?? 0, total: data?.agg.total ?? 0 },
+          { key: "worksheet", n: siswa.filter((s) => s.progress.worksheet >= 3).length, total: data?.agg.total ?? 0 },
           { key: "kuis", n: siswa.filter((s) => s.progress.kuis.answered > 0).length, total: data?.agg.total ?? 0 },
           { key: "refleksi", n: data?.agg.refleksi ?? 0, total: data?.agg.total ?? 0 },
         ] as const).map(({ key, n, total }) => {

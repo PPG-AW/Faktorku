@@ -19,22 +19,18 @@ export default function SiswaHub() {
     if (!state) return;
     const stage = state.kelas.stage;
     if (stage !== "lobby") {
-      if (stage.startsWith("aktivitas-")) {
-        router.push("/siswa/aktivitas");
-      } else {
-        router.push(`/siswa/${stage}`);
-      }
+      router.push(`/siswa/${stage}`);
     }
   }, [state, router]);
 
   if (!ready || !siswa) return null;
 
   return (
-    <main className="relative min-h-[100dvh] overflow-x-hidden">
+    <main className="relative min-h-screen">
       <Ambient />
-      <div className="relative z-10 mx-auto flex min-h-[100dvh] max-w-lg flex-col px-4 py-6 sm:px-6 sm:py-8">
+      <div className="relative z-10 mx-auto flex min-h-screen max-w-lg flex-col px-6 py-8">
         <div className="flex items-center justify-between">
-          <Logo compact />
+          <Logo />
           <button
             onClick={() => { clearSiswaSession(); router.replace("/join"); }}
             className="btn btn-ghost px-3 py-2 text-xs"

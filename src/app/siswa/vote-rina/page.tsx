@@ -52,79 +52,34 @@ export default function SiswaVotePage() {
           <span className="chip">{siswa.nama}</span>
         </div>
 
-        <div className="flex flex-1 flex-col justify-center py-6">
+        <div className="flex flex-1 flex-col justify-center py-8">
           <span className="chip mx-auto uppercase tracking-[0.2em] !text-[var(--red)] border-[var(--red)]/30 bg-[var(--red)]/8">
-            <Vote className="h-3.5 w-3.5" /> Kasus untuk Dijawab
+            <Vote className="h-3.5 w-3.5" /> Pendapatmu
           </span>
-          <h1 className="mt-3 text-center text-2xl font-extrabold leading-tight md:text-3xl" style={{ fontFamily: '"Playfair Display", serif' }}>
-            Rina Mendapat Pesanan 30 Kaos
+          <h1 className="mt-5 text-center text-2xl sm:text-3xl leading-tight break-words md:text-4xl" style={{ fontFamily: '"Playfair Display", serif' }}>
+            Rina menerima pesanan 30 kaos. Menurutmu dia{" "}
+            <em className="ff-italic text-[var(--red)]">untung atau rugi</em>?
           </h1>
-          <p className="mt-1 text-center text-xs text-[var(--ink-3)] md:text-sm">
-            Minggu ini Rina menerima pesanan sebanyak 30 kaos. Semua pesanan selesai dan terjual habis.
-          </p>
 
-          {/* Tabel Data Usaha Rina */}
-          <div className="glass mt-5 overflow-hidden rounded-2xl border-2 border-[var(--hairline-strong)]">
-            <div className="border-b border-[var(--hairline)] bg-[var(--paper-2)] px-4 py-2">
-              <p className="label !mb-0 text-[0.65rem]">Data Perhitungan Minggu Ini</p>
-            </div>
-            <table className="w-full text-left text-xs md:text-sm">
-              <thead className="border-b border-[var(--hairline)] bg-[var(--card)] font-bold text-[var(--ink-2)]">
-                <tr>
-                  <th className="px-3.5 py-2">Komponen</th>
-                  <th className="px-3.5 py-2">Perhitungan</th>
-                  <th className="px-3.5 py-2 text-right">Hasil</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-[var(--hairline)]">
-                <tr className="bg-emerald-500/5">
-                  <td className="px-3.5 py-2 font-semibold text-emerald-800">Uang masuk</td>
-                  <td className="mono px-3.5 py-2 text-zinc-600">50 ribu × 30 kaos</td>
-                  <td className="mono px-3.5 py-2 text-right font-bold text-emerald-700">1,5 juta</td>
-                </tr>
-                <tr>
-                  <td className="px-3.5 py-2 font-semibold text-[var(--ink)]">Bahan sablon</td>
-                  <td className="mono px-3.5 py-2 text-zinc-600">30 ribu × 30 kaos</td>
-                  <td className="mono px-3.5 py-2 text-right font-semibold">900 ribu</td>
-                </tr>
-                <tr>
-                  <td className="px-3.5 py-2 font-semibold text-[var(--ink)]">Upah tenaga kerja</td>
-                  <td className="mono px-3.5 py-2 text-zinc-600">30 ribu × 30 kaos</td>
-                  <td className="mono px-3.5 py-2 text-right font-semibold">900 ribu</td>
-                </tr>
-                <tr>
-                  <td className="px-3.5 py-2 font-semibold text-[var(--ink)]">Sewa dan listrik</td>
-                  <td className="mono px-3.5 py-2 text-zinc-600">tetap seminggu</td>
-                  <td className="mono px-3.5 py-2 text-right font-semibold">75 ribu</td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-
-          <div className="mt-6">
-            <p className="text-center text-sm font-bold text-[var(--ink)] md:text-base">
-              Menurutmu, apakah Rina untung atau rugi pada minggu ini?
-            </p>
-            <div className="mt-3 space-y-2.5">
-              {OPSI.map((o) => {
-                const aktif = pilih === o.key;
-                return (
-                  <button
-                    key={o.key}
-                    onClick={() => kirim(o.key)}
-                    className={cn(
-                      "flex w-full items-center gap-3 border-2 px-4 py-3 text-left text-sm font-bold transition-all md:text-base",
-                      aktif ? "border-[var(--red)] bg-[var(--red)] text-white shadow-[2px_2px_0_var(--ink)]" : "border-[var(--hairline-strong)] bg-[var(--card)] hover:-translate-y-0.5"
-                    )}
-                  >
-                    <span className={cn("grid h-6 w-6 shrink-0 place-items-center border-2", aktif ? "border-white bg-white text-[var(--red)]" : "border-[var(--ink-3)]")}>
-                      {aktif && <Check className="h-3.5 w-3.5" strokeWidth={3} />}
-                    </span>
-                    {o.label}
-                  </button>
-                );
-              })}
-            </div>
+          <div className="mt-8 space-y-3">
+            {OPSI.map((o) => {
+              const aktif = pilih === o.key;
+              return (
+                <button
+                  key={o.key}
+                  onClick={() => kirim(o.key)}
+                  className={cn(
+                    "flex w-full items-center gap-3 border-2 px-4 py-4 text-left text-base font-bold transition-all",
+                    aktif ? "border-[var(--red)] bg-[var(--red)] text-white" : "border-[var(--hairline-strong)] bg-[var(--card)] hover:-translate-y-0.5"
+                  )}
+                >
+                  <span className={cn("grid h-7 w-7 shrink-0 place-items-center border-2", aktif ? "border-white bg-white text-[var(--red)]" : "border-[var(--ink-3)]")}>
+                    {aktif && <Check className="h-4 w-4" strokeWidth={3} />}
+                  </span>
+                  {o.label}
+                </button>
+              );
+            })}
           </div>
 
           {pilih && (

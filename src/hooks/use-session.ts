@@ -46,11 +46,6 @@ export interface KelasState {
     slideAktif: number;
     slideLocked: boolean;
     slideTotal: number;
-    apersepsiSoalAktif?: number;
-    timerStart?: string | null;
-    timerDurasi?: number;
-    timerRunning?: boolean;
-    timerRemaining?: number;
   };
   siswaOnline: number;
   totalSiswa: number;
@@ -85,24 +80,12 @@ export function useStageFollow(stage: string | undefined, current: string, enabl
   const router = useRouter();
   useEffect(() => {
     if (!enabled || !stage) return;
-    
-    // Jika sedang di halaman aktivitas (think/pair/share) dan stage masih aktivitas-*, jangan redirect
-    if (current === "aktivitas" && stage.startsWith("aktivitas-")) {
-      return;
-    }
-
-    if (stage === "lobby") {
-      if (current !== "lobby") router.push("/siswa");
-      return;
-    }
-
-    if (stage.startsWith("aktivitas-")) {
-      if (current !== "aktivitas") router.push("/siswa/aktivitas");
-      return;
-    }
-
-    if (stage !== current) {
-      router.push(`/siswa/${stage}`);
+    if (stage !== current && stage !== "lobby") {
+      // Aktivitas think/pair/share semua menuju satu halaman wizard
+      if (stage.startsWith("aktivitas-")) router.push("/siswa/aktivitas");
+      else router.push(`/siswa/${stage}`);
+    } else if (stage === "lobby" && current !== "lobby") {
+      router.push("/siswa");
     }
   }, [stage, current, router, enabled]);
 }
@@ -113,17 +96,16 @@ const KNOWN_STAGES = new Set([
   "materi", "apersepsi", "vote-rina", "cobax", "kuis", "refleksi", "doa",
 ]);
 
-/** Heartbeat presence + lapor halaman yang sedang dibuka (infer dari URL atau props) */
-export function usePing(siswaId: string | null | undefined, currentStage?: string) {
+/** Heartbeat presence + lapor halaman yang sedang dibuka (infer dari URL) */
+export function usePing(siswaId: string | null | undefined) {
   const pathname = usePathname();
   const stage = useMemo(() => {
-    if (currentStage) return currentStage;
     const seg = pathname.replace(/^\/siswa\/?/, "").split("/")[0];
     if (seg === "aktivitas") return "aktivitas-think";
     if (seg === "cobax") return "cobax";
     if (seg === "doa") return "doa";
     return KNOWN_STAGES.has(seg) ? seg : "lobby";
-  }, [pathname, currentStage]);
+  }, [pathname]);
 
   useEffect(() => {
     if (!siswaId) return;

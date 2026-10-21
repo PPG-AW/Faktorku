@@ -39,11 +39,7 @@ export async function POST(req: Request) {
     };
     if (!kelasId || !action) return NextResponse.json({ error: "kelasId dan action wajib." }, { status: 400 });
 
-    const k = await db
-      .select({ id: kelas.id, slideAktif: kelas.slideAktif })
-      .from(kelas)
-      .where(eq(kelas.id, kelasId))
-      .limit(1);
+    const k = await db.select().from(kelas).where(eq(kelas.id, kelasId)).limit(1);
     if (k.length === 0) return NextResponse.json({ error: "Kelas tidak ditemukan." }, { status: 404 });
     const krow = k[0];
 
@@ -78,44 +74,6 @@ export async function POST(req: Request) {
       }
       case "slideLock": {
         await db.update(kelas).set({ slideLocked: Boolean(value) }).where(eq(kelas.id, kelasId));
-        break;
-      }
-      case "setApersepsiSoal": {
-        const nomor = Math.max(1, Number(value) || 1);
-        await db.update(kelas).set({ apersepsiSoalAktif: nomor }).where(eq(kelas.id, kelasId));
-        break;
-      }
-      case "timerStart": {
-        const v = (value ?? {}) as { durasi?: number; remaining?: number };
-        const durasi = Number(v.durasi) || 0;
-        const remaining = Number(v.remaining) || durasi;
-        await db.update(kelas).set({
-          timerStart: new Date(),
-          timerDurasi: durasi,
-          timerRemaining: remaining,
-          timerRunning: true,
-        }).where(eq(kelas.id, kelasId));
-        break;
-      }
-      case "timerPause": {
-        const v = (value ?? {}) as { remaining?: number };
-        const remaining = Number(v.remaining) || 0;
-        await db.update(kelas).set({
-          timerRunning: false,
-          timerRemaining: remaining,
-          timerStart: null,
-        }).where(eq(kelas.id, kelasId));
-        break;
-      }
-      case "timerReset": {
-        const v = (value ?? {}) as { durasi?: number };
-        const durasi = Number(v.durasi) || 0;
-        await db.update(kelas).set({
-          timerRunning: false,
-          timerRemaining: durasi,
-          timerDurasi: durasi,
-          timerStart: null,
-        }).where(eq(kelas.id, kelasId));
         break;
       }
       case "tutupLogin": {

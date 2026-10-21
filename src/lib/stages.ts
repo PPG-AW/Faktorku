@@ -1,6 +1,6 @@
 import {
-  BookOpen, Flag, FlaskConical, Goal, Handshake, MonitorPlay,
-  PenLine, Sparkles, Speech, Target, Trophy, Vote, type LucideIcon,
+  BarChart3, FlaskConical, Flag, Goal, MonitorPlay, PenLine, Shapes,
+  Sparkles, Speech, Target, Trophy, type LucideIcon,
 } from "lucide-react";
 import type { SlideKonten } from "@/db/schema";
 
@@ -11,31 +11,24 @@ export interface StageMeta {
   icon: LucideIcon;
 }
 
-/** Urutan lengkap tahapan pembelajaran */
+/** Urutan lengkap sesuai Modul Ajar (T-Faktor a=1), LKPD menyusul */
 export const STAGE_ORDER: StageMeta[] = [
-  { key: "lobby", label: "Lobi Kelas", fase: "Pembuka", icon: MonitorPlay },
+  { key: "cover", label: "Cover", fase: "-", icon: MonitorPlay },
   { key: "apersepsi", label: "Apersepsi", fase: "Pendahuluan", icon: Target },
   { key: "tujuan", label: "Tujuan", fase: "Pendahuluan", icon: Goal },
-  { key: "materi", label: "Materi & Stimulasi", fase: "Fase 1", icon: MonitorPlay },
-  { key: "vote-rina", label: "Untung atau Rugi", fase: "Fase 1", icon: Vote },
+  { key: "materi", label: "Stimulasi", fase: "Fase 1", icon: MonitorPlay },
   { key: "cobax", label: "CobaX", fase: "Fase 2", icon: FlaskConical },
-  { key: "aktivitas-think", label: "LKPD: Think", fase: "Fase 3", icon: PenLine },
-  { key: "aktivitas-pair", label: "LKPD: Pair", fase: "Fase 4", icon: Handshake },
-  { key: "aktivitas-share", label: "SHARE: Presentasi", fase: "Fase 5", icon: Speech },
+  { key: "lkpd", label: "LKPD", fase: "Fase 3–4", icon: PenLine },
+  { key: "klasifikasi", label: "Klasifikasi & Pola", fase: "Fase 3", icon: Shapes },
+  { key: "share", label: "SHARE", fase: "Fase 5", icon: Speech },
   { key: "kuis", label: "Kuis", fase: "Fase 6", icon: Trophy },
   { key: "refleksi", label: "Refleksi", fase: "Fase 6", icon: Sparkles },
-  { key: "doa", label: "Penutup & Doa", fase: "Penutup", icon: Flag },
+  { key: "penutup", label: "Penutup", fase: "Penutup", icon: Flag },
+  { key: "hasil", label: "Rekap Nilai", fase: "-", icon: BarChart3 },
 ];
 
 export function stageMeta(key: string): StageMeta {
-  const found = STAGE_ORDER.find((s) => s.key === key);
-  if (found) return found;
-  if (key?.startsWith("aktivitas-")) {
-    if (key.includes("pair")) return { key, label: "LKPD: Pair", fase: "Fase 4", icon: Handshake };
-    if (key.includes("share")) return { key, label: "LKPD: Share", fase: "Fase 5", icon: Speech };
-    return { key, label: "LKPD: Think", fase: "Fase 3", icon: PenLine };
-  }
-  return { key, label: key || "Materi", fase: "-", icon: MonitorPlay };
+  return STAGE_ORDER.find((s) => s.key === key) ?? STAGE_ORDER[STAGE_ORDER.length - 1];
 }
 
 /** Konten bawaan (jika kelas ingin ditampilkan langsung di deck) */
@@ -73,7 +66,7 @@ export const INFO_KONTEN: Record<string, SlideKonten> = {
   },
   penutup: {
     layout: "content",
-    kicker: "Penutup · Kesimpulan & Tugas",
+    kicker: "Penutup · Kesimpulan & Refleksi",
     title: "Apa yang Kita Pelajari Hari Ini?",
     sub: "T-Faktor a = 1: kunci sederhana dari dua bilangan",
     blocks: [
@@ -84,7 +77,6 @@ export const INFO_KONTEN: Record<string, SlideKonten> = {
         "Selalu buktikan akar lewat substitusi.",
       ] },
       { t: "box", title: "Pertemuan Berikutnya", v: "Rumus ABC & Melengkapkan Kuadrat Sempurna, untuk persamaan yang tidak bisa difaktorkan.", tone: "info" },
-      { t: "steps", items: ["PR 1 · x^2 + 11x + 24 = 0", "PR 2 · x^2 - 13x + 36 = 0", "PR 3 · 2x^2 + 11x + 5 = 0", "Tantangan: x^2 + 3x + 1 = 0 (bisa atau tidak?)"] },
     ],
   },
 };

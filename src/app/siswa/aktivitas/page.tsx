@@ -10,38 +10,28 @@ import { BookOpen, Handshake, Presentation } from "lucide-react";
 
 export default function SiswaAktivitasPage() {
   const { siswa, ready } = useSiswa();
-  const { state, offset } = useKelasState(siswa?.kelasKode, 1000);
+  usePing(siswa?.siswaId);
+  const { state } = useKelasState(siswa?.kelasKode, 1000);
   const stage = state?.kelas.stage ?? "aktivitas-think";
-  usePing(siswa?.siswaId, stage);
-  useStageFollow(stage, "aktivitas");
+  useStageFollow(stage && stage.startsWith("aktivitas-") ? stage : "aktivitas-think",
+    "aktivitas-think",
+    !(stage && stage.startsWith("aktivitas-"))
+  );
 
   const meta = WIZARD_STAGE[stage] ?? WIZARD_STAGE["aktivitas-think"];
-  const total = state?.kelas.timerDurasi && state.kelas.timerDurasi > 0 ? state.kelas.timerDurasi : meta.durasi;
-  const isRunning = Boolean(state?.kelas.timerRunning);
-
+  const [total] = useState(meta.durasi);
   const [sisa, setSisa] = useState(meta.durasi);
   const audioRef = useRef<AudioContext | null>(null);
   const finishedRef = useRef(false);
 
-  // Sinkronkan sisa waktu dengan timer guru
+  // Ketika guru mengganti stage, reset timer ke durasi stage tsb (simple, murni client)
   useEffect(() => {
-    if (!state) return;
-    if (isRunning && state.kelas.timerStart) {
-      const startMs = new Date(state.kelas.timerStart).getTime();
-      const nowMs = Date.now() + offset;
-      const elapsedSec = Math.max(0, Math.floor((nowMs - startMs) / 1000));
-      const rem = Math.max(0, (state.kelas.timerRemaining ?? total) - elapsedSec);
-      setSisa(rem);
-    } else if (state.kelas.timerRemaining !== undefined && state.kelas.timerRemaining > 0) {
-      setSisa(state.kelas.timerRemaining);
-    } else {
-      setSisa(total);
-    }
-  }, [state?.kelas.timerRunning, state?.kelas.timerStart, state?.kelas.timerRemaining, stage, total, isRunning, offset]);
+    setSisa(meta.durasi);
+    finishedRef.current = false;
+    try { navigator.vibrate?.(0); } catch {}
+  }, [stage]);
 
-  // Hitung mundur lokal saat timer aktif
   useEffect(() => {
-    if (!isRunning) return;
     const iv = setInterval(() => {
       setSisa((s) => {
         if (s <= 1) {
@@ -68,7 +58,7 @@ export default function SiswaAktivitasPage() {
       });
     }, 1000);
     return () => clearInterval(iv);
-  }, [isRunning]);
+  }, []);
 
   if (!ready || !siswa) return null;
 
@@ -94,26 +84,16 @@ export default function SiswaAktivitasPage() {
             <Icon className="h-3.5 w-3.5" /> {meta.label}
           </span>
 
-          <h1 className="mt-5 text-3xl font-extrabold tracking-tight md:text-5xl" style={{ fontFamily: '"Playfair Display", serif' }}>
-            Kerjakan LKPD yang <em className="ff-italic text-[var(--red)]">diberikan oleh guru</em>
+          <h1 className="mt-5 text-3xl sm:text-4xl font-extrabold tracking-tight break-words md:text-6xl" style={{ fontFamily: '"Playfair Display", serif' }}>
+            Buka <em className="ff-italic text-[var(--red)]">LKPD-mu</em>
           </h1>
 
-          <p className="mt-4 max-w-md text-base leading-relaxed text-[var(--ink-2)] md:text-lg">
+          <p className="mt-4 max-w-md text-sm sm:text-base leading-relaxed text-[var(--ink-2)] break-words md:text-lg">
             {meta.cara}
           </p>
 
-          <div className="mt-8 flex flex-col items-center">
+          <div className="mt-9">
             <TimerRing sisa={sisa} total={total} size={200} stroke={14} />
-            {!isRunning && sisa > 0 && (
-              <span className="chip mt-3 text-xs font-semibold text-zinc-400">
-                Menunggu guru memulai timer…
-              </span>
-            )}
-            {isRunning && sisa > 0 && !urgent && (
-              <span className="chip mt-3 text-xs font-semibold !text-emerald-300 border-emerald-400/25 bg-emerald-400/8">
-                <span className="pulse-dot h-1.5 w-1.5 rounded-full bg-emerald-400" /> Waktu berjalan
-              </span>
-            )}
           </div>
 
           {urgent && sisa > 0 && (

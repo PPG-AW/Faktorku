@@ -58,13 +58,13 @@ export default function SiswaCobaxPage() {
           <span className="chip uppercase tracking-[0.2em] !text-[var(--red)] border-[var(--red)]/30 bg-[var(--red)]/8">
             <CircleHelp className="h-3.5 w-3.5" /> Tebak Nilai x
           </span>
-          <h1 className="mt-4 text-4xl md:text-5xl" style={{ fontFamily: '"Playfair Display", serif' }}>
+          <h1 className="mt-4 text-3xl sm:text-4xl break-words md:text-5xl" style={{ fontFamily: '"Playfair Display", serif' }}>
             Pilih <em className="ff-italic text-[var(--red)]">angka berapa pun</em>
           </h1>
-          <div className="eq-badge mono mx-auto mt-4 w-fit px-5 py-3 text-2xl font-bold">
+          <div className="eq-badge mono mx-auto mt-4 max-w-full overflow-x-auto px-4 py-2.5 text-xl font-bold sm:px-5 sm:py-3 sm:text-2xl">
             <Eq>x^2 - 20x + 75 = 0</Eq>
           </div>
-          <p className="mt-3 text-sm text-[var(--ink-2)]">
+          <p className="mt-3 text-xs sm:text-sm text-[var(--ink-2)] break-words">
             Menurutmu, berapa nilai <b>x</b> yang membuat hasilnya nol? Pilih antara 0 sampai 30.
           </p>
         </div>

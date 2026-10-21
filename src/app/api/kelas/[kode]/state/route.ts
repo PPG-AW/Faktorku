@@ -1,6 +1,6 @@
 import { db } from "@/db";
 import { kelas, kuisSession, siswa, slide, soalKuis } from "@/db/schema";
-import { ensureMigrations, ensureSeed } from "@/lib/seed";
+import { ensureSeed } from "@/lib/seed";
 import { and, desc, eq, gt, count } from "drizzle-orm";
 import { NextResponse } from "next/server";
 
@@ -12,14 +12,7 @@ export async function GET(
 ) {
   try {
     const { kode } = await params;
-    
-    // Pastikan migrasi kolom berjalan terlebih dahulu
-    try {
-      await ensureMigrations();
-      await ensureSeed();
-    } catch (seedErr) {
-      console.warn("Migration/seed warning in state:", seedErr);
-    }
+    await ensureSeed();
 
     const k = await db.select().from(kelas).where(eq(kelas.kode, kode.toUpperCase())).limit(1);
     if (k.length === 0) {
@@ -51,25 +44,17 @@ export async function GET(
     if (s) {
       const paketRows = soalRows.filter((r) => r.paket === s.paket);
       const soal = paketRows.find((r) => r.nomor === s.soalAktif);
-      const mulaiIso = s.soalMulai
-        ? (s.soalMulai instanceof Date ? s.soalMulai.toISOString() : new Date(s.soalMulai).toISOString())
-        : now.toISOString();
-
       kuis = {
         sessionId: s.id,
         aktif: s.aktif,
         soalAktif: s.soalAktif,
-        soalMulai: mulaiIso,
+        soalMulai: s.soalMulai.toISOString(),
         paket: s.paket,
         totalSoal: paketRows.length,
         timer: soal?.timer ?? 60,
         ended: !s.aktif && s.endedAt !== null,
       };
     }
-
-    const timerStartIso = krow.timerStart
-      ? (krow.timerStart instanceof Date ? krow.timerStart.toISOString() : new Date(krow.timerStart).toISOString())
-      : null;
 
     return NextResponse.json({
       kelas: {
@@ -81,11 +66,6 @@ export async function GET(
         slideAktif: krow.slideAktif,
         slideLocked: krow.slideLocked,
         slideTotal: slideRows.length,
-        apersepsiSoalAktif: krow.apersepsiSoalAktif ?? 1,
-        timerStart: timerStartIso,
-        timerDurasi: krow.timerDurasi ?? 0,
-        timerRunning: krow.timerRunning ?? false,
-        timerRemaining: krow.timerRemaining ?? 0,
       },
       siswaOnline: onlineRows[0]?.c ?? 0,
       totalSiswa: totalRows[0]?.c ?? 0,
@@ -93,7 +73,7 @@ export async function GET(
       kuis,
     });
   } catch (e) {
-    console.error("GET /api/kelas/[kode]/state error:", e);
-    return NextResponse.json({ error: "Terjadi kesalahan server saat memuat kelas." }, { status: 500 });
+    console.error(e);
+    return NextResponse.json({ error: "Terjadi kesalahan server." }, { status: 500 });
   }
 }

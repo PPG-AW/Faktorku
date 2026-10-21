@@ -2,9 +2,9 @@
 
 import { useEffect, useRef, useState } from "react";
 import { Eq, EqText } from "@/components/equation";
-import { LKPD, TABEL_POLA, type LkpdBagian, type LkpdBlok } from "@/lib/lkpd";
+import { LKPD, LKPD_KUNCI, TABEL_POLA, type LkpdBagian, type LkpdBlok } from "@/lib/lkpd";
 import { cn, formatWaktu } from "@/lib/utils";
-import { Clock3, Pause, Play, RotateCcw } from "lucide-react";
+import { Clock3, Eye, EyeOff, KeyRound, Pause, Play, RotateCcw } from "lucide-react";
 
 /* --------------------------- elemen isian --------------------------- */
 
@@ -202,154 +202,43 @@ export function LkpdPanel({ bagian }: { bagian: LkpdBagian }) {
 
 /* ------------------------- timer melayang ------------------------- */
 
-const DURASI: Record<string, number> = {
-  "aktivitas-think": 20 * 60,
-  "aktivitas-pair": 10 * 60,
-  "aktivitas-share": 8 * 60,
-};
+const DURASI: Record<string, number> = { "aktivitas-think": 20 * 60, "aktivitas-share": 8 * 60 };
 
-export function FloatingTimer({ stageKey, kelasId }: { stageKey: string; kelasId?: string }) {
+export function FloatingTimer({ stageKey }: { stageKey: string }) {
   const total = DURASI[stageKey] ?? 10 * 60;
   const [jalan, setJalan] = useState(false);
   const [sisa, setSisa] = useState(total);
   const ivRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
-  // Posisi draggable (drag untuk memindahkan timer)
-  const [position, setPosition] = useState<{ x: number; y: number } | null>(null);
-  const draggingRef = useRef(false);
-  const dragStartRef = useRef({ mouseX: 0, mouseY: 0, startX: 0, startY: 0 });
-
-  useEffect(() => {
-    setSisa(total);
-    setJalan(false);
-  }, [total, stageKey]);
+  useEffect(() => { setSisa(total); setJalan(false); }, [total]);
 
   useEffect(() => {
     if (jalan) {
       ivRef.current = setInterval(() => {
-        setSisa((s) => {
-          if (s <= 1) {
-            setJalan(false);
-            if (kelasId) {
-              fetch("/api/guru/kontrol", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ kelasId, action: "timerPause", value: { remaining: 0 } }),
-              }).catch(() => {});
-            }
-            return 0;
-          }
-          return s - 1;
-        });
+        setSisa((s) => { if (s <= 1) { setJalan(false); return 0; } return s - 1; });
       }, 1000);
     }
-    return () => {
-      if (ivRef.current) clearInterval(ivRef.current);
-    };
-  }, [jalan, kelasId]);
-
-  const toggleJalan = () => {
-    const nextJalan = !jalan;
-    setJalan(nextJalan);
-    if (kelasId) {
-      fetch("/api/guru/kontrol", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          kelasId,
-          action: nextJalan ? "timerStart" : "timerPause",
-          value: { durasi: total, remaining: sisa },
-        }),
-      }).catch(() => {});
-    }
-  };
-
-  const resetTimer = () => {
-    setJalan(false);
-    setSisa(total);
-    if (kelasId) {
-      fetch("/api/guru/kontrol", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          kelasId,
-          action: "timerReset",
-          value: { durasi: total },
-        }),
-      }).catch(() => {});
-    }
-  };
-
-  const handlePointerDown = (e: React.PointerEvent) => {
-    // Abaikan jika klik tombol kontrol
-    if ((e.target as HTMLElement).closest("button")) return;
-    draggingRef.current = true;
-    (e.target as HTMLElement).setPointerCapture(e.pointerId);
-    const rect = e.currentTarget.getBoundingClientRect();
-    dragStartRef.current = {
-      mouseX: e.clientX,
-      mouseY: e.clientY,
-      startX: rect.left,
-      startY: rect.top,
-    };
-  };
-
-  const handlePointerMove = (e: React.PointerEvent) => {
-    if (!draggingRef.current) return;
-    const dx = e.clientX - dragStartRef.current.mouseX;
-    const dy = e.clientY - dragStartRef.current.mouseY;
-    setPosition({
-      x: Math.max(10, Math.min(window.innerWidth - 180, dragStartRef.current.startX + dx)),
-      y: Math.max(10, Math.min(window.innerHeight - 150, dragStartRef.current.startY + dy)),
-    });
-  };
-
-  const handlePointerUp = () => {
-    draggingRef.current = false;
-  };
+    return () => { if (ivRef.current) clearInterval(ivRef.current); };
+  }, [jalan]);
 
   const merah = sisa <= 60 && sisa > 0;
 
   return (
-    <div
-      onPointerDown={handlePointerDown}
-      onPointerMove={handlePointerMove}
-      onPointerUp={handlePointerUp}
-      style={
-        position
-          ? { left: `${position.x}px`, top: `${position.y}px` }
-          : undefined
-      }
-      className={cn(
-        "fixed z-40 flex select-none cursor-grab active:cursor-grabbing flex-col items-center border-2 border-[var(--ink)] bg-[var(--card)] px-4 py-3 shadow-[4px_4px_0_var(--ink)]",
-        !position && "right-5 top-28",
-        merah && "border-[var(--red)]"
-      )}
-      title="Tahan & geser untuk memindahkan timer"
-    >
-      <div className="flex w-full items-center justify-between gap-2 border-b border-[var(--hairline)] pb-1">
-        <span className="flex items-center gap-1 text-[0.6rem] font-extrabold uppercase tracking-widest text-[var(--ink-3)]">
-          <Clock3 className="h-3.5 w-3.5" /> Waktu (Geser)
-        </span>
-        <span className="text-[0.6rem] text-zinc-400">⠿</span>
-      </div>
-      <span className={cn("mono mt-1 text-3xl font-extrabold leading-none tabular", merah ? "text-[var(--red)]" : "text-[var(--ink)]")}>
+    <div className={cn(
+      "fixed right-5 top-28 z-40 flex flex-col items-center border-2 border-[var(--ink)] bg-[var(--card)] px-4 py-3 shadow-[4px_4px_0_var(--ink)]",
+      merah && "border-[var(--red)]"
+    )}>
+      <span className="flex items-center gap-1 text-[0.6rem] font-extrabold uppercase tracking-widest text-[var(--ink-3)]">
+        <Clock3 className="h-3.5 w-3.5" /> Waktu
+      </span>
+      <span className={cn("mono mt-0.5 text-3xl font-extrabold leading-none tabular", merah ? "text-[var(--red)]" : "text-[var(--ink)]")}>
         {formatWaktu(sisa)}
       </span>
-      <div className="mt-2.5 flex gap-1.5">
-        <button
-          onClick={toggleJalan}
-          disabled={sisa === 0}
-          className="border-2 border-[var(--ink)] bg-[var(--card)] p-1.5 hover:bg-[var(--paper-2)] disabled:opacity-40"
-          title={jalan ? "Pause" : "Play"}
-        >
+      <div className="mt-2 flex gap-1.5">
+        <button onClick={() => setJalan((j) => !j)} disabled={sisa === 0} className="border-2 border-[var(--ink)] bg-[var(--card)] p-1.5 disabled:opacity-40">
           {jalan ? <Pause className="h-3.5 w-3.5" /> : <Play className="h-3.5 w-3.5" />}
         </button>
-        <button
-          onClick={resetTimer}
-          className="border-2 border-[var(--ink)] bg-[var(--card)] p-1.5 hover:bg-[var(--paper-2)]"
-          title="Reset"
-        >
+        <button onClick={() => { setJalan(false); setSisa(total); }} className="border-2 border-[var(--ink)] bg-[var(--card)] p-1.5">
           <RotateCcw className="h-3.5 w-3.5" />
         </button>
       </div>
@@ -359,21 +248,10 @@ export function FloatingTimer({ stageKey, kelasId }: { stageKey: string; kelasId
 
 /* --------------------------- panel deck LKPD --------------------------- */
 
-export function DeckLkpd({
-  modeShare = false,
-  defaultBagian,
-}: {
-  modeShare?: boolean;
-  defaultBagian?: "a" | "b" | "c";
-}) {
-  const [bagianKey, setBagianKey] = useState<"a" | "b" | "c">(
-    defaultBagian ?? (modeShare ? "c" : "a")
-  );
+export function DeckLkpd({ modeShare = false }: { modeShare?: boolean }) {
+  const [bagianKey, setBagianKey] = useState<"a" | "b" | "c">(modeShare ? "c" : "a");
+  const [kunci, setKunci] = useState(false);
   const bagian = LKPD.find((b) => b.key === bagianKey) ?? LKPD[0];
-
-  useEffect(() => {
-    if (defaultBagian) setBagianKey(defaultBagian);
-  }, [defaultBagian]);
 
   return (
     <div className="flex h-full flex-col">
@@ -383,19 +261,37 @@ export function DeckLkpd({
             <button
               key={b.key}
               onClick={() => setBagianKey(b.key)}
-              className={cn(
-                "px-5 py-2 text-xs font-extrabold uppercase tracking-widest transition-colors",
-                bagianKey === b.key ? "bg-[#E63946] text-white" : "hover:bg-[#FFF7DC]"
-              )}
+              className={cn("px-5 py-2 text-xs font-extrabold uppercase tracking-widest transition-colors",
+                bagianKey === b.key ? "bg-[#E63946] text-white" : "hover:bg-[#FFF7DC]")}
             >
               Bagian {b.key.toUpperCase()}
             </button>
           ))}
         </div>
+        <button onClick={() => setKunci((v) => !v)} className={cn("btn px-4 py-2 text-xs", kunci ? "btn-amber" : "btn-ghost")}>
+          {kunci ? <EyeOff className="h-3.5 w-3.5" /> : <Eye className="h-3.5 w-3.5" />}
+          {kunci ? "Tutup Kunci" : "Kunci Guru"}
+        </button>
       </div>
 
       <div className="flex-1">
         <LkpdPanel bagian={bagian} />
+
+        {kunci && (
+          <div className="anim-rise mt-4 border-2 border-[#D90429] bg-[#FFF3F3] p-4">
+            <p className="mb-3 flex items-center gap-2 text-base font-extrabold uppercase tracking-wider text-[#D90429]">
+              <KeyRound className="h-4.5 w-4.5" /> Kunci Jawaban, Bagian {bagianKey.toUpperCase()}
+            </p>
+            <div className="space-y-1.5">
+              {LKPD_KUNCI[bagianKey].map(([no, jwb]) => (
+                <div key={no} className="flex gap-3 border border-black bg-white px-3 py-2">
+                  <span className="mono w-24 shrink-0 text-xs font-extrabold text-[#1D3557]">{no}</span>
+                  <span className="text-sm font-semibold"><Eq>{jwb}</Eq></span>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );

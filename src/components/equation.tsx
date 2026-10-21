@@ -64,7 +64,7 @@ function render(src: string): ReactNode[] {
 export function Eq({ children, className }: { children: string; className?: string }) {
   const nodes = useMemo(() => render(children), [children]);
   return (
-    <span className={`inline-block max-w-full whitespace-nowrap align-baseline ${className ?? ""}`}>
+    <span className={`inline-block max-w-full overflow-x-auto align-baseline break-normal [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden ${className ?? ""}`}>
       {nodes}
     </span>
   );
@@ -110,7 +110,7 @@ export function EqText({ children, className }: { children: string; className?: 
   }, [children]);
 
   return (
-    <span className={className}>
+    <span className={`break-words ${className ?? ""}`}>
       {parts.map((p, i) =>
         p.math ? <Eq key={i}>{p.teks}</Eq> : <Fragment key={i}>{p.teks}</Fragment>
       )}

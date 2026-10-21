@@ -4,18 +4,10 @@ import { useEffect, useState } from "react";
 import useSWR from "swr";
 import { Ambient } from "@/components/ambient";
 import { Logo } from "@/components/topbar";
-import { Eq } from "@/components/equation";
 import { fetcher, useKelasState, usePing, useSiswa, useStageFollow } from "@/hooks/use-session";
 import { cn } from "@/lib/utils";
-import { CircleCheckBig, PencilLine, Send, Sparkles, Star } from "lucide-react";
-
-const EXIT_TICKET_OPSI = [
-  { key: "A", eq: "(x + 2)(x + 7) = 0" },
-  { key: "B", eq: "(x - 2)(x - 7) = 0" },
-  { key: "C", eq: "(x + 1)(x + 14) = 0" },
-  { key: "D", eq: "(x - 1)(x - 14) = 0" },
-  { key: "E", eq: "(x + 3)(x + 6) = 0" },
-];
+import { Eq, EqText } from "@/components/equation";
+import { Check, CircleCheckBig, PencilLine, Send, Sparkles, Star } from "lucide-react";
 
 function StarRating({ value, onChange, disabled }: { value: number; onChange: (v: number) => void; disabled?: boolean }) {
   const [hover, setHover] = useState(0);
@@ -44,6 +36,14 @@ const ITEM_TUJUAN = [
   { key: "t2", label: "T-Faktor: cari dua bilangan", desc: "p × q = c dan p + q = b" },
   { key: "t3", label: "Substitusi akar", desc: "Buktikan jawaban benar" },
   { key: "t4", label: "Pola tanda faktor", desc: "b dan c menentukan tanda kurung" },
+];
+
+const EXIT_TICKET_OPTIONS = [
+  { key: "A", label: "(x + 1)(x + 14) = 0" },
+  { key: "B", label: "(x + 2)(x + 7) = 0" },
+  { key: "C", label: "(x - 2)(x - 7) = 0" },
+  { key: "D", label: "(x + 3)(x + 6) = 0" },
+  { key: "E", label: "(x - 1)(x - 14) = 0" },
 ];
 
 export default function RefleksiPage() {
@@ -111,12 +111,12 @@ export default function RefleksiPage() {
   };
 
   return (
-    <main className="relative min-h-[100dvh] overflow-x-hidden">
+    <main className="relative min-h-screen">
       <Ambient />
-      <div className="relative z-10 mx-auto flex min-h-[100dvh] max-w-2xl flex-col px-4 py-5 sm:px-5 sm:py-6">
+      <div className="relative z-10 mx-auto flex min-h-screen max-w-2xl flex-col px-5 py-6">
         <div className="flex items-center justify-between">
-          <Logo compact />
-          <span className="chip text-xs">{siswa.nama}</span>
+          <Logo />
+          <span className="chip">{siswa.nama}</span>
         </div>
 
         <div className="mt-6 flex items-center gap-2.5">
@@ -190,14 +190,17 @@ export default function RefleksiPage() {
               <input className="input mono" placeholder="hanya 1 kata" value={satuKata} maxLength={24} disabled={locked} onChange={(e) => setSatuKata(e.target.value)} />
               <p className="mt-1.5 text-[0.62rem] text-[var(--ink-3)]">Kata ini akan membesar di word cloud kelas.</p>
             </div>
-            <div className="border-gradient p-4 sm:p-5" style={{ background: "var(--card)" }}>
-              <p className="label !text-[var(--red)]">Exit Ticket</p>
-              <p className="text-sm font-bold text-[var(--ink)]">
-                Faktorkan: <span className="mono eq-badge inline-block px-2.5 py-0.5"><Eq>x^2 + 9x + 14 = 0</Eq></span>
+            <div className="border-gradient p-5" style={{ background: "var(--card)" }}>
+              <div className="flex items-center justify-between">
+                <p className="label !text-[var(--red)]">Exit Ticket</p>
+                <span className="mono chip !text-[0.6rem] !text-[var(--red)] border-[var(--red)]/30">Opsi A–E</span>
+              </div>
+              <p className="mono mt-1 text-sm font-bold text-[var(--ink)]">
+                Faktorkan: <Eq>x^2 + 9x + 14 = 0</Eq>
               </p>
               <div className="mt-3 space-y-2">
-                {EXIT_TICKET_OPSI.map((opt) => {
-                  const selected = exitTicket === opt.key;
+                {EXIT_TICKET_OPTIONS.map((opt) => {
+                  const active = exitTicket === opt.key;
                   return (
                     <button
                       key={opt.key}
@@ -205,20 +208,24 @@ export default function RefleksiPage() {
                       disabled={locked}
                       onClick={() => setExitTicket(opt.key)}
                       className={cn(
-                        "flex w-full items-center gap-2.5 rounded-xl border p-2.5 text-left transition-all",
-                        selected
-                          ? "border-[var(--red)] bg-[var(--red)]/10 font-bold text-[var(--red)] shadow-[2px_2px_0_var(--ink)]"
-                          : "border-[var(--hairline)] bg-[var(--paper-2)] hover:border-[var(--red)]/50"
+                        "flex w-full items-center gap-2.5 rounded-lg border px-3 py-2 text-left transition-all active:scale-[0.99]",
+                        active
+                          ? "border-[var(--red)] bg-[var(--red)]/10 text-[var(--red)] font-bold shadow-sm"
+                          : "border-[var(--hairline)] bg-[var(--card)] hover:bg-[var(--paper-2)] text-[var(--ink)]"
                       )}
                     >
-                      <span className={cn(
-                        "mono grid h-6 w-6 shrink-0 place-items-center rounded-lg border text-xs font-bold",
-                        selected ? "border-[var(--red)] bg-[var(--red)] text-white" : "border-[var(--hairline-strong)] bg-white text-[var(--ink-2)]"
-                      )}>
+                      <span
+                        className={cn(
+                          "mono flex h-6 w-6 shrink-0 items-center justify-center rounded text-xs font-extrabold",
+                          active
+                            ? "bg-[var(--red)] text-white"
+                            : "border border-[var(--ink-3)] text-[var(--ink-2)] bg-[var(--paper-2)]"
+                        )}
+                      >
                         {opt.key}
                       </span>
-                      <span className="mono min-w-0 flex-1 break-words text-xs sm:text-sm text-[var(--ink)]">
-                        <Eq>{opt.eq}</Eq>
+                      <span className="min-w-0 flex-1 text-xs sm:text-sm font-semibold break-words">
+                        <EqText>{opt.label}</EqText>
                       </span>
                     </button>
                   );

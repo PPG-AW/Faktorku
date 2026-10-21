@@ -17,21 +17,21 @@ function Block({ block, index }: { block: SlideBlock; index: number }) {
   switch (block.t) {
     case "text":
       return (
-        <p className="anim-fade-up text-sm leading-relaxed text-zinc-300 break-words sm:text-base md:text-lg" style={delay}>
+        <p className="anim-fade-up text-base leading-relaxed text-zinc-300 md:text-lg" style={delay}>
           <EqText>{block.v}</EqText>
         </p>
       );
     case "big":
       return (
-        <p className="anim-fade-up text-lg font-bold leading-relaxed text-zinc-100 break-words sm:text-xl md:text-2xl" style={delay}>
+        <p className="anim-fade-up text-xl font-bold leading-relaxed text-zinc-100 md:text-2xl" style={delay}>
           <Eq>{block.v}</Eq>
         </p>
       );
     case "eq":
       return (
         <div
-          className={`anim-fade-up mono eq-badge mx-auto w-fit max-w-full overflow-x-auto px-4 py-2.5 text-center font-semibold tracking-wide text-indigo-100 ${
-            block.big ? "text-[clamp(1.05rem,2.8vw,2rem)] py-3 px-5 sm:px-7 sm:py-4" : "text-[clamp(0.9rem,2vw,1.35rem)]"
+          className={`anim-fade-up mono eq-badge mx-auto w-fit max-w-full px-5 py-3 text-center font-semibold tracking-wide text-indigo-100 ${
+            block.big ? "text-[clamp(1.15rem,3.1vw,2.1rem)] py-4 px-7" : "text-[clamp(1rem,2.2vw,1.45rem)]"
           }`}
           style={delay}
         >
@@ -162,11 +162,11 @@ export function SlideViewer({
 
       {isHero ? (
         <>
-          <h1 className="anim-fade-up anim-fade-up-1 text-gradient text-glow text-5xl font-extrabold tracking-tight md:text-7xl">
+          <h1 className="anim-fade-up anim-fade-up-1 text-gradient text-glow text-3xl sm:text-5xl font-extrabold tracking-tight break-words md:text-7xl">
             {konten.title}
           </h1>
           {konten.sub && (
-            <p className="anim-fade-up anim-fade-up-2 mt-4 max-w-3xl text-base leading-relaxed text-zinc-400 md:text-xl">{konten.sub}</p>
+            <p className="anim-fade-up anim-fade-up-2 mt-4 max-w-3xl text-sm sm:text-base leading-relaxed text-zinc-400 break-words md:text-xl">{konten.sub}</p>
           )}
           <div className="anim-fade-up anim-fade-up-3 mt-8 flex w-full max-w-2xl flex-col items-center gap-4">
             {blocks.map((b, i) => (
@@ -177,15 +177,15 @@ export function SlideViewer({
       ) : (
         <div className="mx-auto w-full max-w-5xl">
           <div className="flex items-end justify-between gap-4">
-            <h1 className="anim-fade-up anim-fade-up-1 text-3xl font-extrabold tracking-tight text-zinc-50 md:text-5xl">
+            <h1 className="anim-fade-up anim-fade-up-1 text-2xl sm:text-3xl font-extrabold tracking-tight text-zinc-50 break-words md:text-5xl">
               {konten.title}
             </h1>
-            <span className="mono shrink-0 text-sm font-semibold text-zinc-500 tabular">
+            <span className="mono shrink-0 text-xs sm:text-sm font-semibold text-zinc-500 tabular">
               {String(nomor).padStart(2, "0")}<span className="text-zinc-700">/{total}</span>
             </span>
           </div>
           {konten.sub && (
-            <p className="anim-fade-up anim-fade-up-2 mt-2 text-sm leading-relaxed text-indigo-300/90 md:text-base">{konten.sub}</p>
+            <p className="anim-fade-up anim-fade-up-2 mt-2 text-xs sm:text-sm leading-relaxed text-indigo-300/90 break-words md:text-base">{konten.sub}</p>
           )}
           <div className="anim-fade-up-3 mt-6 space-y-4 md:mt-8">
             {blocks.map((b, i) => (

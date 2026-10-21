@@ -32,13 +32,6 @@ export async function GET(
     satuKataTexts: rows.map((r) => r.satuKata).filter((t) => t.trim().length > 0),
     mudahTexts: rows.map((r) => r.tugasRumah).filter((t) => t.trim().length > 0),
     kesulitanTexts: rows.map((r) => r.kesulitan).filter((t) => t.trim().length > 0),
-    exitTicketCounts: {
-      A: rows.filter((r) => r.exitTicket === "A" || r.exitTicket.startsWith("A")).length,
-      B: rows.filter((r) => r.exitTicket === "B" || r.exitTicket.startsWith("B")).length,
-      C: rows.filter((r) => r.exitTicket === "C" || r.exitTicket.startsWith("C")).length,
-      D: rows.filter((r) => r.exitTicket === "D" || r.exitTicket.startsWith("D")).length,
-      E: rows.filter((r) => r.exitTicket === "E" || r.exitTicket.startsWith("E")).length,
-    },
     exitTickets: rows
       .filter((r) => r.exitTicket.trim().length > 0)
       .map((r) => ({ nama: siswaRows.find((s) => s.id === r.siswaId)?.nama ?? "Anonim", teks: r.exitTicket })),

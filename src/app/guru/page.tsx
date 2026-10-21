@@ -17,8 +17,8 @@ import { fetcher, useKelasState } from "@/hooks/use-session";
 import { getGuruKode, getGuruNama, setGuruKode } from "@/lib/session";
 import { cn } from "@/lib/utils";
 import {
-  AlertCircle, ChevronLeft, ChevronRight, Keyboard, LayoutGrid, Link2, Link2Off,
-  PanelLeftClose, PanelLeftOpen, PencilLine, Plus, Radio, RotateCcw, RotateCw, Users,
+  ChevronLeft, ChevronRight, Keyboard, LayoutGrid, Link2, Link2Off,
+  PanelLeftClose, PanelLeftOpen, PencilLine, Plus, Radio, RotateCw, Users,
 } from "lucide-react";
 
 interface KelasRow { id: string; kode: string; nama: string; guru: string }
@@ -35,7 +35,7 @@ export default function GuruDeck() {
   const lastPushed = useRef<string | null>(null);
 
   const { data: kelasList, mutate: mutateList } = useSWR<{ kelas: KelasRow[] }>("/api/kelas", fetcher);
-  const { state, mutate: mutateState, offset, error: stateError } = useKelasState(kode, 2000);
+  const { state, mutate: mutateState, offset } = useKelasState(kode, 2000);
   const { data: monitor } = useSWR<MonitorData>(
     state ? `/api/guru/${state.kelas.id}/monitor` : null, fetcher, { refreshInterval: 2500 }
   );
@@ -45,14 +45,6 @@ export default function GuruDeck() {
     if (k) setKode(k);
     setBooted(true);
   }, []);
-
-  // Jika kode kelas di localStorage sudah tidak ada di database (404), reset otomatis ke pemilihan kelas
-  useEffect(() => {
-    if (stateError && (stateError.message.includes("tidak ditemukan") || stateError.message.includes("404"))) {
-      setGuruKode("");
-      setKode(null);
-    }
-  }, [stateError]);
 
   const slide: DeckItem = DECK[index];
 
@@ -105,47 +97,11 @@ export default function GuruDeck() {
   if (booted && !kode) {
     return <SetupKelas list={kelasList?.kelas ?? []} onPick={(k) => { setKode(k); setGuruKode(k); }} onCreated={() => mutateList()} />;
   }
-
-  if (stateError) {
-    return (
-      <main className="relative flex min-h-screen flex-col items-center justify-center p-6 text-center">
-        <Ambient />
-        <div className="glass relative z-10 max-w-md rounded-3xl p-8 shadow-[4px_4px_0_var(--ink)] border-2 border-[var(--ink)]">
-          <AlertCircle className="mx-auto h-12 w-12 text-[var(--red)]" />
-          <h2 className="mt-4 text-xl font-extrabold text-[var(--ink)]">Gagal Menghubungkan Kelas</h2>
-          <p className="mt-2 text-sm text-[var(--ink-2)]">{stateError.message}</p>
-          <div className="mt-6 flex flex-col gap-2">
-            <button onClick={() => mutateState()} className="btn btn-primary py-2.5">
-              <RotateCcw className="h-4 w-4" /> Coba Lagi
-            </button>
-            <button onClick={() => { setGuruKode(""); setKode(null); }} className="btn btn-ghost py-2.5">
-              Pilih / Buat Kelas Baru
-            </button>
-          </div>
-        </div>
-      </main>
-    );
-  }
-
   if (!state) {
     return (
-      <main className="relative flex min-h-screen flex-col items-center justify-center p-6 text-center">
+      <main className="relative flex min-h-screen items-center justify-center">
         <Ambient />
-        <div className="glass relative z-10 flex max-w-sm flex-col items-center rounded-3xl p-8 shadow-[4px_4px_0_var(--ink)] border-2 border-[var(--ink)]">
-          <div className="h-10 w-10 animate-spin rounded-full border-4 border-[var(--ink)]/20 border-t-[var(--red)]" />
-          <p className="mt-4 font-bold text-[var(--ink)]">Menyiapkan ruang kelas…</p>
-          {kode && (
-            <p className="mono mt-1 text-xs text-[var(--ink-3)]">
-              Kode kelas: <span className="font-bold text-[var(--red)]">{kode}</span>
-            </p>
-          )}
-          <button
-            onClick={() => { setGuruKode(""); setKode(null); }}
-            className="btn btn-ghost mt-6 text-xs text-[var(--ink-3)] hover:text-[var(--ink)]"
-          >
-            Batal / Pilih Kelas Lain
-          </button>
-        </div>
+        <p className="relative z-10 text-[var(--ink-2)]">Menyiapkan ruang kelas…</p>
       </main>
     );
   }
@@ -309,7 +265,6 @@ export default function GuruDeck() {
                 {slide.interaktif === "vote-rina" && <DeckVoteRina {...panelProps} />}
                 {slide.interaktif === "cobax" && <DeckCobax {...panelProps} onReveal={() => kontrol("sesiStart")} />}
                 {slide.interaktif === "lkpd" && <DeckLkpd />}
-                {slide.interaktif === "lkpd-pair" && <DeckLkpd defaultBagian="c" />}
                 {slide.interaktif === "share" && <DeckLkpd modeShare />}
                 {slide.interaktif === "kuis" && <DeckKuis {...panelProps} offset={offset} onKontrol={(a, v) => kontrol(a, v)} />}
                 {slide.interaktif === "leaderboard" && <DeckLeaderboard {...panelProps} />}
@@ -323,18 +278,15 @@ export default function GuruDeck() {
                 <KelasLive kelasId={state.kelas.id} aktifStage={slide.stage || state.kelas.stage} />
               </div>
             )}
+
+            {/* Canvas coret bebas, menutupi seluruh konten dokumen di dalam container scroll */}
+            <DrawCanvas slideKey={slide.key} active={draw} onClose={() => setDraw(false)} />
           </div>
 
-          {/* Timer melayang pada LKPD, Pair, & Share */}
+          {/* Timer melayang hanya pada LKPD & Share */}
           {slide.timer && (
-            <FloatingTimer
-              stageKey={`aktivitas-${slide.timer}` as "aktivitas-think" | "aktivitas-pair" | "aktivitas-share"}
-              kelasId={state.kelas.id}
-            />
+            <FloatingTimer stageKey={`aktivitas-${slide.timer}` as "aktivitas-think" | "aktivitas-pair" | "aktivitas-share"} />
           )}
-
-          {/* Canvas coret bebas, menutupi seluruh panggung */}
-          <DrawCanvas slideKey={slide.key} active={draw} onClose={() => setDraw(false)} />
         </div>
 
         <footer className="flex shrink-0 items-center gap-3 border-t-2 border-[var(--ink)] bg-[var(--card)] px-5 py-2.5">

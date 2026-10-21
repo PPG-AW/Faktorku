@@ -16,7 +16,7 @@ interface SoalKuisClient {
   nomor: number;
   pertanyaan: string;
   tipe: "pg" | "isian";
-  opsi: { A: string; B: string; C: string; D: string; E?: string } | null;
+  opsi: Record<string, string> | null;
   timer: number;
   skor: number;
 }
@@ -128,14 +128,12 @@ export default function KuisPage() {
   const totalSoal = session?.totalSoal ?? soals.length;
 
   return (
-    <main className="relative min-h-[100dvh] overflow-x-hidden">
+    <main className="relative min-h-screen">
       <Ambient variant="warm" />
-      <div className="relative z-10 mx-auto flex min-h-[100dvh] max-w-2xl flex-col px-4 py-5 sm:px-5 sm:py-6">
-        <div className="flex items-center justify-between gap-2">
-          <Logo compact />
-          <span className="chip text-xs">
-            <ShieldAlert className="h-3.5 w-3.5 shrink-0 text-amber-300" /> Opsi diacak
-          </span>
+      <div className="relative z-10 mx-auto flex min-h-screen max-w-2xl flex-col px-5 py-6">
+        <div className="flex items-center justify-between">
+          <Logo />
+          <span className="chip"><ShieldAlert className="h-3.5 w-3.5 text-amber-300" /> Opsi diacak, jangan contek!</span>
         </div>
 
         {/* ============ MENUNGGU MULAI ============ */}
@@ -168,8 +166,8 @@ export default function KuisPage() {
             </div>
 
             <div key={`${session?.sessionId}-${soal.id}`} className="anim-slide glass mt-5 rounded-3xl p-6 md:p-8">
-              <h2 className="text-xl font-bold leading-snug text-white md:text-2xl">
-                <Eq>{soal.pertanyaan}</Eq>
+              <h2 className="text-lg font-bold leading-snug text-white break-words md:text-2xl">
+                <EqText>{soal.pertanyaan}</EqText>
               </h2>
 
               {soal.tipe === "pg" && (
@@ -178,12 +176,12 @@ export default function KuisPage() {
                     <button
                       key={key}
                       onClick={() => kirim(key)}
-                      className="group flex w-full items-center gap-3 rounded-2xl border border-white/10 bg-white/4 px-4 py-3.5 text-left transition-all hover:-translate-y-0.5 hover:border-amber-400/50 hover:bg-amber-400/8"
+                      className="group flex w-full items-center gap-3 rounded-2xl border border-white/10 bg-white/4 px-4 py-3.5 text-left transition-all hover:-translate-y-0.5 hover:border-amber-400/50 hover:bg-amber-400/8 active:scale-[0.99]"
                     >
                       <span className="mono flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-white/8 text-sm font-extrabold text-amber-300 group-hover:bg-amber-400/25">
                         {key}
                       </span>
-                      <span className="min-w-0 flex-1 break-words text-sm font-semibold text-zinc-200 md:text-base"><Eq>{val}</Eq></span>
+                      <span className="min-w-0 flex-1 text-sm font-semibold text-zinc-200 break-words md:text-base"><EqText>{val}</EqText></span>
                     </button>
                   ))}
                 </div>

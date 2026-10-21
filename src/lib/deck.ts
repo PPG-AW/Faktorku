@@ -26,7 +26,7 @@ export const DECK: DeckSlide[] = [
 
   { key: "kuis", label: "Kuis & Leaderboard", sub: "Mengukur ketercapaian", group: "Penutup", fase: "Fase 6", stage: "kuis", icon: Trophy },
   { key: "refleksi", label: "Refleksi Kelas", sub: "Ceklis, rating, word cloud", group: "Penutup", fase: "Fase 6", stage: "refleksi", icon: Sparkles },
-  { key: "penutup", label: "Kesimpulan & PR", sub: "Rangkuman, tugas, doa", group: "Penutup", fase: "Penutup", stage: "penutup", icon: Flag },
+  { key: "penutup", label: "Kesimpulan & Doa", sub: "Rangkuman dan doa", group: "Penutup", fase: "Penutup", stage: "penutup", icon: Flag },
 
   { key: "hasil", label: "Rekap Nilai & PDF", sub: "Hanya untuk guru", group: "Khusus Guru", fase: "—", stage: null, icon: BarChart3 },
 ];

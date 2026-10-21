@@ -58,22 +58,9 @@ export function DrawCanvas({
     const cv = canvasRef.current;
     const wrap = wrapRef.current;
     if (!cv || !wrap) return;
-
-    // Reset style sementara agar pengukuran scrollHeight murni dari konten slide/LKPD
-    const parent = wrap.parentElement;
-    wrap.style.height = "";
-    wrap.style.width = "";
-
-    const scrollH = parent ? Math.max(parent.scrollHeight, parent.clientHeight) : wrap.clientHeight;
-    const scrollW = parent ? Math.max(parent.scrollWidth, parent.clientWidth) : wrap.clientWidth;
-
-    const w = scrollW;
-    const h = scrollH;
-
-    wrap.style.height = `${h}px`;
-    wrap.style.width = `${w}px`;
-
     const dpr = window.devicePixelRatio || 1;
+    const w = wrap.clientWidth;
+    const h = wrap.clientHeight;
     if (cv.width !== w * dpr || cv.height !== h * dpr) {
       cv.width = w * dpr;
       cv.height = h * dpr;
@@ -118,22 +105,9 @@ export function DrawCanvas({
   useEffect(() => { paint(); }, [paint, slideKey]);
 
   useEffect(() => {
-    const parent = wrapRef.current?.parentElement;
     const ro = new ResizeObserver(() => paint());
     if (wrapRef.current) ro.observe(wrapRef.current);
-    if (parent) ro.observe(parent);
-    
-    // Observer jika ada DOM/konten baru di parent yang mengubah scrollHeight
-    let mo: MutationObserver | null = null;
-    if (parent) {
-      mo = new MutationObserver(() => paint());
-      mo.observe(parent, { childList: true, subtree: true, attributes: true });
-    }
-
-    return () => {
-      ro.disconnect();
-      mo?.disconnect();
-    };
+    return () => ro.disconnect();
   }, [paint]);
 
   /* ---------- pointer ---------- */
@@ -198,18 +172,18 @@ export function DrawCanvas({
     <>
       <div
         ref={wrapRef}
-        className={cn("absolute left-0 top-0 w-full min-h-full z-30", active ? "pointer-events-auto" : "pointer-events-none")}
-        style={{ cursor: active ? (tool === "eraser" ? "cell" : "crosshair") : "default", touchAction: active ? "none" : "auto" }}
+        className={cn("absolute inset-0 z-30 min-h-full min-w-full", active ? "pointer-events-auto" : "pointer-events-none")}
+        style={{ cursor: active ? (tool === "eraser" ? "cell" : "crosshair") : "default" }}
         onPointerDown={down}
         onPointerMove={move}
         onPointerUp={up}
         onPointerLeave={up}
       >
-        <canvas ref={canvasRef} className="h-full w-full" />
+        <canvas ref={canvasRef} className="block h-full w-full" />
       </div>
 
       {active && (
-        <div className="fixed bottom-6 left-1/2 z-50 flex -translate-x-1/2 flex-wrap items-center gap-1.5 border-2 border-[var(--ink)] bg-[var(--card)] px-2 py-1.5 shadow-[4px_4px_0_var(--ink)]">
+        <div className="fixed bottom-14 left-1/2 z-50 flex -translate-x-1/2 flex-wrap items-center gap-1.5 border-2 border-[var(--ink)] bg-[var(--card)] px-2 py-1.5 shadow-[4px_4px_0_var(--ink)]">
           {/* alat */}
           {([
             { k: "pen" as Tool, Icon: Pen, label: "Pena" },

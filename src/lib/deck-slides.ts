@@ -1,5 +1,5 @@
 import {
-  BookOpen, ClipboardList, Coins, Flag, FlaskConical, Goal, Handshake, Home,
+  BookOpen, ClipboardList, Coins, Flag, FlaskConical, Goal, Home,
   Lightbulb, ListChecks, MonitorPlay, PenLine, Scale, Speech, Sparkles,
   Target, TrendingUp, Trophy, Vote, type LucideIcon,
 } from "lucide-react";
@@ -12,7 +12,6 @@ export type Interaktif =
   | "vote-rina"
   | "cobax"
   | "lkpd"
-  | "lkpd-pair"
   | "share"
   | "kuis"
   | "leaderboard"
@@ -30,7 +29,7 @@ export interface DeckItem {
   interaktif: Interaktif;
   /** blok konten muncul satu per satu (klik / panah bawah) */
   bertahap?: boolean;
-  timer?: "think" | "pair" | "share";
+  timer?: "think" | "share";
   icon: LucideIcon;
 }
 
@@ -224,22 +223,17 @@ export const DECK: DeckItem[] = [
     konten: null,
   },
   {
-    nomor: 12, key: "lkpd", grup: "Kegiatan Inti", label: "LKPD: THINK", fase: "Fase 3 · Think (Mandiri)",
+    nomor: 12, key: "lkpd", grup: "Kegiatan Inti", label: "LKPD, Think & Pair", fase: "Fase 3–4",
     stage: "aktivitas-think", interaktif: "lkpd", timer: "think", icon: PenLine,
     konten: null,
   },
   {
-    nomor: 13, key: "lkpd-pair", grup: "Kegiatan Inti", label: "LKPD: PAIR", fase: "Fase 4 · Pair (Diskusi)",
-    stage: "aktivitas-pair", interaktif: "lkpd-pair", timer: "pair", icon: Handshake,
-    konten: null,
-  },
-  {
-    nomor: 14, key: "share", grup: "Kegiatan Inti", label: "SHARE, Presentasi", fase: "Fase 5 · Verification",
+    nomor: 13, key: "share", grup: "Kegiatan Inti", label: "SHARE, Presentasi", fase: "Fase 5 · Verification",
     stage: "aktivitas-share", interaktif: "share", timer: "share", icon: Speech,
     konten: null,
   },
   {
-    nomor: 15, key: "langkah", grup: "Kegiatan Inti", label: "5 Langkah T-Faktor", fase: "Fase 6 · Generalization",
+    nomor: 14, key: "langkah", grup: "Kegiatan Inti", label: "5 Langkah T-Faktor", fase: "Fase 6 · Generalization",
     stage: "materi", interaktif: null, bertahap: true, icon: ListChecks,
     konten: {
       layout: "content",
@@ -258,7 +252,7 @@ export const DECK: DeckItem[] = [
     },
   },
   {
-    nomor: 16, key: "pola", grup: "Kegiatan Inti", label: "Pola Tanda", fase: "Fase 6 · Generalization",
+    nomor: 15, key: "pola", grup: "Kegiatan Inti", label: "Pola Tanda", fase: "Fase 6 · Generalization",
     stage: "materi", interaktif: null, icon: TrendingUp,
     konten: {
       layout: "content",
@@ -277,7 +271,7 @@ export const DECK: DeckItem[] = [
     },
   },
   {
-    nomor: 17, key: "batas", grup: "Kegiatan Inti", label: "Yang Tidak Bisa Difaktorkan", fase: "Fase 6",
+    nomor: 16, key: "batas", grup: "Kegiatan Inti", label: "Yang Tidak Bisa Difaktorkan", fase: "Fase 6",
     stage: "materi", interaktif: null, bertahap: true, icon: BookOpen,
     konten: {
       layout: "focus",
@@ -294,22 +288,22 @@ export const DECK: DeckItem[] = [
 
   /* =========================== PENUTUP =========================== */
   {
-    nomor: 18, key: "kuis", grup: "Penutup", label: "Kuis Kompetisi", fase: "Fase 6 · Sumatif",
+    nomor: 17, key: "kuis", grup: "Penutup", label: "Kuis Kompetisi", fase: "Fase 6 · Sumatif",
     stage: "kuis", interaktif: "kuis", icon: Trophy,
     konten: null,
   },
   {
-    nomor: 19, key: "leaderboard", grup: "Penutup", label: "Leaderboard", fase: "Fase 6",
+    nomor: 18, key: "leaderboard", grup: "Penutup", label: "Leaderboard", fase: "Fase 6",
     stage: "kuis", interaktif: "leaderboard", icon: Trophy,
     konten: null,
   },
   {
-    nomor: 20, key: "refleksi", grup: "Penutup", label: "Refleksi & Word Cloud", fase: "Fase 6 · Reflektif",
+    nomor: 19, key: "refleksi", grup: "Penutup", label: "Refleksi & Word Cloud", fase: "Fase 6 · Reflektif",
     stage: "refleksi", interaktif: "refleksi", icon: Sparkles,
     konten: null,
   },
   {
-    nomor: 21, key: "kesimpulan", grup: "Penutup", label: "Kesimpulan Bersama", fase: "Penutup",
+    nomor: 20, key: "kesimpulan", grup: "Penutup", label: "Kesimpulan Bersama", fase: "Penutup",
     stage: "materi", interaktif: null, bertahap: true, icon: ListChecks,
     konten: {
       layout: "content",
@@ -326,29 +320,21 @@ export const DECK: DeckItem[] = [
     },
   },
   {
-    nomor: 22, key: "preview", grup: "Penutup", label: "Preview & Tugas Rumah", fase: "Penutup",
+    nomor: 21, key: "preview", grup: "Penutup", label: "Pertemuan Berikutnya", fase: "Penutup",
     stage: "materi", interaktif: null, icon: MonitorPlay,
     konten: {
       layout: "content",
       kicker: "Penutup",
-      title: "Pertemuan Berikutnya & PR",
+      title: "Pertemuan Berikutnya",
       sub: "Rumus ABC + Melengkapkan Kuadrat Sempurna",
       blocks: [
         { t: "box", title: "Materi Depan", v: "Rumus ABC untuk persamaan yang tidak bisa difaktorkan, termasuk x² + 5x + 3 = 0 tadi.", tone: "info" },
-        { t: "steps", items: [
-          "PR 1. Faktorkan x² + 11x + 24 = 0",
-          "PR 2. Faktorkan x² - 13x + 36 = 0",
-          "PR 3. Faktorkan x² - 2x - 8 = 0",
-          "PR 4. Tentukan akar dari (x + 7)(x - 2) = 0",
-          "PR 5. Buktikan x = 4 akar dari x² - 9x + 20 = 0",
-        ] },
-        { t: "box", title: "Soal Bonus", v: "Faktorkan x² + 3x + 1 = 0. Bisa atau tidak? Tuliskan alasanmu.", tone: "violet" },
-        { t: "text", v: "Kumpulkan di meja guru sebelum pelajaran minggu depan." },
+        { t: "text", v: "Persiapkan diri untuk mempelajari metode kuadratik pada pertemuan mendatang." },
       ],
     },
   },
   {
-    nomor: 23, key: "doa", grup: "Penutup", label: "Doa Penutup", fase: "Penutup",
+    nomor: 22, key: "doa", grup: "Penutup", label: "Doa Penutup", fase: "Penutup",
     stage: "doa", interaktif: "logout", icon: Flag,
     konten: null,
   },
