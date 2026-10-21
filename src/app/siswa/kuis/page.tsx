@@ -4,7 +4,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import useSWR from "swr";
 import { Ambient } from "@/components/ambient";
 import { Logo } from "@/components/topbar";
-import { Eq } from "@/components/equation";
+import { Eq, EqText } from "@/components/equation";
 import { TimerRing } from "@/components/timer";
 import { Leaderboard, type LeaderboardEntry } from "@/components/leaderboard";
 import { fetcher, useKelasState, usePing, useSiswa, useStageFollow } from "@/hooks/use-session";
