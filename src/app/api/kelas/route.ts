@@ -1,6 +1,6 @@
-import { db } from "@/db";
+import { db, pool } from "@/db";
 import { kelas } from "@/db/schema";
-import { ensureSeed } from "@/lib/seed";
+import { ensureMigrations, ensureSeed } from "@/lib/seed";
 import { generateKodeKelas, uid } from "@/lib/utils";
 import { NextResponse } from "next/server";
 import { desc } from "drizzle-orm";
@@ -16,7 +16,12 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Nama kelas dan nama guru wajib diisi." }, { status: 400 });
     }
 
-    await ensureSeed();
+    try {
+      await ensureMigrations();
+      await ensureSeed();
+    } catch (seedErr) {
+      console.warn("Migration/seed warning in POST /api/kelas:", seedErr);
+    }
 
     let created = null;
     for (let i = 0; i < 6; i++) {
@@ -36,12 +41,42 @@ export async function POST(req: Request) {
     }
     return NextResponse.json({ kelas: created });
   } catch (e) {
-    console.error(e);
+    console.error("POST /api/kelas error:", e);
     return NextResponse.json({ error: "Terjadi kesalahan server." }, { status: 500 });
   }
 }
 
 export async function GET() {
-  const rows = await db.select().from(kelas).orderBy(desc(kelas.createdAt)).limit(20);
-  return NextResponse.json({ kelas: rows });
+  try {
+    try {
+      await ensureMigrations();
+    } catch (migErr) {
+      console.warn("Migration warning in GET /api/kelas:", migErr);
+    }
+
+    const rows = await db
+      .select({
+        id: kelas.id,
+        kode: kelas.kode,
+        nama: kelas.nama,
+        guru: kelas.guru,
+        createdAt: kelas.createdAt,
+      })
+      .from(kelas)
+      .orderBy(desc(kelas.createdAt))
+      .limit(20);
+
+    return NextResponse.json({ kelas: rows });
+  } catch (e) {
+    console.error("GET /api/kelas error, trying fallback query:", e);
+    try {
+      const res = await pool.query(
+        "SELECT id, kode, nama, guru, created_at AS \"createdAt\" FROM kelas ORDER BY created_at DESC LIMIT 20;"
+      );
+      return NextResponse.json({ kelas: res.rows });
+    } catch (fallbackErr) {
+      console.error("Fallback query failed:", fallbackErr);
+      return NextResponse.json({ kelas: [] });
+    }
+  }
 }

@@ -18,7 +18,11 @@ export async function POST(
       return NextResponse.json({ error: "Nama minimal 2 huruf." }, { status: 400 });
     }
 
-    const k = await db.select().from(kelas).where(eq(kelas.kode, kode.toUpperCase())).limit(1);
+    const k = await db
+      .select({ id: kelas.id, kode: kelas.kode, nama: kelas.nama })
+      .from(kelas)
+      .where(eq(kelas.kode, kode.toUpperCase()))
+      .limit(1);
     if (k.length === 0) {
       return NextResponse.json({ error: `Kelas dengan kode "${kode.toUpperCase()}" tidak ditemukan.` }, { status: 404 });
     }

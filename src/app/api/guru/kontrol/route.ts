@@ -39,7 +39,11 @@ export async function POST(req: Request) {
     };
     if (!kelasId || !action) return NextResponse.json({ error: "kelasId dan action wajib." }, { status: 400 });
 
-    const k = await db.select().from(kelas).where(eq(kelas.id, kelasId)).limit(1);
+    const k = await db
+      .select({ id: kelas.id, slideAktif: kelas.slideAktif })
+      .from(kelas)
+      .where(eq(kelas.id, kelasId))
+      .limit(1);
     if (k.length === 0) return NextResponse.json({ error: "Kelas tidak ditemukan." }, { status: 404 });
     const krow = k[0];
 

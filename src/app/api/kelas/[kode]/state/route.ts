@@ -1,6 +1,6 @@
 import { db } from "@/db";
 import { kelas, kuisSession, siswa, slide, soalKuis } from "@/db/schema";
-import { ensureSeed } from "@/lib/seed";
+import { ensureMigrations, ensureSeed } from "@/lib/seed";
 import { and, desc, eq, gt, count } from "drizzle-orm";
 import { NextResponse } from "next/server";
 
@@ -13,11 +13,12 @@ export async function GET(
   try {
     const { kode } = await params;
     
-    // Jalankan ensureSeed tanpa mematikan request jika ada kendala DDL/seed
+    // Pastikan migrasi kolom berjalan terlebih dahulu
     try {
+      await ensureMigrations();
       await ensureSeed();
     } catch (seedErr) {
-      console.warn("ensureSeed warning:", seedErr);
+      console.warn("Migration/seed warning in state:", seedErr);
     }
 
     const k = await db.select().from(kelas).where(eq(kelas.kode, kode.toUpperCase())).limit(1);

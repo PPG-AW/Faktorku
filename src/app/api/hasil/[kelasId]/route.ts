@@ -22,7 +22,7 @@ export async function GET(
 ) {
   const { kelasId } = await params;
 
-  const k = await db.select().from(kelas).where(eq(kelas.id, kelasId)).limit(1);
+  const k = await db.select({ id: kelas.id }).from(kelas).where(eq(kelas.id, kelasId)).limit(1);
   if (k.length === 0) return NextResponse.json({ error: "Kelas tidak ditemukan." }, { status: 404 });
 
   const siswaRows = await db.select().from(siswa).where(eq(siswa.kelasId, kelasId)).orderBy(siswa.nama);
