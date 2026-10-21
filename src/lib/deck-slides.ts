@@ -1,5 +1,5 @@
 import {
-  BookOpen, ClipboardList, Coins, Flag, FlaskConical, Goal, Home,
+  BookOpen, ClipboardList, Coins, Flag, FlaskConical, Goal, Handshake, Home,
   Lightbulb, ListChecks, MonitorPlay, PenLine, Scale, Speech, Sparkles,
   Target, TrendingUp, Trophy, Vote, type LucideIcon,
 } from "lucide-react";
@@ -12,6 +12,7 @@ export type Interaktif =
   | "vote-rina"
   | "cobax"
   | "lkpd"
+  | "lkpd-pair"
   | "share"
   | "kuis"
   | "leaderboard"
