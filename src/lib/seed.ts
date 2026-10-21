@@ -562,18 +562,23 @@ const WORKSHEET = [
 /* ============================ SEED ENGINE ================================= */
 
 let seedPromise: Promise<void> | null = null;
+let seeded = false;
+let columnsMigrated = false;
 
 /** Idempotent, sinkronkan konten deck materi berdasar nomor slide */
 export async function ensureSeed(): Promise<void> {
+  if (seeded) return;
   if (!seedPromise) {
     seedPromise = (async () => {
-      await pool.query(`
-        ALTER TABLE kelas ADD COLUMN IF NOT EXISTS apersepsi_soal_aktif INTEGER NOT NULL DEFAULT 1;
-        ALTER TABLE kelas ADD COLUMN IF NOT EXISTS timer_start TIMESTAMPTZ;
-        ALTER TABLE kelas ADD COLUMN IF NOT EXISTS timer_durasi INTEGER NOT NULL DEFAULT 0;
-        ALTER TABLE kelas ADD COLUMN IF NOT EXISTS timer_running BOOLEAN NOT NULL DEFAULT FALSE;
-        ALTER TABLE kelas ADD COLUMN IF NOT EXISTS timer_remaining INTEGER NOT NULL DEFAULT 0;
-      `).catch(() => {});
+      if (!columnsMigrated) {
+        await pool.query(`
+          ALTER TABLE kelas ADD COLUMN IF NOT EXISTS apersepsi_soal_aktif INTEGER NOT NULL DEFAULT 1;
+          ALTER TABLE kelas ADD COLUMN IF NOT EXISTS timer_start TIMESTAMPTZ;
+          ALTER TABLE kelas ADD COLUMN IF NOT EXISTS timer_durasi INTEGER NOT NULL DEFAULT 0;
+          ALTER TABLE kelas ADD COLUMN IF NOT EXISTS timer_running BOOLEAN NOT NULL DEFAULT FALSE;
+          ALTER TABLE kelas ADD COLUMN IF NOT EXISTS timer_remaining INTEGER NOT NULL DEFAULT 0;
+        `).then(() => { columnsMigrated = true; }).catch(() => {});
+      }
 
       for (const s of SLIDES) {
         await db

@@ -12,7 +12,13 @@ export async function GET(
 ) {
   try {
     const { kode } = await params;
-    await ensureSeed();
+    
+    // Jalankan ensureSeed tanpa mematikan request jika ada kendala DDL/seed
+    try {
+      await ensureSeed();
+    } catch (seedErr) {
+      console.warn("ensureSeed warning:", seedErr);
+    }
 
     const k = await db.select().from(kelas).where(eq(kelas.kode, kode.toUpperCase())).limit(1);
     if (k.length === 0) {
@@ -44,17 +50,25 @@ export async function GET(
     if (s) {
       const paketRows = soalRows.filter((r) => r.paket === s.paket);
       const soal = paketRows.find((r) => r.nomor === s.soalAktif);
+      const mulaiIso = s.soalMulai
+        ? (s.soalMulai instanceof Date ? s.soalMulai.toISOString() : new Date(s.soalMulai).toISOString())
+        : now.toISOString();
+
       kuis = {
         sessionId: s.id,
         aktif: s.aktif,
         soalAktif: s.soalAktif,
-        soalMulai: s.soalMulai.toISOString(),
+        soalMulai: mulaiIso,
         paket: s.paket,
         totalSoal: paketRows.length,
         timer: soal?.timer ?? 60,
         ended: !s.aktif && s.endedAt !== null,
       };
     }
+
+    const timerStartIso = krow.timerStart
+      ? (krow.timerStart instanceof Date ? krow.timerStart.toISOString() : new Date(krow.timerStart).toISOString())
+      : null;
 
     return NextResponse.json({
       kelas: {
@@ -67,7 +81,7 @@ export async function GET(
         slideLocked: krow.slideLocked,
         slideTotal: slideRows.length,
         apersepsiSoalAktif: krow.apersepsiSoalAktif ?? 1,
-        timerStart: krow.timerStart ? krow.timerStart.toISOString() : null,
+        timerStart: timerStartIso,
         timerDurasi: krow.timerDurasi ?? 0,
         timerRunning: krow.timerRunning ?? false,
         timerRemaining: krow.timerRemaining ?? 0,
@@ -78,7 +92,7 @@ export async function GET(
       kuis,
     });
   } catch (e) {
-    console.error(e);
-    return NextResponse.json({ error: "Terjadi kesalahan server." }, { status: 500 });
+    console.error("GET /api/kelas/[kode]/state error:", e);
+    return NextResponse.json({ error: "Terjadi kesalahan server saat memuat kelas." }, { status: 500 });
   }
 }

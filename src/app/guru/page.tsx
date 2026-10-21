@@ -17,8 +17,8 @@ import { fetcher, useKelasState } from "@/hooks/use-session";
 import { getGuruKode, getGuruNama, setGuruKode } from "@/lib/session";
 import { cn } from "@/lib/utils";
 import {
-  ChevronLeft, ChevronRight, Keyboard, LayoutGrid, Link2, Link2Off,
-  PanelLeftClose, PanelLeftOpen, PencilLine, Plus, Radio, RotateCw, Users,
+  AlertCircle, ChevronLeft, ChevronRight, Keyboard, LayoutGrid, Link2, Link2Off,
+  PanelLeftClose, PanelLeftOpen, PencilLine, Plus, Radio, RotateCcw, RotateCw, Users,
 } from "lucide-react";
 
 interface KelasRow { id: string; kode: string; nama: string; guru: string }
@@ -35,7 +35,7 @@ export default function GuruDeck() {
   const lastPushed = useRef<string | null>(null);
 
   const { data: kelasList, mutate: mutateList } = useSWR<{ kelas: KelasRow[] }>("/api/kelas", fetcher);
-  const { state, mutate: mutateState, offset } = useKelasState(kode, 2000);
+  const { state, mutate: mutateState, offset, error: stateError } = useKelasState(kode, 2000);
   const { data: monitor } = useSWR<MonitorData>(
     state ? `/api/guru/${state.kelas.id}/monitor` : null, fetcher, { refreshInterval: 2500 }
   );
@@ -45,6 +45,14 @@ export default function GuruDeck() {
     if (k) setKode(k);
     setBooted(true);
   }, []);
+
+  // Jika kode kelas di localStorage sudah tidak ada di database (404), reset otomatis ke pemilihan kelas
+  useEffect(() => {
+    if (stateError && (stateError.message.includes("tidak ditemukan") || stateError.message.includes("404"))) {
+      setGuruKode("");
+      setKode(null);
+    }
+  }, [stateError]);
 
   const slide: DeckItem = DECK[index];
 
@@ -97,11 +105,47 @@ export default function GuruDeck() {
   if (booted && !kode) {
     return <SetupKelas list={kelasList?.kelas ?? []} onPick={(k) => { setKode(k); setGuruKode(k); }} onCreated={() => mutateList()} />;
   }
+
+  if (stateError) {
+    return (
+      <main className="relative flex min-h-screen flex-col items-center justify-center p-6 text-center">
+        <Ambient />
+        <div className="glass relative z-10 max-w-md rounded-3xl p-8 shadow-[4px_4px_0_var(--ink)] border-2 border-[var(--ink)]">
+          <AlertCircle className="mx-auto h-12 w-12 text-[var(--red)]" />
+          <h2 className="mt-4 text-xl font-extrabold text-[var(--ink)]">Gagal Menghubungkan Kelas</h2>
+          <p className="mt-2 text-sm text-[var(--ink-2)]">{stateError.message}</p>
+          <div className="mt-6 flex flex-col gap-2">
+            <button onClick={() => mutateState()} className="btn btn-primary py-2.5">
+              <RotateCcw className="h-4 w-4" /> Coba Lagi
+            </button>
+            <button onClick={() => { setGuruKode(""); setKode(null); }} className="btn btn-ghost py-2.5">
+              Pilih / Buat Kelas Baru
+            </button>
+          </div>
+        </div>
+      </main>
+    );
+  }
+
   if (!state) {
     return (
-      <main className="relative flex min-h-screen items-center justify-center">
+      <main className="relative flex min-h-screen flex-col items-center justify-center p-6 text-center">
         <Ambient />
-        <p className="relative z-10 text-[var(--ink-2)]">Menyiapkan ruang kelas…</p>
+        <div className="glass relative z-10 flex max-w-sm flex-col items-center rounded-3xl p-8 shadow-[4px_4px_0_var(--ink)] border-2 border-[var(--ink)]">
+          <div className="h-10 w-10 animate-spin rounded-full border-4 border-[var(--ink)]/20 border-t-[var(--red)]" />
+          <p className="mt-4 font-bold text-[var(--ink)]">Menyiapkan ruang kelas…</p>
+          {kode && (
+            <p className="mono mt-1 text-xs text-[var(--ink-3)]">
+              Kode kelas: <span className="font-bold text-[var(--red)]">{kode}</span>
+            </p>
+          )}
+          <button
+            onClick={() => { setGuruKode(""); setKode(null); }}
+            className="btn btn-ghost mt-6 text-xs text-[var(--ink-3)] hover:text-[var(--ink)]"
+          >
+            Batal / Pilih Kelas Lain
+          </button>
+        </div>
       </main>
     );
   }
