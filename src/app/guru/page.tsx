@@ -265,6 +265,7 @@ export default function GuruDeck() {
                 {slide.interaktif === "vote-rina" && <DeckVoteRina {...panelProps} />}
                 {slide.interaktif === "cobax" && <DeckCobax {...panelProps} onReveal={() => kontrol("sesiStart")} />}
                 {slide.interaktif === "lkpd" && <DeckLkpd />}
+                {slide.interaktif === "lkpd-pair" && <DeckLkpd defaultBagian="c" />}
                 {slide.interaktif === "share" && <DeckLkpd modeShare />}
                 {slide.interaktif === "kuis" && <DeckKuis {...panelProps} offset={offset} onKontrol={(a, v) => kontrol(a, v)} />}
                 {slide.interaktif === "leaderboard" && <DeckLeaderboard {...panelProps} />}
@@ -280,9 +281,12 @@ export default function GuruDeck() {
             )}
           </div>
 
-          {/* Timer melayang hanya pada LKPD & Share */}
+          {/* Timer melayang pada LKPD, Pair, & Share */}
           {slide.timer && (
-            <FloatingTimer stageKey={`aktivitas-${slide.timer}` as "aktivitas-think" | "aktivitas-pair" | "aktivitas-share"} />
+            <FloatingTimer
+              stageKey={`aktivitas-${slide.timer}` as "aktivitas-think" | "aktivitas-pair" | "aktivitas-share"}
+              kelasId={state.kelas.id}
+            />
           )}
 
           {/* Canvas coret bebas, menutupi seluruh panggung */}

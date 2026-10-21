@@ -23,6 +23,11 @@ export const kelas = pgTable("kelas", {
   loginDitutup: boolean("login_ditutup").notNull().default(false),
   cobaxRevealed: boolean("cobax_revealed").notNull().default(false),
   rina1Revealed: boolean("rina1_revealed").notNull().default(false),
+  apersepsiSoalAktif: integer("apersepsi_soal_aktif").notNull().default(1),
+  timerStart: timestamp("timer_start", { withTimezone: true }),
+  timerDurasi: integer("timer_durasi").notNull().default(0),
+  timerRunning: boolean("timer_running").notNull().default(false),
+  timerRemaining: integer("timer_remaining").notNull().default(0),
   createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
 });
 

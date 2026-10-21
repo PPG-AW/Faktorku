@@ -19,7 +19,11 @@ export default function SiswaHub() {
     if (!state) return;
     const stage = state.kelas.stage;
     if (stage !== "lobby") {
-      router.push(`/siswa/${stage}`);
+      if (stage.startsWith("aktivitas-")) {
+        router.push("/siswa/aktivitas");
+      } else {
+        router.push(`/siswa/${stage}`);
+      }
     }
   }, [state, router]);
 

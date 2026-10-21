@@ -83,6 +83,15 @@ export function DeckApersepsi({ kelasId }: PanelProps) {
 
   useEffect(() => { setReveal(false); }, [idx]);
 
+  useEffect(() => {
+    if (!s) return;
+    fetch("/api/guru/kontrol", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ kelasId, action: "setApersepsiSoal", value: s.nomor }),
+    }).catch(() => {});
+  }, [s?.nomor, kelasId]);
+
   const s = soal[idx];
   const total = soal.length;
   const maxCount = s ? Math.max(1, ...Object.values(s.opsiCount)) : 1;
@@ -150,17 +159,19 @@ export function DeckApersepsi({ kelasId }: PanelProps) {
                   {reveal ? (benar ? <Check className="h-5 w-5" /> : <X className="h-4 w-4" />) : key}
                 </span>
                 <span className="mono min-w-0 flex-1 overflow-x-auto text-lg font-semibold"><Eq>{val}</Eq></span>
-                <div className="h-7 w-32 shrink-0 overflow-hidden border border-[var(--hairline)] bg-[var(--paper-2)] sm:w-40">
-                  <div
-                    className="bar-grow flex h-full items-center px-2"
-                    style={{
-                      width: `${Math.max(n === 0 ? 0 : 12, (n / maxCount) * 100)}%`,
-                      background: benar ? "linear-gradient(90deg,#15803d,#34d399)" : "linear-gradient(90deg,#141414,#4b4b4b)",
-                    }}
-                  >
-                    <span className="mono text-xs font-bold tabular text-white">{n}</span>
+                {reveal && (
+                  <div className="h-7 w-32 shrink-0 overflow-hidden border border-[var(--hairline)] bg-[var(--paper-2)] sm:w-40">
+                    <div
+                      className="bar-grow flex h-full items-center px-2"
+                      style={{
+                        width: `${Math.max(n === 0 ? 0 : 12, (n / maxCount) * 100)}%`,
+                        background: benar ? "linear-gradient(90deg,#15803d,#34d399)" : "linear-gradient(90deg,#141414,#4b4b4b)",
+                      }}
+                    >
+                      <span className="mono text-xs font-bold tabular text-white">{n}</span>
+                    </div>
                   </div>
-                </div>
+                )}
               </div>
             );
           })}
@@ -239,17 +250,19 @@ export function DeckVoteRina({ kelasId }: PanelProps) {
               style={{ animationDelay: `${i * 0.08}s` }}
             >
               <span className="min-w-0 flex-1 text-lg font-bold leading-snug">{o.label}</span>
-              <div className="h-9 w-40 shrink-0 overflow-hidden border border-[var(--hairline)] bg-[var(--paper-2)] sm:w-56">
-                <div
-                  className="bar-grow flex h-full items-center px-2.5"
-                  style={{
-                    width: `${Math.max(n === 0 ? 0 : 10, (n / maxN) * 100)}%`,
-                    background: jawabanBenar ? "linear-gradient(90deg,#15803d,#34d399)" : "linear-gradient(90deg,#141414,#4b4b4b)",
-                  }}
-                >
-                  <span className="mono text-sm font-bold tabular text-white">{n}</span>
+              {reveal && (
+                <div className="h-9 w-40 shrink-0 overflow-hidden border border-[var(--hairline)] bg-[var(--paper-2)] sm:w-56">
+                  <div
+                    className="bar-grow flex h-full items-center px-2.5"
+                    style={{
+                      width: `${Math.max(n === 0 ? 0 : 10, (n / maxN) * 100)}%`,
+                      background: jawabanBenar ? "linear-gradient(90deg,#15803d,#34d399)" : "linear-gradient(90deg,#141414,#4b4b4b)",
+                    }}
+                  >
+                    <span className="mono text-sm font-bold tabular text-white">{n}</span>
+                  </div>
                 </div>
-              </div>
+              )}
             </div>
           );
         })}

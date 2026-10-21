@@ -1,5 +1,5 @@
 import {
-  BookOpen, ClipboardList, Coins, Flag, FlaskConical, Goal, Home,
+  BookOpen, ClipboardList, Coins, Flag, FlaskConical, Goal, Handshake, Home,
   Lightbulb, ListChecks, MonitorPlay, PenLine, Scale, Speech, Sparkles,
   Target, TrendingUp, Trophy, Vote, type LucideIcon,
 } from "lucide-react";
@@ -12,6 +12,7 @@ export type Interaktif =
   | "vote-rina"
   | "cobax"
   | "lkpd"
+  | "lkpd-pair"
   | "share"
   | "kuis"
   | "leaderboard"
@@ -29,7 +30,7 @@ export interface DeckItem {
   interaktif: Interaktif;
   /** blok konten muncul satu per satu (klik / panah bawah) */
   bertahap?: boolean;
-  timer?: "think" | "share";
+  timer?: "think" | "pair" | "share";
   icon: LucideIcon;
 }
 
@@ -44,7 +45,7 @@ export const DECK: DeckItem[] = [
       title: "PERSAMAAN KUADRAT",
       sub: "Pemfaktoran T-Faktor untuk a = 1",
       blocks: [
-        { t: "eq", v: "ax^2 + bx + c = 0", big: true },
+        { t: "eq", v: "ax² + bx + c = 0", big: true },
         { t: "text", v: "Discovery Learning · Think, Pair, Share · 90 menit" },
       ],
     },
@@ -63,9 +64,9 @@ export const DECK: DeckItem[] = [
       title: "Tujuan Hari Ini",
       sub: "Target: benar minimal 3 dari 4 soal",
       blocks: [
-        { t: "box", title: "Tujuan 1, Konsep", v: "Memahami konsep persamaan kuadrat dan bentuk umum ax^2 + bx + c = 0.", tone: "info" },
+        { t: "box", title: "Tujuan 1, Konsep", v: "Memahami konsep persamaan kuadrat dan bentuk umum ax² + bx + c = 0.", tone: "info" },
         { t: "list", items: [
-          "Menyebutkan bentuk umum ax^2 + bx + c = 0",
+          "Menyebutkan bentuk umum ax² + bx + c = 0",
           "Mengidentifikasi nilai a, b, dan c",
           "Membedakan persamaan linear dan kuadrat",
           "Mengubah persamaan ke bentuk umum",
@@ -99,7 +100,7 @@ export const DECK: DeckItem[] = [
         { t: "text", v: "Sewa tempat dan listrik 75 ribu setiap minggu. Jumlah ini tetap, mau produksi banyak atau sedikit." },
         { t: "text", v: "Ada satu biaya lagi yang unik, yaitu upah tenaga kerja." },
         { t: "text", v: "Makin banyak kaos, makin rumit pengerjaannya. Upah untuk setiap kaos ikut naik mengikuti jumlah kaos, yaitu x ribu." },
-        { t: "box", title: "Inilah yang menarik", v: "Upah tiap kaos adalah x ribu dan jumlah kaos adalah x. Maka total upah menjadi x dikali x, yaitu x^2.", tone: "violet" },
+        { t: "box", title: "Inilah yang menarik", v: "Upah tiap kaos adalah x ribu dan jumlah kaos adalah x. Maka total upah menjadi x dikali x, yaitu x².", tone: "violet" },
         { t: "text", v: "Suatu sore Rina bertanya pada dirinya sendiri." },
         { t: "box", title: "Pertanyaan Rina", v: "Berapa kaos yang harus aku jual supaya uang masuk tepat sama dengan semua biaya? Tidak untung, tetapi juga tidak rugi.", tone: "warn" },
       ],
@@ -117,10 +118,9 @@ export const DECK: DeckItem[] = [
         { t: "table", head: ["Komponen", "Rincian", "Rumus"], rows: [
           ["Harga jual", "50 ribu tiap kaos", "50x"],
           ["Bahan sablon", "30 ribu tiap kaos", "30x"],
-          ["Upah tenaga kerja", "x ribu tiap kaos", "x^2"],
+          ["Upah tenaga kerja", "x ribu tiap kaos", "x²"],
           ["Sewa dan listrik", "75 ribu seminggu", "75"],
         ] },
-        { t: "box", title: "Perhatikan", v: "Angka 50 adalah HARGA satu kaos, bukan jumlah kaos. Jumlah kaos tetap kita sebut x.", tone: "warn" },
       ],
     },
   },
@@ -193,13 +193,13 @@ export const DECK: DeckItem[] = [
       sub: "Uang masuk = uang keluar",
       blocks: [
         { t: "box", title: "Uang Masuk", v: "50x ribu", tone: "success" },
-        { t: "box", title: "Uang Keluar", v: "30x + x^2 + 75 ribu", tone: "warn" },
+        { t: "box", title: "Uang Keluar", v: "30x + x² + 75 ribu", tone: "warn" },
         { t: "steps", items: [
-          "50x = x^2 + 30x + 75",
-          "0 = x^2 + 30x - 50x + 75",
-          "0 = x^2 - 20x + 75",
+          "50x = x² + 30x + 75",
+          "0 = x² + 30x - 50x + 75",
+          "0 = x² - 20x + 75",
         ] },
-        { t: "eq", v: "x^2 - 20x + 75 = 0", big: true },
+        { t: "eq", v: "x² - 20x + 75 = 0", big: true },
         { t: "box", title: "Persamaan Kuadrat", v: "dengan a = 1, b = -20, dan c = 75.", tone: "info" },
       ],
     },
@@ -213,7 +213,7 @@ export const DECK: DeckItem[] = [
       title: "Berapa Nilai x?",
       sub: "Berapa kaos yang harus terjual supaya Rina balik modal?",
       blocks: [
-        { t: "eq", v: "x^2 - 20x + 75 = 0", big: true },
+        { t: "eq", v: "x² - 20x + 75 = 0", big: true },
         { t: "box", title: "Siap-siap", v: "Slide berikutnya kalian bebas memilih angka berapa pun dari 0 sampai 30 lewat HP. Tebakan seluruh kelas akan tampil di layar ini.", tone: "warn" },
       ],
     },
@@ -224,36 +224,41 @@ export const DECK: DeckItem[] = [
     konten: null,
   },
   {
-    nomor: 12, key: "lkpd", grup: "Kegiatan Inti", label: "LKPD, Think & Pair", fase: "Fase 3–4",
+    nomor: 12, key: "lkpd", grup: "Kegiatan Inti", label: "LKPD: THINK", fase: "Fase 3 · Think (Mandiri)",
     stage: "aktivitas-think", interaktif: "lkpd", timer: "think", icon: PenLine,
     konten: null,
   },
   {
-    nomor: 13, key: "share", grup: "Kegiatan Inti", label: "SHARE, Presentasi", fase: "Fase 5 · Verification",
+    nomor: 13, key: "lkpd-pair", grup: "Kegiatan Inti", label: "LKPD: PAIR", fase: "Fase 4 · Pair (Diskusi)",
+    stage: "aktivitas-pair", interaktif: "lkpd-pair", timer: "pair", icon: Handshake,
+    konten: null,
+  },
+  {
+    nomor: 14, key: "share", grup: "Kegiatan Inti", label: "SHARE, Presentasi", fase: "Fase 5 · Verification",
     stage: "aktivitas-share", interaktif: "share", timer: "share", icon: Speech,
     konten: null,
   },
   {
-    nomor: 14, key: "langkah", grup: "Kegiatan Inti", label: "5 Langkah T-Faktor", fase: "Fase 6 · Generalization",
+    nomor: 15, key: "langkah", grup: "Kegiatan Inti", label: "5 Langkah T-Faktor", fase: "Fase 6 · Generalization",
     stage: "materi", interaktif: null, bertahap: true, icon: ListChecks,
     konten: {
       layout: "content",
       kicker: "Fase 6 · Generalization",
       title: "5 Langkah T-Faktor",
-      sub: "Contoh: x^2 + 5x + 6 = 0",
+      sub: "Contoh: x² + 5x + 6 = 0",
       blocks: [
         { t: "box", title: "Langkah 1", v: "Tentukan a, b, c → a = 1, b = 5, c = 6", tone: "info" },
         { t: "box", title: "Langkah 2", v: "Cari dua bilangan: p x q = 6 dan p + q = 5 → p = 2, q = 3", tone: "info" },
         { t: "box", title: "Langkah 3", v: "Tulis bentuk faktor → (x + 2)(x + 3) = 0", tone: "violet" },
         { t: "box", title: "Langkah 4", v: "Tentukan nilai x → x = -2 atau x = -3", tone: "violet" },
         { t: "box", title: "Langkah 5", v: "Cek substitusi dengan memasukkan nilai x kembali ke persamaan.", tone: "success" },
-        { t: "eq", v: "(-2)^2 + 5(-2) + 6 = 4 - 10 + 6 = 0" },
+        { t: "eq", v: "(-2)² + 5(-2) + 6 = 4 - 10 + 6 = 0" },
         { t: "eq", v: "p x q = c dan p + q = b", big: true },
       ],
     },
   },
   {
-    nomor: 15, key: "pola", grup: "Kegiatan Inti", label: "Pola Tanda", fase: "Fase 6 · Generalization",
+    nomor: 16, key: "pola", grup: "Kegiatan Inti", label: "Pola Tanda", fase: "Fase 6 · Generalization",
     stage: "materi", interaktif: null, icon: TrendingUp,
     konten: {
       layout: "content",
@@ -272,12 +277,12 @@ export const DECK: DeckItem[] = [
     },
   },
   {
-    nomor: 16, key: "batas", grup: "Kegiatan Inti", label: "Yang Tidak Bisa Difaktorkan", fase: "Fase 6",
+    nomor: 17, key: "batas", grup: "Kegiatan Inti", label: "Yang Tidak Bisa Difaktorkan", fase: "Fase 6",
     stage: "materi", interaktif: null, bertahap: true, icon: BookOpen,
     konten: {
       layout: "focus",
       kicker: "Batasan T-Faktor",
-      title: "x^2 + 5x + 3 = 0",
+      title: "x² + 5x + 3 = 0",
       sub: "Cari dua bilangan: hasil kali 3, hasil jumlah 5",
       blocks: [
         { t: "check", eq: "1 x 3 = 3", result: "1 + 3 = 4", ok: false },
@@ -289,22 +294,22 @@ export const DECK: DeckItem[] = [
 
   /* =========================== PENUTUP =========================== */
   {
-    nomor: 17, key: "kuis", grup: "Penutup", label: "Kuis Kompetisi", fase: "Fase 6 · Sumatif",
+    nomor: 18, key: "kuis", grup: "Penutup", label: "Kuis Kompetisi", fase: "Fase 6 · Sumatif",
     stage: "kuis", interaktif: "kuis", icon: Trophy,
     konten: null,
   },
   {
-    nomor: 18, key: "leaderboard", grup: "Penutup", label: "Leaderboard", fase: "Fase 6",
+    nomor: 19, key: "leaderboard", grup: "Penutup", label: "Leaderboard", fase: "Fase 6",
     stage: "kuis", interaktif: "leaderboard", icon: Trophy,
     konten: null,
   },
   {
-    nomor: 19, key: "refleksi", grup: "Penutup", label: "Refleksi & Word Cloud", fase: "Fase 6 · Reflektif",
+    nomor: 20, key: "refleksi", grup: "Penutup", label: "Refleksi & Word Cloud", fase: "Fase 6 · Reflektif",
     stage: "refleksi", interaktif: "refleksi", icon: Sparkles,
     konten: null,
   },
   {
-    nomor: 20, key: "kesimpulan", grup: "Penutup", label: "Kesimpulan Bersama", fase: "Penutup",
+    nomor: 21, key: "kesimpulan", grup: "Penutup", label: "Kesimpulan Bersama", fase: "Penutup",
     stage: "materi", interaktif: null, bertahap: true, icon: ListChecks,
     konten: {
       layout: "content",
@@ -316,12 +321,12 @@ export const DECK: DeckItem[] = [
         { t: "text", v: "T-Faktor bekerja dengan mencari dua bilangan: hasil kali sama dengan c, hasil jumlah sama dengan b." },
         { t: "text", v: "Persamaan kuadrat bisa punya dua akar, satu akar, atau tidak bisa difaktorkan dengan bilangan bulat." },
         { t: "text", v: "Selalu buktikan jawaban dengan substitusi ke persamaan awal." },
-        { t: "eq", v: "(x + p)(x + q) = x^2 + (p + q)x + pq", big: true },
+        { t: "eq", v: "(x + p)(x + q) = x² + (p + q)x + pq", big: true },
       ],
     },
   },
   {
-    nomor: 21, key: "preview", grup: "Penutup", label: "Preview & Tugas Rumah", fase: "Penutup",
+    nomor: 22, key: "preview", grup: "Penutup", label: "Preview & Tugas Rumah", fase: "Penutup",
     stage: "materi", interaktif: null, icon: MonitorPlay,
     konten: {
       layout: "content",
@@ -329,21 +334,21 @@ export const DECK: DeckItem[] = [
       title: "Pertemuan Berikutnya & PR",
       sub: "Rumus ABC + Melengkapkan Kuadrat Sempurna",
       blocks: [
-        { t: "box", title: "Materi Depan", v: "Rumus ABC untuk persamaan yang tidak bisa difaktorkan, termasuk x^2 + 5x + 3 = 0 tadi.", tone: "info" },
+        { t: "box", title: "Materi Depan", v: "Rumus ABC untuk persamaan yang tidak bisa difaktorkan, termasuk x² + 5x + 3 = 0 tadi.", tone: "info" },
         { t: "steps", items: [
-          "PR 1. Faktorkan x^2 + 11x + 24 = 0",
-          "PR 2. Faktorkan x^2 - 13x + 36 = 0",
-          "PR 3. Faktorkan x^2 - 2x - 8 = 0",
+          "PR 1. Faktorkan x² + 11x + 24 = 0",
+          "PR 2. Faktorkan x² - 13x + 36 = 0",
+          "PR 3. Faktorkan x² - 2x - 8 = 0",
           "PR 4. Tentukan akar dari (x + 7)(x - 2) = 0",
-          "PR 5. Buktikan x = 4 akar dari x^2 - 9x + 20 = 0",
+          "PR 5. Buktikan x = 4 akar dari x² - 9x + 20 = 0",
         ] },
-        { t: "box", title: "Soal Bonus", v: "Faktorkan x^2 + 3x + 1 = 0. Bisa atau tidak? Tuliskan alasanmu.", tone: "violet" },
+        { t: "box", title: "Soal Bonus", v: "Faktorkan x² + 3x + 1 = 0. Bisa atau tidak? Tuliskan alasanmu.", tone: "violet" },
         { t: "text", v: "Kumpulkan di meja guru sebelum pelajaran minggu depan." },
       ],
     },
   },
   {
-    nomor: 22, key: "doa", grup: "Penutup", label: "Doa Penutup", fase: "Penutup",
+    nomor: 23, key: "doa", grup: "Penutup", label: "Doa Penutup", fase: "Penutup",
     stage: "doa", interaktif: "logout", icon: Flag,
     konten: null,
   },

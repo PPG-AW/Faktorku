@@ -48,12 +48,18 @@ export default function ApersepsiPage() {
     return () => clearInterval(iv);
   }, [idx]);
 
-  // Lompat ke soal pertama yang belum dijawab saat data tiba
+  // Ikuti soal yang dibuka oleh guru secara sinkron
+  const teacherSoalAktif = state?.kelas.apersepsiSoalAktif ?? 1;
   useEffect(() => {
     if (!soals.length) return;
-    const firstUnanswered = soals.findIndex((s) => !answeredMap[s.id]);
-    if (firstUnanswered >= 0) setIdx(firstUnanswered);
-  }, [data]);
+    const targetIdx = soals.findIndex((s) => s.nomor === teacherSoalAktif);
+    if (targetIdx >= 0) {
+      setIdx(targetIdx);
+      setElapsed(0);
+      setPilihan(null);
+      setTeks("");
+    }
+  }, [teacherSoalAktif, soals]);
 
   if (!ready || !siswa) return null;
 
@@ -70,9 +76,6 @@ export default function ApersepsiPage() {
       setPilihan(null);
       setTeks("");
       setElapsed(0);
-      setTimeout(() => {
-        setIdx((i) => Math.min(i + 1, soals.length - 1));
-      }, 350);
     } finally {
       setSending(false);
     }
@@ -116,22 +119,28 @@ export default function ApersepsiPage() {
               <span className="mono tabular">{terjawab}/{soals.length}</span>
             </div>
             <div className="mt-2 flex gap-1">
-              {soals.map((s, i) => (
-                <button
-                  key={s.id}
-                  onClick={() => { setIdx(i); setElapsed(0); }}
-                  className={cn(
-                    "h-1.5 flex-1 rounded-full transition-colors",
-                    answeredMap[s.id]
-                      ? answeredMap[s.id].benar || s.tipe === "terbuka"
-                        ? "bg-emerald-400"
-                        : "bg-rose-400"
-                      : i === idx
-                        ? "bg-indigo-400"
-                        : "bg-white/12"
-                  )}
-                />
-              ))}
+              {soals.map((s, i) => {
+                const isAllowed = s.nomor <= teacherSoalAktif;
+                return (
+                  <button
+                    key={s.id}
+                    disabled={!isAllowed}
+                    onClick={() => { if (isAllowed) { setIdx(i); setElapsed(0); } }}
+                    className={cn(
+                      "h-1.5 flex-1 rounded-full transition-colors",
+                      answeredMap[s.id]
+                        ? answeredMap[s.id].benar || s.tipe === "terbuka"
+                          ? "bg-emerald-400"
+                          : "bg-rose-400"
+                        : i === idx
+                          ? "bg-indigo-400"
+                          : isAllowed
+                            ? "bg-white/25"
+                            : "bg-white/8 opacity-40 cursor-not-allowed"
+                    )}
+                  />
+                );
+              })}
             </div>
           </div>
         )}
@@ -243,16 +252,14 @@ export default function ApersepsiPage() {
                 </p>
               </div>
             </div>
-            <button
-              onClick={() => {
-                const next = soals.findIndex((s) => !answeredMap[s.id]);
-                setIdx(next >= 0 ? next : idx);
-                setElapsed(0);
-              }}
-              className="btn btn-primary mt-5 px-5 py-2.5"
-            >
-              Lanjut <ChevronRight className="h-4 w-4" />
-            </button>
+            <div className="mt-5 rounded-2xl border border-white/10 bg-white/5 p-4 text-center">
+              <p className="text-sm font-semibold text-zinc-300">
+                Perhatikan penjelasan guru di depan kelas.
+              </p>
+              <p className="mt-1 text-xs text-zinc-400">
+                Soal berikutnya akan otomatis terbuka saat guru berpindah soal.
+              </p>
+            </div>
           </div>
         )}
 

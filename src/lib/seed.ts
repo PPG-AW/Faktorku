@@ -1,4 +1,4 @@
-import { db } from "@/db";
+import { db, pool } from "@/db";
 import { slide, soalKuis, soalDiagnostik, soalWorksheet, type SlideKonten } from "@/db/schema";
 import { uid } from "@/lib/utils";
 
@@ -392,6 +392,14 @@ let seedPromise: Promise<void> | null = null;
 export async function ensureSeed(): Promise<void> {
   if (!seedPromise) {
     seedPromise = (async () => {
+      await pool.query(`
+        ALTER TABLE kelas ADD COLUMN IF NOT EXISTS apersepsi_soal_aktif INTEGER NOT NULL DEFAULT 1;
+        ALTER TABLE kelas ADD COLUMN IF NOT EXISTS timer_start TIMESTAMPTZ;
+        ALTER TABLE kelas ADD COLUMN IF NOT EXISTS timer_durasi INTEGER NOT NULL DEFAULT 0;
+        ALTER TABLE kelas ADD COLUMN IF NOT EXISTS timer_running BOOLEAN NOT NULL DEFAULT FALSE;
+        ALTER TABLE kelas ADD COLUMN IF NOT EXISTS timer_remaining INTEGER NOT NULL DEFAULT 0;
+      `).catch(() => {});
+
       for (const s of SLIDES) {
         await db
           .insert(slide)

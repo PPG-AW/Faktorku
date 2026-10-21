@@ -1,6 +1,6 @@
 import {
-  BarChart3, FlaskConical, Flag, Goal, MonitorPlay, PenLine, Shapes,
-  Sparkles, Speech, Target, Trophy, type LucideIcon,
+  BookOpen, Flag, FlaskConical, Goal, Handshake, MonitorPlay,
+  PenLine, Sparkles, Speech, Target, Trophy, Vote, type LucideIcon,
 } from "lucide-react";
 import type { SlideKonten } from "@/db/schema";
 
@@ -11,24 +11,31 @@ export interface StageMeta {
   icon: LucideIcon;
 }
 
-/** Urutan lengkap sesuai Modul Ajar (T-Faktor a=1), LKPD menyusul */
+/** Urutan lengkap tahapan pembelajaran */
 export const STAGE_ORDER: StageMeta[] = [
-  { key: "cover", label: "Cover", fase: "-", icon: MonitorPlay },
+  { key: "lobby", label: "Lobi Kelas", fase: "Pembuka", icon: MonitorPlay },
   { key: "apersepsi", label: "Apersepsi", fase: "Pendahuluan", icon: Target },
   { key: "tujuan", label: "Tujuan", fase: "Pendahuluan", icon: Goal },
-  { key: "materi", label: "Stimulasi", fase: "Fase 1", icon: MonitorPlay },
+  { key: "materi", label: "Materi & Stimulasi", fase: "Fase 1", icon: MonitorPlay },
+  { key: "vote-rina", label: "Untung atau Rugi", fase: "Fase 1", icon: Vote },
   { key: "cobax", label: "CobaX", fase: "Fase 2", icon: FlaskConical },
-  { key: "lkpd", label: "LKPD", fase: "Fase 3–4", icon: PenLine },
-  { key: "klasifikasi", label: "Klasifikasi & Pola", fase: "Fase 3", icon: Shapes },
-  { key: "share", label: "SHARE", fase: "Fase 5", icon: Speech },
+  { key: "aktivitas-think", label: "LKPD: Think", fase: "Fase 3", icon: PenLine },
+  { key: "aktivitas-pair", label: "LKPD: Pair", fase: "Fase 4", icon: Handshake },
+  { key: "aktivitas-share", label: "SHARE: Presentasi", fase: "Fase 5", icon: Speech },
   { key: "kuis", label: "Kuis", fase: "Fase 6", icon: Trophy },
   { key: "refleksi", label: "Refleksi", fase: "Fase 6", icon: Sparkles },
-  { key: "penutup", label: "Penutup", fase: "Penutup", icon: Flag },
-  { key: "hasil", label: "Rekap Nilai", fase: "-", icon: BarChart3 },
+  { key: "doa", label: "Penutup & Doa", fase: "Penutup", icon: Flag },
 ];
 
 export function stageMeta(key: string): StageMeta {
-  return STAGE_ORDER.find((s) => s.key === key) ?? STAGE_ORDER[STAGE_ORDER.length - 1];
+  const found = STAGE_ORDER.find((s) => s.key === key);
+  if (found) return found;
+  if (key?.startsWith("aktivitas-")) {
+    if (key.includes("pair")) return { key, label: "LKPD: Pair", fase: "Fase 4", icon: Handshake };
+    if (key.includes("share")) return { key, label: "LKPD: Share", fase: "Fase 5", icon: Speech };
+    return { key, label: "LKPD: Think", fase: "Fase 3", icon: PenLine };
+  }
+  return { key, label: key || "Materi", fase: "-", icon: MonitorPlay };
 }
 
 /** Konten bawaan (jika kelas ingin ditampilkan langsung di deck) */

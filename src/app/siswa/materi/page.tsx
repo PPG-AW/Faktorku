@@ -11,7 +11,7 @@ export default function SiswaMateriPage() {
   const { siswa, ready } = useSiswa();
   usePing(siswa?.siswaId);
   const { state } = useKelasState(siswa?.kelasKode, 1500);
-  useStageFollow(state?.kelas.stage, "materi", state?.kelas.stage !== "materi");
+  useStageFollow(state?.kelas.stage, "materi");
 
   if (!ready || !siswa) return null;
 
