@@ -30,7 +30,7 @@ export interface DeckItem {
   interaktif: Interaktif;
   /** blok konten muncul satu per satu (klik / panah bawah) */
   bertahap?: boolean;
-  timer?: "think" | "share";
+  timer?: "think" | "pair" | "share";
   icon: LucideIcon;
 }
 
