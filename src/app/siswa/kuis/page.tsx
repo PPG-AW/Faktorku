@@ -16,7 +16,7 @@ interface SoalKuisClient {
   nomor: number;
   pertanyaan: string;
   tipe: "pg" | "isian";
-  opsi: { A: string; B: string; C: string; D: string } | null;
+  opsi: { A: string; B: string; C: string; D: string; E?: string } | null;
   timer: number;
   skor: number;
 }
@@ -128,12 +128,14 @@ export default function KuisPage() {
   const totalSoal = session?.totalSoal ?? soals.length;
 
   return (
-    <main className="relative min-h-screen">
+    <main className="relative min-h-[100dvh] overflow-x-hidden">
       <Ambient variant="warm" />
-      <div className="relative z-10 mx-auto flex min-h-screen max-w-2xl flex-col px-5 py-6">
-        <div className="flex items-center justify-between">
-          <Logo />
-          <span className="chip"><ShieldAlert className="h-3.5 w-3.5 text-amber-300" /> Opsi diacak, jangan contek!</span>
+      <div className="relative z-10 mx-auto flex min-h-[100dvh] max-w-2xl flex-col px-4 py-5 sm:px-5 sm:py-6">
+        <div className="flex items-center justify-between gap-2">
+          <Logo compact />
+          <span className="chip text-xs">
+            <ShieldAlert className="h-3.5 w-3.5 shrink-0 text-amber-300" /> Opsi diacak
+          </span>
         </div>
 
         {/* ============ MENUNGGU MULAI ============ */}
@@ -181,7 +183,7 @@ export default function KuisPage() {
                       <span className="mono flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-white/8 text-sm font-extrabold text-amber-300 group-hover:bg-amber-400/25">
                         {key}
                       </span>
-                      <span className="text-sm font-semibold text-zinc-200 md:text-base"><Eq>{val}</Eq></span>
+                      <span className="min-w-0 flex-1 break-words text-sm font-semibold text-zinc-200 md:text-base"><Eq>{val}</Eq></span>
                     </button>
                   ))}
                 </div>

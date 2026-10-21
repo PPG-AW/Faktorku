@@ -232,8 +232,17 @@ interface Rekap {
   satuKataTexts: string[];
   mudahTexts: string[];
   kesulitanTexts: string[];
+  exitTicketCounts?: { A: number; B: number; C: number; D: number; E: number };
   exitTickets: { nama: string; teks: string }[];
 }
+
+const EXIT_TICKET_OPSI = [
+  { key: "A", label: "(x + 2)(x + 7) = 0", benar: true },
+  { key: "B", label: "(x - 2)(x - 7) = 0", benar: false },
+  { key: "C", label: "(x + 1)(x + 14) = 0", benar: false },
+  { key: "D", label: "(x - 1)(x - 14) = 0", benar: false },
+  { key: "E", label: "(x + 3)(x + 6) = 0", benar: false },
+];
 
 export function DeckRefleksi({ kelasId }: PanelProps) {
   const { data } = useSWR<Rekap>(`/api/refleksi/rekap/${kelasId}`, fetcher, { refreshInterval: 2500 });
@@ -247,6 +256,10 @@ export function DeckRefleksi({ kelasId }: PanelProps) {
     { judul: "Paling Mudah", texts: data?.mudahTexts ?? [] },
     { judul: "Paling Sulit", texts: data?.kesulitanTexts ?? [] },
   ];
+
+  const counts = data?.exitTicketCounts ?? { A: 0, B: 0, C: 0, D: 0, E: 0 };
+  const totalExit = Object.values(counts).reduce((a, b) => a + b, 0);
+  const maxExit = Math.max(1, ...Object.values(counts));
 
   return (
     <div className="flex h-full flex-col">
@@ -264,47 +277,101 @@ export function DeckRefleksi({ kelasId }: PanelProps) {
 
       <div className="mt-6 grid flex-1 gap-4 xl:grid-cols-4">
         {/* Kolom 1: ketercapaian + rating */}
-        <div className="glass p-6 xl:col-span-1" style={{ borderRadius: 3 }}>
-          <p className="label">Ketercapaian tujuan</p>
-          <div className="space-y-4">
-            {T.map((t) => {
-              const terisi = Math.max(data?.terisi ?? 0, 1);
-              const pct = Math.round((t.n / terisi) * 100);
+        <div className="glass flex flex-col justify-between p-5" style={{ borderRadius: 3 }}>
+          <div>
+            <p className="label">Ketercapaian tujuan</p>
+            <div className="space-y-3">
+              {T.map((t) => {
+                const terisi = Math.max(data?.terisi ?? 0, 1);
+                const pct = Math.round((t.n / terisi) * 100);
+                return (
+                  <div key={t.label}>
+                    <div className="flex justify-between text-xs">
+                      <span className="font-extrabold text-[var(--ink)]">{t.label}</span>
+                      <span className="mono font-bold text-[var(--ink-3)] tabular">{t.n}/{data?.terisi ?? 0} · {pct}%</span>
+                    </div>
+                    <div className="mt-1 h-3 overflow-hidden border border-[var(--hairline)] bg-[var(--paper-2)]">
+                      <div className="bar-grow h-full bg-gradient-to-r from-emerald-700 to-emerald-500" style={{ width: `${pct}%` }} />
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+
+          <div className="mt-4 border-t border-[var(--hairline)] pt-3">
+            <p className="label">Kepuasan metode</p>
+            <div className="grid grid-cols-2 gap-2">
+              {[{ l: "T-Faktor", v: data?.rating.tf ?? 0 }, { l: "Metode AC", v: data?.rating.ac ?? 0 }].map((r) => (
+                <div key={r.l} className="border border-[var(--hairline)] bg-[var(--card)] p-2.5 text-center" style={{ borderRadius: 3 }}>
+                  <p className="text-[0.6rem] font-bold uppercase tracking-widest text-[var(--ink-3)]">{r.l}</p>
+                  <div className="mt-1 flex items-center justify-center gap-0.5">
+                    {[1, 2, 3, 4, 5].map((n) => (
+                      <Star key={n} className={cn("h-3.5 w-3.5", n <= Math.round(r.v) ? "fill-[var(--red)] text-[var(--red)]" : "text-[var(--ink-3)]")} />
+                    ))}
+                  </div>
+                  <p className="mono mt-1 text-xl font-extrabold text-[var(--red)] tabular">{r.v.toFixed(1)}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        {/* Kolom 2: EXIT TICKET (selalu tampil dengan grafik dan jawaban) */}
+        <div className="glass flex flex-col p-5" style={{ borderRadius: 3 }}>
+          <div className="flex items-center justify-between border-b border-[var(--hairline)] pb-2">
+            <div>
+              <p className="label !mb-0 !text-[var(--red)]">Exit Ticket</p>
+              <p className="text-xs font-bold text-[var(--ink)]">
+                Faktorkan: <span className="mono eq-badge inline-block px-1.5 py-0.5"><Eq>x^2 + 9x + 14 = 0</Eq></span>
+              </p>
+            </div>
+            <span className="mono text-xs font-bold text-[var(--ink-3)] tabular">{totalExit} jawab</span>
+          </div>
+
+          <div className="mt-3 space-y-2">
+            {EXIT_TICKET_OPSI.map((opt) => {
+              const n = (counts as Record<string, number>)[opt.key] ?? 0;
+              const pct = totalExit > 0 ? Math.round((n / totalExit) * 100) : 0;
               return (
-                <div key={t.label}>
-                  <div className="flex justify-between text-sm">
-                    <span className="font-extrabold text-[var(--ink)]">{t.label}</span>
-                    <span className="mono font-bold text-[var(--ink-3)] tabular">{t.n}/{data?.terisi ?? 0} · {pct}%</span>
+                <div
+                  key={opt.key}
+                  className={cn(
+                    "flex items-center gap-2 border px-2.5 py-1.5 transition-all text-xs",
+                    opt.benar ? "border-emerald-700 bg-emerald-50" : "border-[var(--hairline)] bg-[var(--paper-2)]"
+                  )}
+                >
+                  <span className={cn(
+                    "mono grid h-6 w-6 shrink-0 place-items-center border font-bold text-xs",
+                    opt.benar ? "border-emerald-700 bg-emerald-700 text-white" : "border-[var(--hairline-strong)] bg-white text-[var(--ink)]"
+                  )}>
+                    {opt.key}
+                  </span>
+                  <span className="mono min-w-0 flex-1 truncate font-semibold text-[var(--ink)]">
+                    <Eq>{opt.label}</Eq>
+                  </span>
+                  <div className="h-4 w-16 shrink-0 overflow-hidden border border-[var(--hairline)] bg-white">
+                    <div
+                      className="bar-grow h-full"
+                      style={{
+                        width: `${Math.max(n === 0 ? 0 : 15, (n / maxExit) * 100)}%`,
+                        background: opt.benar ? "linear-gradient(90deg,#15803d,#34d399)" : "linear-gradient(90deg,#141414,#4b4b4b)",
+                      }}
+                    />
                   </div>
-                  <div className="mt-1.5 h-4 overflow-hidden border border-[var(--hairline)] bg-[var(--paper-2)]">
-                    <div className="bar-grow h-full bg-gradient-to-r from-emerald-700 to-emerald-500" style={{ width: `${pct}%` }} />
-                  </div>
+                  <span className="mono w-7 shrink-0 text-right font-bold text-zinc-600 tabular">{n}</span>
                 </div>
               );
             })}
           </div>
-          <div className="mt-5 grid grid-cols-2 gap-2">
-            {[{ l: "T-Faktor", v: data?.rating.tf ?? 0 }, { l: "Metode AC", v: data?.rating.ac ?? 0 }].map((r) => (
-              <div key={r.l} className="border border-[var(--hairline)] bg-[var(--card)] p-3.5 text-center" style={{ borderRadius: 3 }}>
-                <p className="text-[0.62rem] font-bold uppercase tracking-widest text-[var(--ink-3)]">{r.l}</p>
-                <div className="mt-1 flex items-center justify-center gap-0.5">
-                  {[1, 2, 3, 4, 5].map((n) => (
-                    <Star key={n} className={cn("h-4 w-4", n <= Math.round(r.v) ? "fill-[var(--red)] text-[var(--red)]" : "text-[var(--ink-3)]")} />
-                  ))}
-                </div>
-                <p className="mono mt-1 text-2xl font-extrabold text-[var(--red)] tabular">{r.v.toFixed(1)}</p>
-              </div>
-            ))}
-          </div>
-          {/* Exit ticket review */}
+
           {(data?.exitTickets ?? []).length > 0 && (
-            <div className="mt-4 border-t border-[var(--hairline)] pt-3">
-              <p className="label">Exit Ticket, x² + 9x + 14</p>
-              <div className="mono max-h-32 space-y-1 overflow-y-auto text-xs">
-                {(data?.exitTickets ?? []).slice(0, 10).map((t, i) => (
-                  <p key={i} className="flex gap-2 text-[var(--ink-2)]">
-                    <span className="inline-block h-1.5 w-1.5 translate-y-1.5 bg-[var(--red)]" />
-                    <b className="text-[var(--ink)]">{t.nama.split(" ")[0]}</b>, {t.teks}
+            <div className="mt-3 flex-1 overflow-y-auto border-t border-[var(--hairline)] pt-2">
+              <p className="text-[0.62rem] font-bold uppercase tracking-wider text-[var(--ink-3)]">Jawaban Siswa Terakhir:</p>
+              <div className="mono mt-1 max-h-24 space-y-1 text-[0.68rem]">
+                {(data?.exitTickets ?? []).slice(-8).reverse().map((t, i) => (
+                  <p key={i} className="truncate text-[var(--ink-2)]">
+                    <b className="text-[var(--ink)]">{t.nama.split(" ")[0]}:</b> Opsi {t.teks}
                   </p>
                 ))}
               </div>
@@ -312,16 +379,29 @@ export function DeckRefleksi({ kelasId }: PanelProps) {
           )}
         </div>
 
-        {/* Kolom 2–4: tiga word cloud */}
-        {CLOUD.map((c) => (
-          <div key={c.judul} className="glass flex flex-col p-6" style={{ borderRadius: 3 }}>
-            <p className="label !text-center">{c.judul}</p>
-            <div className="flex flex-1 items-center justify-center">
-              <WordCloud texts={c.texts} />
-            </div>
-            <p className="mono mt-2 text-center text-xs text-[var(--ink-3)] tabular">{c.texts.length} siswa</p>
+        {/* Kolom 3 & 4: Word Clouds */}
+        <div key={CLOUD[0].judul} className="glass flex flex-col p-5" style={{ borderRadius: 3 }}>
+          <p className="label !text-center">{CLOUD[0].judul}</p>
+          <div className="flex flex-1 items-center justify-center">
+            <WordCloud texts={CLOUD[0].texts} />
           </div>
-        ))}
+          <p className="mono mt-2 text-center text-xs text-[var(--ink-3)] tabular">{CLOUD[0].texts.length} siswa</p>
+        </div>
+
+        <div className="glass flex flex-col justify-between p-5" style={{ borderRadius: 3 }}>
+          <div className="flex-1">
+            <p className="label !text-center">{CLOUD[1].judul}</p>
+            <div className="flex h-28 items-center justify-center">
+              <WordCloud texts={CLOUD[1].texts} />
+            </div>
+          </div>
+          <div className="mt-2 border-t border-[var(--hairline)] pt-2 flex-1">
+            <p className="label !text-center">{CLOUD[2].judul}</p>
+            <div className="flex h-28 items-center justify-center">
+              <WordCloud texts={CLOUD[2].texts} />
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   );

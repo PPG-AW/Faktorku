@@ -46,12 +46,12 @@ export default function SiswaDoaPage() {
   if (!ready || !siswa) return null;
 
   return (
-    <main className="relative min-h-screen">
+    <main className="relative min-h-[100dvh] overflow-x-hidden">
       <Ambient />
-      <div className="relative z-10 mx-auto flex min-h-screen max-w-xl flex-col px-5 py-6">
+      <div className="relative z-10 mx-auto flex min-h-[100dvh] max-w-xl flex-col px-4 py-5 sm:px-5 sm:py-6">
         <div className="flex items-center justify-between">
-          <Logo />
-          <span className="chip">{siswa.nama}</span>
+          <Logo compact />
+          <span className="chip text-xs">{siswa.nama}</span>
         </div>
 
         <div className="flex flex-1 flex-col items-center justify-center text-center">
@@ -59,28 +59,22 @@ export default function SiswaDoaPage() {
             <MoonStar className="h-3.5 w-3.5" /> Penutup
           </span>
 
-          <h1 className="mt-5 text-5xl font-extrabold leading-tight tracking-tight md:text-6xl" style={{ fontFamily: '"Playfair Display", serif' }}>
+          <h1 className="mt-5 text-4xl sm:text-5xl md:text-6xl font-extrabold leading-tight tracking-tight" style={{ fontFamily: '"Playfair Display", serif' }}>
             Sampai jumpa
             <br />
             <em className="ff-italic text-[var(--red)]">pekan depan.</em>
           </h1>
 
-          <div className="glass mt-8 w-full p-6" style={{ borderRadius: 3 }}>
-            <p className="font-serif text-lg italic leading-relaxed text-[var(--ink-2)]">
+          <div className="glass mt-8 w-full p-5 sm:p-6" style={{ borderRadius: 3 }}>
+            <p className="font-serif text-base sm:text-lg italic leading-relaxed text-[var(--ink-2)]">
               Pembelajaran hari ini telah selesai. Semoga ilmu yang kita pelajari
               menjadi bekal yang bermanfaat bagi diri sendiri maupun orang lain.
             </p>
-            <p className="mt-3 text-base font-bold text-[var(--ink-2)]">Mari kita tutup dengan berdoa menurut keyakinan masing-masing.</p>
-          </div>
-
-          <div className="mono mt-6 space-y-1.5 text-sm text-[var(--ink-2)]">
-            <p><Eq>PR · x^2 + 11x + 24 = 0</Eq></p>
-            <p><Eq>PR · x^2 - 13x + 36 = 0</Eq></p>
-            <p className="text-[var(--red)]"><Eq>Tantangan · x^2 + 3x + 1 = 0</Eq></p>
+            <p className="mt-3 text-sm sm:text-base font-bold text-[var(--ink-2)]">Mari kita tutup dengan berdoa menurut keyakinan masing-masing.</p>
           </div>
 
           {!out ? (
-            <button onClick={handleKeluar} className="btn btn-primary mt-8 px-10 py-4 text-base">
+            <button onClick={handleKeluar} className="btn btn-primary mt-8 px-8 sm:px-10 py-3.5 sm:py-4 text-base">
               <LogOut className="h-5 w-5" /> Keluar dari Kelas
             </button>
           ) : (

@@ -17,21 +17,21 @@ function Block({ block, index }: { block: SlideBlock; index: number }) {
   switch (block.t) {
     case "text":
       return (
-        <p className="anim-fade-up text-base leading-relaxed text-zinc-300 md:text-lg" style={delay}>
+        <p className="anim-fade-up text-sm leading-relaxed text-zinc-300 break-words sm:text-base md:text-lg" style={delay}>
           <EqText>{block.v}</EqText>
         </p>
       );
     case "big":
       return (
-        <p className="anim-fade-up text-xl font-bold leading-relaxed text-zinc-100 md:text-2xl" style={delay}>
+        <p className="anim-fade-up text-lg font-bold leading-relaxed text-zinc-100 break-words sm:text-xl md:text-2xl" style={delay}>
           <Eq>{block.v}</Eq>
         </p>
       );
     case "eq":
       return (
         <div
-          className={`anim-fade-up mono eq-badge mx-auto w-fit max-w-full px-5 py-3 text-center font-semibold tracking-wide text-indigo-100 ${
-            block.big ? "text-[clamp(1.15rem,3.1vw,2.1rem)] py-4 px-7" : "text-[clamp(1rem,2.2vw,1.45rem)]"
+          className={`anim-fade-up mono eq-badge mx-auto w-fit max-w-full overflow-x-auto px-4 py-2.5 text-center font-semibold tracking-wide text-indigo-100 ${
+            block.big ? "text-[clamp(1.05rem,2.8vw,2rem)] py-3 px-5 sm:px-7 sm:py-4" : "text-[clamp(0.9rem,2vw,1.35rem)]"
           }`}
           style={delay}
         >

@@ -1,6 +1,7 @@
 import { db, pool } from "@/db";
 import { slide, soalKuis, soalDiagnostik, soalWorksheet, type SlideKonten } from "@/db/schema";
 import { uid } from "@/lib/utils";
+import { and, eq } from "drizzle-orm";
 
 /* ================== SLIDE MATERI, PERSIS MODUL AJAR (T-Faktor a=1) ================== */
 
@@ -339,35 +340,209 @@ const APERSEPSI: {
 
 const KUIS: {
   nomor: number; paket: number; pertanyaan: string; tipe: string;
-  opsi?: { A: string; B: string; C: string; D: string };
+  opsi: { A: string; B: string; C: string; D: string; E: string };
   kunci: string; timer: number; skor: number;
 }[] = [
   // ---------- PAKET 1 (utama) ----------
-  { nomor: 1, paket: 1, pertanyaan: "Manakah yang merupakan persamaan kuadrat?", tipe: "pg",
-    opsi: { A: "2x + 3 = 0", B: "x^2 - 4 = 0", C: "5x = 10", D: "x + 7 = 0" },
-    kunci: "B", timer: 120, skor: 20 },
-  { nomor: 2, paket: 1, pertanyaan: "Ubah x^2 = 9 ke bentuk umum, lalu tuliskan a, b, c (pisahkan dengan koma).", tipe: "isian", kunci: "1,0,-9", timer: 120, skor: 20 },
-  { nomor: 3, paket: 1, pertanyaan: "Faktorkan x^2 + 7x + 12 = 0", tipe: "isian", kunci: "(x+3)(x+4)", timer: 120, skor: 20 },
-  { nomor: 4, paket: 1, pertanyaan: "Dari (x - 2)(x - 5) = 0, tentukan nilai x (pisahkan dengan koma).", tipe: "isian", kunci: "2,5", timer: 120, skor: 20 },
-  { nomor: 5, paket: 1, pertanyaan: "Buktikan x = 5 adalah akar dari x^2 - 20x + 75 = 0. Tuliskan hasil substitusinya.", tipe: "isian", kunci: "25-100+75=0", timer: 120, skor: 20 },
+  {
+    nomor: 1, paket: 1,
+    pertanyaan: "Manakah yang merupakan bentuk umum persamaan kuadrat dengan a = 1?",
+    tipe: "pg",
+    opsi: {
+      A: "x + 5 = 0",
+      B: "x^2 - 4x + 3 = 0",
+      C: "2x^3 - x = 0",
+      D: "3x - 12 = 0",
+      E: "x^2 + y = 5",
+    },
+    kunci: "B", timer: 120, skor: 20,
+  },
+  {
+    nomor: 2, paket: 1,
+    pertanyaan: "Jika persamaan x^2 = 9 diubah ke bentuk umum ax^2 + bx + c = 0, berapakah nilai a, b, dan c berturut-turut?",
+    tipe: "pg",
+    opsi: {
+      A: "1, 0, -9",
+      B: "1, -9, 0",
+      C: "1, 9, 0",
+      D: "0, 1, -9",
+      E: "1, 0, 9",
+    },
+    kunci: "A", timer: 120, skor: 20,
+  },
+  {
+    nomor: 3, paket: 1,
+    pertanyaan: "Bentuk pemfaktoran dari persamaan kuadrat x^2 + 7x + 12 = 0 adalah...",
+    tipe: "pg",
+    opsi: {
+      A: "(x + 1)(x + 12) = 0",
+      B: "(x + 2)(x + 6) = 0",
+      C: "(x + 3)(x + 4) = 0",
+      D: "(x - 3)(x - 4) = 0",
+      E: "(x - 2)(x - 6) = 0",
+    },
+    kunci: "C", timer: 120, skor: 20,
+  },
+  {
+    nomor: 4, paket: 1,
+    pertanyaan: "Akar-akar penyelesaian dari persamaan (x - 2)(x - 5) = 0 adalah...",
+    tipe: "pg",
+    opsi: {
+      A: "x = -2 atau x = -5",
+      B: "x = 2 atau x = -5",
+      C: "x = -2 atau x = 5",
+      D: "x = 2 atau x = 5",
+      E: "x = 10 atau x = 1",
+    },
+    kunci: "D", timer: 120, skor: 20,
+  },
+  {
+    nomor: 5, paket: 1,
+    pertanyaan: "Buktikan apakah x = 5 adalah akar dari x^2 - 20x + 75 = 0 melalui substitusi:",
+    tipe: "pg",
+    opsi: {
+      A: "25 - 100 + 75 = 0 (Terbukti akar)",
+      B: "10 - 100 + 75 = -15 (Bukan akar)",
+      C: "25 - 20 + 75 = 80 (Bukan akar)",
+      D: "25 + 100 + 75 = 200 (Bukan akar)",
+      E: "5 - 100 + 75 = -20 (Bukan akar)",
+    },
+    kunci: "A", timer: 120, skor: 20,
+  },
 
   // ---------- PAKET 2 (cadangan) ----------
-  { nomor: 1, paket: 2, pertanyaan: "Manakah yang BUKAN persamaan kuadrat?", tipe: "pg",
-    opsi: { A: "x^2 + 2x = 0", B: "4x - 9 = 0", C: "x^2 = 16", D: "x^2 - 5x + 6 = 0" },
-    kunci: "B", timer: 120, skor: 20 },
-  { nomor: 2, paket: 2, pertanyaan: "Ubah 3x^2 - 7 = 2x ke bentuk umum, lalu tuliskan a, b, c (pisahkan dengan koma).", tipe: "isian", kunci: "3,-2,-7", timer: 120, skor: 20 },
-  { nomor: 3, paket: 2, pertanyaan: "Faktorkan x^2 + 9x + 20 = 0", tipe: "isian", kunci: "(x+4)(x+5)", timer: 120, skor: 20 },
-  { nomor: 4, paket: 2, pertanyaan: "Dari (x + 6)(x - 1) = 0, tentukan nilai x (pisahkan dengan koma).", tipe: "isian", kunci: "-6,1", timer: 120, skor: 20 },
-  { nomor: 5, paket: 2, pertanyaan: "Buktikan x = 3 adalah akar dari x^2 - 8x + 15 = 0. Tuliskan hasil substitusinya.", tipe: "isian", kunci: "9-24+15=0", timer: 120, skor: 20 },
+  {
+    nomor: 1, paket: 2,
+    pertanyaan: "Manakah yang BUKAN merupakan persamaan kuadrat?",
+    tipe: "pg",
+    opsi: {
+      A: "x^2 + 2x = 0",
+      B: "x^2 - 5x + 6 = 0",
+      C: "4x - 9 = 0",
+      D: "x^2 = 16",
+      E: "x^2 - 1 = 0",
+    },
+    kunci: "C", timer: 120, skor: 20,
+  },
+  {
+    nomor: 2, paket: 2,
+    pertanyaan: "Bentuk umum ax^2 + bx + c = 0 dari persamaan x^2 + 5x = 14 adalah...",
+    tipe: "pg",
+    opsi: {
+      A: "x^2 + 5x + 14 = 0",
+      B: "x^2 + 5x - 14 = 0",
+      C: "x^2 - 5x - 14 = 0",
+      D: "x^2 - 5x + 14 = 0",
+      E: "5x^2 + x - 14 = 0",
+    },
+    kunci: "B", timer: 120, skor: 20,
+  },
+  {
+    nomor: 3, paket: 2,
+    pertanyaan: "Bentuk pemfaktoran dari persamaan kuadrat x^2 + 9x + 20 = 0 adalah...",
+    tipe: "pg",
+    opsi: {
+      A: "(x + 1)(x + 20) = 0",
+      B: "(x + 2)(x + 10) = 0",
+      C: "(x - 4)(x - 5) = 0",
+      D: "(x + 4)(x + 5) = 0",
+      E: "(x + 3)(x + 6) = 0",
+    },
+    kunci: "D", timer: 120, skor: 20,
+  },
+  {
+    nomor: 4, paket: 2,
+    pertanyaan: "Akar-akar penyelesaian dari persamaan (x + 6)(x - 1) = 0 adalah...",
+    tipe: "pg",
+    opsi: {
+      A: "x = 6 atau x = -1",
+      B: "x = -6 atau x = 1",
+      C: "x = 6 atau x = 1",
+      D: "x = -6 atau x = -1",
+      E: "x = 0 atau x = 6",
+    },
+    kunci: "B", timer: 120, skor: 20,
+  },
+  {
+    nomor: 5, paket: 2,
+    pertanyaan: "Buktikan apakah x = 3 adalah akar dari x^2 - 8x + 15 = 0 melalui substitusi:",
+    tipe: "pg",
+    opsi: {
+      A: "9 - 24 + 15 = 0 (Terbukti akar)",
+      B: "6 - 24 + 15 = -3 (Bukan akar)",
+      C: "9 + 24 + 15 = 48 (Bukan akar)",
+      D: "9 - 8 + 15 = 16 (Bukan akar)",
+      E: "3 - 24 + 15 = -6 (Bukan akar)",
+    },
+    kunci: "A", timer: 120, skor: 20,
+  },
 
   // ---------- PAKET 3 (cadangan kedua) ----------
-  { nomor: 1, paket: 3, pertanyaan: "Pada persamaan x^2 - 6x + 8 = 0, berapakah nilai b?", tipe: "pg",
-    opsi: { A: "1", B: "-6", C: "6", D: "8" },
-    kunci: "B", timer: 120, skor: 20 },
-  { nomor: 2, paket: 3, pertanyaan: "Ubah x^2 + 4x = 12 ke bentuk umum, lalu tuliskan a, b, c (pisahkan dengan koma).", tipe: "isian", kunci: "1,4,-12", timer: 120, skor: 20 },
-  { nomor: 3, paket: 3, pertanyaan: "Faktorkan x^2 - 5x - 14 = 0", tipe: "isian", kunci: "(x-7)(x+2)", timer: 120, skor: 20 },
-  { nomor: 4, paket: 3, pertanyaan: "Dari (x - 8)(x + 3) = 0, tentukan nilai x (pisahkan dengan koma).", tipe: "isian", kunci: "8,-3", timer: 120, skor: 20 },
-  { nomor: 5, paket: 3, pertanyaan: "Buktikan x = 2 adalah akar dari x^2 - 5x + 6 = 0. Tuliskan hasil substitusinya.", tipe: "isian", kunci: "4-10+6=0", timer: 120, skor: 20 },
+  {
+    nomor: 1, paket: 3,
+    pertanyaan: "Pada persamaan kuadrat x^2 - 6x + 8 = 0, berapakah nilai koefisien b dan c?",
+    tipe: "pg",
+    opsi: {
+      A: "b = 6 dan c = 8",
+      B: "b = -6 dan c = 8",
+      C: "b = 1 dan c = -6",
+      D: "b = -6 dan c = -8",
+      E: "b = 8 dan c = -6",
+    },
+    kunci: "B", timer: 120, skor: 20,
+  },
+  {
+    nomor: 2, paket: 3,
+    pertanyaan: "Dua bilangan yang memiliki hasil kali = -14 dan hasil jumlah = -5 adalah...",
+    tipe: "pg",
+    opsi: {
+      A: "-7 dan 2",
+      B: "7 dan -2",
+      C: "-14 dan 1",
+      D: "14 dan -1",
+      E: "-7 dan -2",
+    },
+    kunci: "A", timer: 120, skor: 20,
+  },
+  {
+    nomor: 3, paket: 3,
+    pertanyaan: "Bentuk pemfaktoran dari persamaan kuadrat x^2 - 5x - 14 = 0 adalah...",
+    tipe: "pg",
+    opsi: {
+      A: "(x + 7)(x - 2) = 0",
+      B: "(x - 7)(x - 2) = 0",
+      C: "(x - 7)(x + 2) = 0",
+      D: "(x + 14)(x - 1) = 0",
+      E: "(x - 14)(x + 1) = 0",
+    },
+    kunci: "C", timer: 120, skor: 20,
+  },
+  {
+    nomor: 4, paket: 3,
+    pertanyaan: "Akar-akar penyelesaian dari persamaan (x - 8)(x + 3) = 0 adalah...",
+    tipe: "pg",
+    opsi: {
+      A: "x = -8 atau x = 3",
+      B: "x = 8 atau x = 3",
+      C: "x = -8 atau x = -3",
+      D: "x = 8 atau x = -3",
+      E: "x = 24 atau x = 1",
+    },
+    kunci: "D", timer: 120, skor: 20,
+  },
+  {
+    nomor: 5, paket: 3,
+    pertanyaan: "Persamaan x^2 - 4x + 4 = 0 jika difaktorkan menghasilkan (x - 2)^2 = 0. Berapakah jumlah akarnya?",
+    tipe: "pg",
+    opsi: {
+      A: "Tidak ada akar riil",
+      B: "Satu akar kembar (x = 2)",
+      C: "Dua akar berbeda (x = 2 dan x = -2)",
+      D: "Tiga akar",
+      E: "Tak terhingga akar",
+    },
+    kunci: "B", timer: 120, skor: 20,
+  },
 ];
 
 /* ========================= WORKSHEET HARD CODE (T-Faktor a=1) ============= */
@@ -424,9 +599,37 @@ export async function ensureSeed(): Promise<void> {
       if (w.length === 0) {
         await db.insert(soalWorksheet).values(WORKSHEET.map((s) => ({ id: uid(), nomor: s.nomor, pertanyaan: s.pertanyaan, tipe: s.tipe, timer: s.timer, data: s.data })));
       }
-      const k = await db.select({ id: soalKuis.id }).from(soalKuis).limit(1);
-      if (k.length === 0) {
-        await db.insert(soalKuis).values(KUIS.map((s) => ({ id: uid(), nomor: s.nomor, paket: s.paket, pertanyaan: s.pertanyaan, opsi: s.opsi ?? null, kunci: s.kunci, tipe: s.tipe, timer: s.timer, skor: s.skor })));
+      for (const s of KUIS) {
+        const existing = await db
+          .select({ id: soalKuis.id })
+          .from(soalKuis)
+          .where(and(eq(soalKuis.nomor, s.nomor), eq(soalKuis.paket, s.paket)))
+          .limit(1);
+        if (existing.length > 0) {
+          await db
+            .update(soalKuis)
+            .set({
+              pertanyaan: s.pertanyaan,
+              opsi: s.opsi,
+              kunci: s.kunci,
+              tipe: s.tipe,
+              timer: s.timer,
+              skor: s.skor,
+            })
+            .where(eq(soalKuis.id, existing[0].id));
+        } else {
+          await db.insert(soalKuis).values({
+            id: uid(),
+            nomor: s.nomor,
+            paket: s.paket,
+            pertanyaan: s.pertanyaan,
+            opsi: s.opsi,
+            kunci: s.kunci,
+            tipe: s.tipe,
+            timer: s.timer,
+            skor: s.skor,
+          });
+        }
       }
     })().catch((e) => {
       seedPromise = null;

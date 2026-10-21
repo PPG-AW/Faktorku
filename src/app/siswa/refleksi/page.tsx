@@ -4,9 +4,18 @@ import { useEffect, useState } from "react";
 import useSWR from "swr";
 import { Ambient } from "@/components/ambient";
 import { Logo } from "@/components/topbar";
+import { Eq } from "@/components/equation";
 import { fetcher, useKelasState, usePing, useSiswa, useStageFollow } from "@/hooks/use-session";
 import { cn } from "@/lib/utils";
 import { CircleCheckBig, PencilLine, Send, Sparkles, Star } from "lucide-react";
+
+const EXIT_TICKET_OPSI = [
+  { key: "A", eq: "(x + 2)(x + 7) = 0" },
+  { key: "B", eq: "(x - 2)(x - 7) = 0" },
+  { key: "C", eq: "(x + 1)(x + 14) = 0" },
+  { key: "D", eq: "(x - 1)(x - 14) = 0" },
+  { key: "E", eq: "(x + 3)(x + 6) = 0" },
+];
 
 function StarRating({ value, onChange, disabled }: { value: number; onChange: (v: number) => void; disabled?: boolean }) {
   const [hover, setHover] = useState(0);
@@ -102,12 +111,12 @@ export default function RefleksiPage() {
   };
 
   return (
-    <main className="relative min-h-screen">
+    <main className="relative min-h-[100dvh] overflow-x-hidden">
       <Ambient />
-      <div className="relative z-10 mx-auto flex min-h-screen max-w-2xl flex-col px-5 py-6">
+      <div className="relative z-10 mx-auto flex min-h-[100dvh] max-w-2xl flex-col px-4 py-5 sm:px-5 sm:py-6">
         <div className="flex items-center justify-between">
-          <Logo />
-          <span className="chip">{siswa.nama}</span>
+          <Logo compact />
+          <span className="chip text-xs">{siswa.nama}</span>
         </div>
 
         <div className="mt-6 flex items-center gap-2.5">
@@ -181,17 +190,47 @@ export default function RefleksiPage() {
               <input className="input mono" placeholder="hanya 1 kata" value={satuKata} maxLength={24} disabled={locked} onChange={(e) => setSatuKata(e.target.value)} />
               <p className="mt-1.5 text-[0.62rem] text-[var(--ink-3)]">Kata ini akan membesar di word cloud kelas.</p>
             </div>
-            <div className="border-gradient p-5" style={{ background: "var(--card)" }}>
+            <div className="border-gradient p-4 sm:p-5" style={{ background: "var(--card)" }}>
               <p className="label !text-[var(--red)]">Exit Ticket</p>
-              <p className="mono text-sm text-[var(--ink)]">Faktorkan x^2 + 9x + 14 = 0</p>
-              <input className="input mono mt-2" placeholder="tulis hasil faktornya…" value={exitTicket} maxLength={80} disabled={locked} onChange={(e) => setExitTicket(e.target.value)} />
+              <p className="text-sm font-bold text-[var(--ink)]">
+                Faktorkan: <span className="mono eq-badge inline-block px-2.5 py-0.5"><Eq>x^2 + 9x + 14 = 0</Eq></span>
+              </p>
+              <div className="mt-3 space-y-2">
+                {EXIT_TICKET_OPSI.map((opt) => {
+                  const selected = exitTicket === opt.key;
+                  return (
+                    <button
+                      key={opt.key}
+                      type="button"
+                      disabled={locked}
+                      onClick={() => setExitTicket(opt.key)}
+                      className={cn(
+                        "flex w-full items-center gap-2.5 rounded-xl border p-2.5 text-left transition-all",
+                        selected
+                          ? "border-[var(--red)] bg-[var(--red)]/10 font-bold text-[var(--red)] shadow-[2px_2px_0_var(--ink)]"
+                          : "border-[var(--hairline)] bg-[var(--paper-2)] hover:border-[var(--red)]/50"
+                      )}
+                    >
+                      <span className={cn(
+                        "mono grid h-6 w-6 shrink-0 place-items-center rounded-lg border text-xs font-bold",
+                        selected ? "border-[var(--red)] bg-[var(--red)] text-white" : "border-[var(--hairline-strong)] bg-white text-[var(--ink-2)]"
+                      )}>
+                        {opt.key}
+                      </span>
+                      <span className="mono min-w-0 flex-1 break-words text-xs sm:text-sm text-[var(--ink)]">
+                        <Eq>{opt.eq}</Eq>
+                      </span>
+                    </button>
+                  );
+                })}
+              </div>
             </div>
           </div>
 
           {!locked && (
             <button
               onClick={submit}
-              disabled={sending || rating === 0 || satuKata.trim().length < 2 || exitTicket.trim().length < 2}
+              disabled={sending || rating === 0 || satuKata.trim().length < 2 || !exitTicket}
               className="btn btn-primary w-full py-4 text-base"
             >
               {sending ? <span className="h-5 w-5 animate-spin rounded-full border-2 border-white/40 border-t-white" /> : <Send className="h-4.5 w-4.5" />}
