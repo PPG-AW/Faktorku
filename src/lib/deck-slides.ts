@@ -100,9 +100,9 @@ export const DECK: DeckItem[] = [
         { t: "text", v: "Sewa tempat dan listrik 75 ribu setiap minggu. Jumlah ini tetap, mau produksi banyak atau sedikit." },
         { t: "text", v: "Ada satu biaya lagi yang unik, yaitu upah tenaga kerja." },
         { t: "text", v: "Makin banyak kaos, makin rumit pengerjaannya. Upah untuk setiap kaos ikut naik mengikuti jumlah kaos, yaitu x ribu." },
-        { t: "box", title: "Inilah yang menarik", v: "Upah tiap kaos adalah x ribu dan jumlah kaos adalah x. Maka total upah menjadi x dikali x, yaitu x².", tone: "violet" },
+        { t: "box", title: "Perhatikan", v: "Upah tiap kaos adalah x ribu dan jumlah kaos adalah x. Maka total upah menjadi x dikali x, yaitu x².", tone: "violet" },
         { t: "text", v: "Suatu sore Rina bertanya pada dirinya sendiri." },
-        { t: "box", title: "Pertanyaan Rina", v: "Berapa kaos yang harus aku jual supaya uang masuk tepat sama dengan semua biaya? Tidak untung, tetapi juga tidak rugi.", tone: "warn" },
+        { t: "box", title: "Pertanyaan Rina", v: "Berapa kaos yang harus aku jual supaya balik modal? Tidak untung, tetapi juga tidak rugi.", tone: "warn" },
       ],
     },
   },
@@ -176,7 +176,7 @@ export const DECK: DeckItem[] = [
       sub: "Untuk tahu untung atau rugi, cari dulu titik balik modalnya",
       blocks: [
         { t: "text", v: "Supaya bisa menjawab pertanyaan tadi, kita perlu satu angka kunci." },
-        { t: "text", v: "Yaitu berapa kaos yang membuat uang masuk tepat sama dengan uang keluar." },
+        { t: "text", v: "Yaitu berapa jumlah kaos yang membuat pemasukan sama dengan pengeluaran." },
         { t: "eq", v: "Uang masuk = Uang keluar", big: true },
         { t: "list", items: ["Di atas titik itu: Rina untung", "Tepat di titik itu: balik modal", "Di bawah titik itu: Rina rugi"] },
         { t: "box", title: "Itulah Titik Impas", v: "Selisih uang masuk dan uang keluar sama dengan nol. Dari sinilah persamaan kita lahir.", tone: "violet" },
@@ -239,12 +239,12 @@ export const DECK: DeckItem[] = [
     konten: null,
   },
   {
-    nomor: 15, key: "langkah", grup: "Kegiatan Inti", label: "5 Langkah T-Faktor", fase: "Fase 6 · Generalization",
+    nomor: 15, key: "langkah", grup: "Kegiatan Inti", label: "5 Langkah Faktorisasi", fase: "Fase 6 · Generalization",
     stage: "materi", interaktif: null, bertahap: true, icon: ListChecks,
     konten: {
       layout: "content",
       kicker: "Fase 6 · Generalization",
-      title: "5 Langkah T-Faktor",
+      title: "5 Langkah Faktorisasi",
       sub: "Contoh: x² + 5x + 6 = 0",
       blocks: [
         { t: "box", title: "Langkah 1", v: "Tentukan a, b, c → a = 1, b = 5, c = 6", tone: "info" },
@@ -263,7 +263,7 @@ export const DECK: DeckItem[] = [
     konten: {
       layout: "content",
       kicker: "Fase 6 · Generalization",
-      title: "Pola Tanda T-Faktor",
+      title: "Pola Tanda Faktorisasi dengan Metode T",
       sub: "Tanda b dan c menentukan tanda p dan q",
       blocks: [
         { t: "table", head: ["Tanda b", "Tanda c", "Tanda p dan q", "Bentuk Faktor"], rows: [
@@ -318,7 +318,7 @@ export const DECK: DeckItem[] = [
       sub: "Apa yang sudah kita temukan bersama?",
       blocks: [
         { t: "text", v: "Memfaktorkan adalah kebalikan dari mengalikan bentuk aljabar." },
-        { t: "text", v: "Inti T-Faktor: cari dua bilangan yang hasil kalinya = c dan hasil jumlahnya = b." },
+        { t: "text", v: "Inti Faktorisasi: cari dua bilangan yang hasil kalinya = c dan hasil jumlahnya = b." },
         { t: "text", v: "Persamaan kuadrat dapat memiliki dua akar berbeda, satu akar kembar, atau tidak dapat difaktorkan" },
         { t: "text", v: "Selalu buktikan kebenaran akar dengan mensubstitusikannya ke persamaan awal." },
         { t: "eq", v: "(x + p)(x + q) = x² + (p + q)x + pq", big: true },
